@@ -12,6 +12,30 @@ const routes: Routes = [
   {
     path: 'splash',
     loadChildren: () => import('./splash/splash.module').then( m => m.SplashPageModule)
+  },
+  {
+    path: 'alta-empleado',
+    loadChildren: () => import('./alta-empleado/alta-empleado.module').then( m => m.AltaEmpleadoPageModule)
+  },
+  {
+    path: 'alta-cliente',
+    loadChildren: () => import('./alta-cliente/alta-cliente.module').then( m => m.AltaClientePageModule)
+  },
+  {
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+  },
+  {
+    path: 'alta-supervisor',
+    loadChildren: () => import('./alta-supervisor/alta-supervisor.module').then( m => m.AltaSupervisorPageModule)
+  },
+  {
+    path: 'alta-mesa',
+    loadChildren: () => import('./alta-mesa/alta-mesa.module').then( m => m.AltaMesaPageModule)
+  },
+  {
+    path: 'alta-producto',
+    loadChildren: () => import('./alta-producto/alta-producto.module').then( m => m.AltaProductoPageModule)
   }
 
 ];
