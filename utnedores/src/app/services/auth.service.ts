@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { waitForAsync } from '@angular/core/testing';
 import { Auth,	signInWithEmailAndPassword,	createUserWithEmailAndPassword,	signOut } from '@angular/fire/auth';
 import { Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -9,6 +10,7 @@ export interface Local{
 }
 
 export interface Usuario{
+	idField: string;
 	idUsuario: string;
 	nombre: string;
 	apellido: string;
@@ -23,6 +25,7 @@ export interface Usuario{
 }
 
 export interface ListaEspera{
+	idField: string;
 	idUsuario: string;
 	fecha: string;
 	hora: string;
@@ -30,6 +33,7 @@ export interface ListaEspera{
 }
 
 export interface Mesa{
+	idField: string;
 	numMesa: string;
 	qr: string;
 	capacidad: string;
@@ -42,8 +46,11 @@ export interface Mesa{
 }
 
 export interface Producto{
+	idField: string;
 	idProducto: string;
-	nombre: string;
+	categoria: string;
+	producto: string;
+	tamanio: string;
 	descripcion: string;
 	tiempoElaboracion: string;
 	foto1: string;
@@ -53,7 +60,8 @@ export interface Producto{
 	qr: string;
 }
 
-export interface Pedidos{
+export interface Pedido{
+	idField: string;
 	numMesa: string;
 	idProducto: string;
 	cantidad: string;
@@ -61,24 +69,25 @@ export interface Pedidos{
 	precio: string;
 	fecha: string;
 	hora: string;
-	confirmado: string;
-	pendiente: string;
-	entregado: string;
+	estado: string;
 }
 
 export interface Propina{
+	idField: string;
 	idUsuario: string;
 	valor: string;
 }
 
-export interface ReservasNoConfirmadas{
+export interface ReservaNoConfirmada{
+	idField: string;
 	idUsuario: string;
 	cantPersonas: string;
 	hora: string;
 	fecha: string;
 }
 
-export interface ReservasAsignadas{
+export interface ReservaAsignada{
+	idField: string;
 	numMesa: string;
 	idUsuario: string;
 	fecha: string;
@@ -118,11 +127,26 @@ export interface EncuestaSupervisor{
 })
 export class AuthService {
 
-  constructor(private auth: Auth, private firestore: Firestore) {}
+	constructor(
+		private auth: Auth,
+		private firestore: Firestore
+	) {
 
+	}
 
+	addUser(user: Usuario)
+	{
+		const userRef = collection(this.firestore, 'users');
+		return addDoc(userRef, user);
+	}
 
-  async register({ email, password }) {
+	getUsers(): Observable<Usuario[]>
+	{
+		const userRef = collection(this.firestore, 'users');
+		return collectionData(userRef) as Observable<Usuario[]>;
+	}
+
+  	async register({ email, password }) {
 		try {
 			const user = await createUserWithEmailAndPassword(this.auth, email, password);
 			return user;
