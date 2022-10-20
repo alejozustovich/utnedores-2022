@@ -11,6 +11,16 @@ export class AltaClientePage implements OnInit {
   users: Usuario[];
   idRegistroUsuario = "1";
   spinner = false;
+  esRegistrado = true;
+  esAnonimo = false;
+  srcUserPhoto = "../../assets/user-photo.png";
+  nombre = "";
+  apellido = "";
+  dni = "";
+  correo = "";
+  clave = "";
+  claveConfirmada = "";
+  foto = "";
 
   constructor(
     private authService: AuthService
@@ -34,23 +44,31 @@ export class AltaClientePage implements OnInit {
 		});
 	}
 
+  SetNombre( value ) { this.nombre = value; }
+  SetApellido( value ) { this.apellido = value; }
+  SetDNI( value ) { this.dni = value; }
+  SetCorreo( value ) { this.correo = value; }
+  SetClave( value ) { this.clave = value; }
+  SetClaveConfirmada( value ) { this.claveConfirmada = value; }
 
   GuardarUsuario()
   {
     var unUsuario: Usuario = {
       idField: "",
       idUsuario: "",
-      nombre: "",
-      apellido: "",
-      correo: "",
-      clave: "",
-      dni: "",
+      nombre: this.nombre,
+      apellido: this.apellido,
+      correo: this.correo,
+      clave: this.clave,
+      dni: this.dni,
       cuil: "",
       foto: "",
       perfil: "",
       tipo: "",
       aprobado: ""
     };
+
+    alert(this.nombre);
 
     //this.authService.addUser(unUsuario);
   }
@@ -63,6 +81,18 @@ export class AltaClientePage implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  CambiarBotonTipoCliente() {
+
+    if(this.esRegistrado) {
+      this.esRegistrado = false;
+      this.esAnonimo = true;
+    }
+    else {
+      this.esRegistrado = true;
+      this.esAnonimo = false;
+    }
   }
 
 }
