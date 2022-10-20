@@ -1,0 +1,15 @@
+.custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+  .custom-file-input::before {
+    content: '            Elegir Fotos';
+    display: inline-block;
+    border: 2px solid rgb(14, 88, 14);
+    color: rgb(14, 88, 14);
+    border-radius: 3px;
+    padding: 8px 15px;
+    font-weight: 700;
+    font-size: 20px;
+    width: 240px;
+    margin-top: 15px;
+  }

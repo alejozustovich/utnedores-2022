@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AltaMesaPageRoutingModule } from './alta-mesa-routing.module';
+import { GenerarQRPageRoutingModule } from './generar-qr-routing.module';
 
-import { AltaMesaPage } from './alta-mesa.page';
+import { GenerarQRPage } from './generar-qr.page';
 import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
@@ -14,9 +14,9 @@ import { QRCodeModule } from 'angularx-qrcode';
     CommonModule,
     FormsModule,
     IonicModule,
-    AltaMesaPageRoutingModule,
+    GenerarQRPageRoutingModule,
     QRCodeModule
   ],
-  declarations: [AltaMesaPage]
+  declarations: [GenerarQRPage]
 })
-export class AltaMesaPageModule {}
+export class GenerarQRPageModule {}
