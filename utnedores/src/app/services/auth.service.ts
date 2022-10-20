@@ -3,6 +3,9 @@ import { waitForAsync } from '@angular/core/testing';
 import { Auth,	signInWithEmailAndPassword,	createUserWithEmailAndPassword,	signOut } from '@angular/fire/auth';
 import { Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, listAll, getDownloadURL, uploadString } from '@angular/fire/storage';
+
 
 export interface Local{
 	idLocal: string;
@@ -127,6 +130,7 @@ export interface EncuestaSupervisor{
 })
 export class AuthService {
 
+	
 	constructor(
 		private auth: Auth,
 		private firestore: Firestore
@@ -143,8 +147,59 @@ export class AuthService {
 	getUsers(): Observable<Usuario[]>
 	{
 		const userRef = collection(this.firestore, 'users');
-		return collectionData(userRef) as Observable<Usuario[]>;
+		return collectionData(userRef, {idField: 'idField'}) as Observable<Usuario[]>;
 	}
+
+
+	subirImagenBase64(nombreImagen, base64Image){
+		const storage = getStorage();
+		const storageRef = ref(storage, nombreImagen);
+		uploadString(storageRef, base64Image, 'data_url').then((snapshot) =>{
+		  
+		});
+	}
+
+	subirImagenFile(nombreImagen, file){
+		const storage = getStorage();
+		const storageRef = ref(storage, nombreImagen);
+		uploadBytes(storageRef, file).then((response) => {
+		});
+	}
+
+
+	addTable(mesa: Mesa)
+	{
+		const tableRef = collection(this.firestore, 'mesas');
+		return addDoc(tableRef, mesa);
+	}
+
+	getTables(): Observable<Mesa[]>
+	{
+		const mesaRef = collection(this.firestore, 'mesas');
+		return collectionData(mesaRef, {idField: 'idField'}) as Observable<Mesa[]>;
+	}
+
+
+
+
+	addProduct(producto: Producto)
+	{
+		const productRef = collection(this.firestore, 'productos');
+		return addDoc(productRef, producto);
+	}
+
+	getProducts(): Observable<Producto[]>
+	{
+		const productRef = collection(this.firestore, 'productos');
+		return collectionData(productRef, {idField: 'idField'}) as Observable<Producto[]>;
+	}
+
+
+
+
+
+
+
 
   	async register({ email, password }) {
 		try {

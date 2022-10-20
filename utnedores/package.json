@@ -33,6 +33,7 @@
     "@capacitor/splash-screen": "^4.1.0",
     "@capacitor/status-bar": "4.0.1",
     "@ionic/angular": "^6.1.9",
+    "angularx-qrcode": "^14.0.0",
     "chart.js": "^3.9.1",
     "cordova-plugin-camera": "^6.0.0",
     "cordova-plugin-flashlight": "^3.2.0",

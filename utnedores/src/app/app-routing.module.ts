@@ -36,6 +36,10 @@ const routes: Routes = [
   {
     path: 'alta-producto',
     loadChildren: () => import('./alta-producto/alta-producto.module').then( m => m.AltaProductoPageModule)
+  },
+  {
+    path: 'generar-qr',
+    loadChildren: () => import('./generar-qr/generar-qr.module').then( m => m.GenerarQRPageModule)
   }
 
 ];

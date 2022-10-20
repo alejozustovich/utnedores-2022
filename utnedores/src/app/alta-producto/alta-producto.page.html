@@ -6,4 +6,17 @@
 
 <ion-content>
 
+  <ion-card class="ion-text-center">
+    <ion-card-content>
+        <qrcode *ngIf="mostrarQr" (qrCodeURL)="onChangeURL($event)" [qrdata]="myAngularxQrCode" [width]="128" [errorCorrectionLevel]="'M'"></qrcode>
+    </ion-card-content>
+  </ion-card>
+  
+  <input class="custom-file-input" type="file" (change)="Cargar($event)" multiple="multiple">
+
+  <img *ngIf="variable1 != ''" style="margin-top: 10px; width: 100%; height: 100%;" [src]="variable1">
+  <img *ngIf="variable2 != ''" style="width: 100%; height: 100%;" [src]="variable2">
+  <img *ngIf="variable3 != ''" style="width: 100%; height: 100%;" [src]="variable3">
+
+  <ion-button (click)="Subir()">Subir</ion-button>
 </ion-content>
