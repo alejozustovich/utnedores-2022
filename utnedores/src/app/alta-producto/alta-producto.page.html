@@ -1,10 +1,76 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>altaProducto</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="true">
+	<ion-toolbar>
+	  <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
+	  <ion-button id="btn_toolbar" (click)="Volver()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
+	</ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true">
+	<ion-grid>
+	  <div class="contenido">
+
+		<div class="titulo_form">
+			<img src="../../assets/cliente.png" alt="" width="50" height="50">
+			<h2>Alta de Producto</h2>
+		</div>
+
+		<form>
+			<select (change)="SelectChange()" id="categoria" style="outline: none; border-radius: 5px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.5); height: 45px; width: 100%; background-color: rgba(46, 17, 3, 0.5); color: rgb(255, 255, 255); opacity: 70%;">
+				<option hidden>Seleccionar Categoría</option>
+				<option style="background: black; color: white;" value="0">Entradas</option>
+				<option style="background: black; color: white;" value="1">Promociones</option>
+				<option style="background: black; color: white;" value="2">Platos fríos</option>
+				<option style="background: black; color: white;" value="3">Platos calientes</option>
+				<option style="background: black; color: white;" value="4">Bebidas sin alcohol</option>
+				<option style="background: black; color: white;" value="5">Bebidas con alcohol</option>
+				<option style="background: black; color: white;" value="6">Postres y Café-Te</option>
+			</select>
+
+			
+
+			<ion-input [value]="producto" (input)="SetProducto($event.target.value)" placeholder="Producto"></ion-input>
+			<ion-input [value]="descripcion" (input)="SetDescripcion($event.target.value)" placeholder="Descripción"></ion-input>
+			<ion-input id="elaboracion" [value]="elaboracion" (input)="SetElaboracion($event.target.value)" placeholder="Tiempo de elaboración (Minutos)" [disabled]="elab"></ion-input>
+			
+			<ion-row>
+				<ion-input id="tamanio" [value]="tamanio" (input)="SetTamanio($event.target.value)" placeholder="Tamaño (ml o L)" [disabled]="bebida"></ion-input>
+				<ion-input [value]="precio" (input)="SetPrecio($event.target.value)" placeholder="Precio ($)"></ion-input>
+			</ion-row>
+		
+		  	<ion-item style="--min-height: 90px;">
+				<ion-thumbnail slot="start" style="margin-top: -10px;">
+					<ion-img [src]="srcProductPhoto[0]" style="max-width: 100px; max-height: 100px;"></ion-img>
+					<ion-icon (click)="LimpiarFoto(0)" style="margin-left: 20px; margin-top: 5px;" name="trash-outline"></ion-icon>
+				</ion-thumbnail>
+				<ion-thumbnail slot="start" style="margin-top: -10px;">
+					<ion-img [src]="srcProductPhoto[1]" style="max-width: 100px; max-height: 100px;"></ion-img>
+					<ion-icon (click)="LimpiarFoto(1)" style="margin-left: 20px; margin-top: 5px;" name="trash-outline"></ion-icon>
+				</ion-thumbnail>
+				<ion-thumbnail slot="start" style="margin-top: -10px;">
+					<ion-img [src]="srcProductPhoto[2]" style="max-width: 100px; max-height: 100px;"></ion-img>
+					<ion-icon (click)="LimpiarFoto(2)" style="margin-left: 20px; margin-top: 5px;" name="trash-outline"></ion-icon>
+				</ion-thumbnail>
+				<ion-button (click)="Fotos()" style="--background: rgb(71, 18, 18);"><ion-icon name="camera-outline"></ion-icon></ion-button>
+			</ion-item>
+		  <ion-button style="--background: rgb(15, 145, 58); height: 50px;" (click)="AgregarProducto()"><ion-icon name="checkmark-circle-outline"></ion-icon>AGREGAR PRODUCTO</ion-button> 
+		</form>
+	  </div>
+	</ion-grid>
+
+  <input id="files" class="custom-file-input" type="file" (change)="Cargar($event)" multiple="multiple">
+</ion-content>
+
+<div class="custom-loading" *ngIf="spinner">
+	<div class="spinner">
+		<div class="double-bounce1"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+		<div class="double-bounce2"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+	</div>
+</div>
+
+
+
+
+<!--ion-content>
 
   <ion-card class="ion-text-center">
     <ion-card-content>
@@ -14,9 +80,9 @@
   
   <input class="custom-file-input" type="file" (change)="Cargar($event)" multiple="multiple">
 
-  <img *ngIf="variable1 != ''" style="margin-top: 10px; width: 100%; height: 100%;" [src]="variable1">
-  <img *ngIf="variable2 != ''" style="width: 100%; height: 100%;" [src]="variable2">
-  <img *ngIf="variable3 != ''" style="width: 100%; height: 100%;" [src]="variable3">
+  <img *ngIf="variable1 != ''" style="margin-top: 10px; width: 80px; height: 80px;" [src]="variable1">
+  <img *ngIf="variable2 != ''" style="width: 80px; height: 80px;" [src]="variable2">
+  <img *ngIf="variable3 != ''" style="width: 80px; height: 80px;" [src]="variable3">
 
   <ion-button (click)="Subir()">Subir</ion-button>
-</ion-content>
+</ion-content-->
