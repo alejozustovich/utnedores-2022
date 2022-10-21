@@ -1,9 +1,188 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>altaSupervisor</ion-title>
+    <img id="img_toolbar" src="../../assets/Logo-bg.png" width="13%" />
+    <ion-button id="btn_toolbar"
+      ><ion-icon name="arrow-undo"></ion-icon
+    ></ion-button>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <div class="contenedor">
+    <ion-grid>
+      <div class="titulo_form">
+        <img src="../../assets/manager.png" width="60" height="60" />
+        <h2>Alta de {{tipo}}</h2>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="radio"
+              id="dueño"
+              checked
+              (change)="cambiarTipo('Dueño')"
+            />
+            <label class="form-check-label" for="dueño">Dueño</label>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="radio"
+              id="supervisor"
+              (change)="cambiarTipo('Supervisor')"
+            />
+            <label class="form-check-label" for="supervisor">
+              Supervisor
+            </label>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="formRegistro" (ngSubmit)="registrarUsuario()">
+        <ion-input
+          formControlName="nombre"
+          type="text"
+          placeholder="Nombre"
+          [ngClass]="{'error-borde mb-0': (nombre.dirty || nombre.touched) && nombre.errors}"
+        ></ion-input>
+        <small
+          class="error"
+          *ngIf="(nombre.dirty || nombre.touched) && nombre.errors"
+        >
+          Nombre requerido
+        </small>
+        <ion-input
+          formControlName="apellido"
+          type="text"
+          placeholder="Apellido"
+          [ngClass]="{'error-borde mb-0': (apellido.dirty || apellido.touched) && apellido.errors}"
+        ></ion-input>
+        <small
+          class="error"
+          *ngIf="(apellido.dirty || apellido.touched) && apellido.errors"
+        >
+          Apellido requerido
+        </small>
+        <ion-row>
+          <ion-col>
+            <ion-input
+              formControlName="dni"
+              type="text"
+              placeholder="DNI"
+              [ngClass]="{'error-borde mb-0': (dni.dirty || dni.touched) && dni.errors}"
+            ></ion-input>
+            <small
+              class="error"
+              *ngIf="(dni.dirty || dni.touched) && dni.errors"
+            >
+              DNI requerido
+            </small>
+          </ion-col>
+          <ion-col>
+            <ion-input
+              formControlName="cuil"
+              type="text"
+              placeholder="CUIL"
+              [ngClass]="{'error-borde mb-0': (cuil.dirty || cuil.touched) && cuil.errors}"
+            ></ion-input>
+            <small
+              class="error"
+              *ngIf="(cuil.dirty || cuil.touched) && cuil.errors"
+            >
+              CUIL requerido
+            </small>
+          </ion-col>
+        </ion-row>
 
+        <ion-input
+          formControlName="correo"
+          type="text"
+          placeholder="Correo"
+          class="mb-0"
+          [ngClass]="{'error-borde mb-0': (correo.dirty || correo.touched) && correo.errors}"
+        ></ion-input>
+        <small
+          class="error"
+          *ngIf="(correo.dirty || correo.touched) && correo.errors"
+        >
+          Correo requerido
+        </small>
+
+        <ion-row>
+          <ion-col>
+            <ion-input
+              formControlName="clave"
+              type="text"
+              placeholder="Clave"
+              class="mb-0"
+              [ngClass]="{'error-borde mb-0': (clave.dirty || clave.touched) && clave.errors}"
+            ></ion-input>
+            <small
+              class="error"
+              *ngIf="(clave.dirty || clave.touched) && clave.errors"
+            >
+              Clave requerida
+            </small>
+          </ion-col>
+          <ion-col>
+            <ion-input
+              formControlName="claveConfirmada"
+              type="text"
+              placeholder="Confirmar clave"
+              class="mb-0"
+              [ngClass]="{'error-borde mb-0': (claveConfirmada.dirty || claveConfirmada.touched) && claveConfirmada.errors}"
+            ></ion-input>
+            <small
+              class="error"
+              *ngIf="(claveConfirmada.dirty || claveConfirmada.touched) && claveConfirmada.errors"
+            >
+              Clave requerida
+            </small>
+          </ion-col>
+        </ion-row>
+        <ion-item class="foto">
+          <ion-thumbnail slot="start">
+            <ion-img
+              src="../../assets/user-photo.png"
+              style="max-width: 100px; max-height: 100px"
+            ></ion-img>
+          </ion-thumbnail>
+          <ion-button style="--background: rgb(71, 18, 18)"
+            ><ion-icon name="camera-outline"></ion-icon
+          ></ion-button>
+        </ion-item>
+        <small
+        class="error"
+        *ngIf="(claveConfirmada.dirty || claveConfirmada.touched) && claveConfirmada.errors"
+      >
+        Clave requerida
+      </small>
+        <ion-button class="mt-3" style="--background: rgb(15, 145, 58); height: 50px"
+          ><ion-icon name="checkmark-circle-outline"></ion-icon>Crear {{tipo}}</ion-button
+        >
+      </form>
+    </ion-grid>
+  </div>
+
+  <ion-fab horizontal="end" vertical="bottom">
+    <ion-fab-button size="large">
+      <img src="../../assets/qr.png" />
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
+
+<div class="custom-loading" *ngIf="spinner">
+  <div class="spinner">
+    <div class="double-bounce1">
+      <img src="../../assets/Logo.png" style="width: 200px" />
+    </div>
+    <div class="double-bounce2">
+      <img src="../../assets/Logo.png" style="width: 200px" />
+    </div>
+  </div>
+</div>
