@@ -3,9 +3,6 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-  },  {
     path: 'login',
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
@@ -40,8 +37,12 @@ const routes: Routes = [
   {
     path: 'generar-qr',
     loadChildren: () => import('./generar-qr/generar-qr.module').then( m => m.GenerarQRPageModule)
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
+    pathMatch: 'full'
   }
-
 ];
 @NgModule({
   imports: [
