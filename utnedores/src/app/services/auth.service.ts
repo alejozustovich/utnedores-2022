@@ -180,8 +180,6 @@ export class AuthService {
 	}
 
 
-
-
 	addProduct(producto: Producto)
 	{
 		const productRef = collection(this.firestore, 'productos');
@@ -193,12 +191,6 @@ export class AuthService {
 		const productRef = collection(this.firestore, 'productos');
 		return collectionData(productRef, {idField: 'idField'}) as Observable<Producto[]>;
 	}
-
-
-
-
-
-
 
 
   	async register({ email, password }) {
