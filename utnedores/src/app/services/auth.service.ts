@@ -183,7 +183,6 @@ export class AuthService {
 	addProduct(producto: Producto)
 	{
 		const productRef = collection(this.firestore, 'productos');
-		return addDoc(productRef, producto);
 	}
 
 	getProducts(): Observable<Producto[]>
