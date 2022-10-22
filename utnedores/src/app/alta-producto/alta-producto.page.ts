@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 })
 export class AltaProductoPage implements OnInit {
 
+  selectedIndex = 0;
   bebida = false;
   elab = false;
   spinner = false;
@@ -31,8 +32,17 @@ export class AltaProductoPage implements OnInit {
     "Bebidas sin alcohol",
     "Bebidas con alcohol",
     "Postres y Café-Te"];
-  prodPhoto = "../../assets/product-photo.png";
-  srcProductPhoto: string[] = ["../../assets/product-photo.png", "../../assets/product-photo.png", "../../assets/product-photo.png"];
+  prodPhoto = "../../assets/dessert-photo.png";
+  srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
+  
+  producto = "";
+  tam = "";
+  descripcion = "";
+  tiempoElaboracion = "";
+  precio = "";
+  fotosLleno = false;
+  
+  
   public myAngularxQrCode: string = "";
   public qrCodeDownloadLink: SafeUrl = "";
 
@@ -44,35 +54,43 @@ export class AltaProductoPage implements OnInit {
   }
 
   SetTamanio(value){
-
+    this.tam = value;
   }
 
   SetDescripcion(value){
-
+    this.descripcion = value;
   }
 
 
   SetProducto(value){
-
+    this.producto = value;
   }
 
   SetElaboracion(value){
-
+    this.tiempoElaboracion = value;
   }
 
 
-  SelectChange(){
-    var index = Number((<HTMLInputElement>document.getElementById('categoria')).value);
-    if(index == 4 || index == 5){
+  
+
+  SelectChange(event){
+    this.selectedIndex = Number(event.detail.value);
+    if(this.selectedIndex == 4 || this.selectedIndex == 5){
       this.bebida = false;
       this.elab = true;
       (<HTMLInputElement>document.getElementById('elaboracion')).value = "";
+      this.tiempoElaboracion = "0";
     }else{
+      this.tam = "0";
       (<HTMLInputElement>document.getElementById('tamanio')).value = "";
       this.bebida = true;
       this.elab = false;
     }
-    console.log(this.categorias[index]);
+
+  }
+
+  SetPrecio(value){
+    this.precio = value;
   }
 
   Actualizar(){
@@ -92,7 +110,7 @@ export class AltaProductoPage implements OnInit {
 	}
 
   Fotos(){
-    (<HTMLInputElement>document.getElementById('files')).click();
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
   AsignarNumeroProducto(){
@@ -129,14 +147,13 @@ export class AltaProductoPage implements OnInit {
     setTimeout(()=>{
       date = new Date();
       this.nombreFotos[2] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
-      this.AgregarProducto();
     },4000);
   }
 
   ngOnInit() {
   }
 
-  Subir(){
+  SubirImagenes(){
     this.authService.subirImagenFile(this.nombreFotos[0], this.files[0]);
     setTimeout(()=>{
       this.authService.subirImagenFile(this.nombreFotos[1], this.files[1]);
@@ -148,13 +165,31 @@ export class AltaProductoPage implements OnInit {
 
   ImprimirMensaje(mensaje){
     console.log(mensaje);
+  }  
+
+  LimpiarFoto(num: number){
+    this.files[num] = null;
+    this.srcProductPhoto[num] = this.prodPhoto;
+    this.fotosLleno = false;
   }
+
+
+
+  AsignarImagen(indice: number){
+    var readerVar = new FileReader();
+    readerVar.readAsDataURL(this.files[indice]);
+    readerVar.onload = (_event) => {
+      this.srcProductPhoto[indice] = (readerVar.result).toString();
+    }
+  }
+
 
   Cargar(event:any):void{
     
     var selectFile = event.target.files;
     var num = selectFile.length;
     var cant = 0;
+    var indice = 0;
 
     for(var i = 0 ; i < this.srcProductPhoto.length ; i++)
     {
@@ -163,38 +198,35 @@ export class AltaProductoPage implements OnInit {
       }
     }
 
-    if(num == cant){
-      for(var i = 0 ; i < num ; i++)
-      {
-        this.files[i] = event.target.files[i];
+    if(num <= cant){
+
+      if(this.files[0] == null){
+        this.files[0] = event.target.files[indice];
+        this.AsignarImagen(0);
+        indice = indice + 1;
       }
-  
-      if(this.srcProductPhoto[0].includes(this.prodPhoto)){
-        var readerVar0 = new FileReader();
-        readerVar0.readAsDataURL(this.files[0]);
-        readerVar0.onload = (_event) => {
-          this.srcProductPhoto[0] = (readerVar0.result).toString();
+
+      if(this.files[1] == null && num >= (indice + 1)){
+        this.files[1] = event.target.files[indice];
+        this.AsignarImagen(1);
+        indice = indice + 1;
+      }
+
+      if(this.files[2] == null && num >= (indice + 1)){
+        this.files[2] = event.target.files[indice];
+        this.AsignarImagen(2);
+      }
+      this.fotosLleno = true;
+
+      setTimeout(()=>{
+        for(var i = 0 ; i < 3 ; i++)
+        {
+          if(this.srcProductPhoto[i].includes(this.prodPhoto)){
+            this.fotosLleno = false;
+          }
         }
-      }
-
-
-      if(this.srcProductPhoto[1].includes(this.prodPhoto)){
-        var readerVar1 = new FileReader();
-        readerVar1.readAsDataURL(this.files[1]);
-        readerVar1.onload = (_event) => {
-          this.srcProductPhoto[1] = (readerVar1.result).toString();
-        }
-      }
-
-
-      if(this.srcProductPhoto[2].includes(this.prodPhoto)){
-        var readerVar2 = new FileReader();
-        readerVar2.readAsDataURL(this.files[2]);
-        readerVar2.onload = (_event) => {
-          this.srcProductPhoto[2] = (readerVar2.result).toString();
-        }
-      }
-
+      },3000);
+      
     }
     else{
       if(cant == 1)
@@ -207,46 +239,30 @@ export class AltaProductoPage implements OnInit {
     }
   }
 
-  LimpiarFoto(num: number){
-    this.srcProductPhoto[num] = this.prodPhoto;
-  }
-
   AgregarProducto(){
-
     if(this.numProducto == "0"){
       //ERROR
       this.TraerProductos();
     }
     else{
-      var index = (<HTMLInputElement>document.getElementById('categoria')).value;
 
-      var producto = "";
-      var tamanio = "";
-      var descripcion = "";
-      var tiempoElaboracion = "";
-      var precio = "";
-
+      //AGREGAR FOTOS
       var unProducto: Producto = {
         idField: "",
         idProducto: this.numProducto,
-        categoria: this.categorias[index],
-        producto: "",
-        tamanio: "",
-        descripcion: "",
-        tiempoElaboracion: "",
+        categoria: this.categorias[this.selectedIndex],
+        producto: this.producto,
+        tamanio: this.tam,
+        descripcion: this.descripcion,
+        tiempoElaboracion: this.tiempoElaboracion,
         foto1: this.nombreFotos[0],
         foto2: this.nombreFotos[1],
         foto3: this.nombreFotos[2],
-        precio: "",
+        precio: this.precio,
         qr: this.myAngularxQrCode
       }
-      console.log(unProducto);
-
-      
-      /*this.authService.addProduct(unProducto);
-      setTimeout(()=>{
-        this.Actualizar();
-      },4000);*/
+      this.SubirImagenes();
+      this.authService.addProduct(unProducto);
     }
   }
 
