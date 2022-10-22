@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, Usuario } from '../services/auth.service';
 
+import { getStorage, ref } from "firebase/storage";
+import { uploadString } from '@angular/fire/storage';
+import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
+
 @Component({
   selector: 'app-alta-cliente',
   templateUrl: './alta-cliente.page.html',
@@ -22,8 +26,21 @@ export class AltaClientePage implements OnInit {
   claveConfirmada = "";
   foto = "";
 
+  base64Image = "";
+  options: CameraOptions = {
+    quality: 50,
+    allowEdit: false,
+    correctOrientation: true,
+    encodingType: this.camera.EncodingType.JPEG,
+    mediaType: this.camera.MediaType.PICTURE,
+    saveToPhotoAlbum: true,
+    sourceType: this.camera.PictureSourceType.CAMERA,
+    destinationType: this.camera.DestinationType.DATA_URL
+  }
+
   constructor(
-    private authService: AuthService
+    private authService: AuthService ,
+    private camera: Camera
   ) { 
     this.GuardarId();
   }
@@ -51,11 +68,16 @@ export class AltaClientePage implements OnInit {
   SetClave( value ) { this.clave = value; }
   SetClaveConfirmada( value ) { this.claveConfirmada = value; }
 
-  GuardarUsuario()
-  {
+  GuardarUsuario() {
+    this.spinner = true;
+
+    setTimeout(() => {
+      this.spinner = false;
+    }, 3000);
+
     var unUsuario: Usuario = {
       idField: "",
-      idUsuario: "",
+      idUsuario: this.idRegistroUsuario,
       nombre: this.nombre,
       apellido: this.apellido,
       correo: this.correo,
@@ -68,14 +90,11 @@ export class AltaClientePage implements OnInit {
       aprobado: ""
     };
 
-    alert(this.nombre);
-
     //this.authService.addUser(unUsuario);
   }
 
   RegistrarUsuario(){
     var registro = {email: "correo@gmail.com", password: "123456"};
-    
     //this.authService.register(registro);
   }
 
@@ -93,6 +112,23 @@ export class AltaClientePage implements OnInit {
       this.esRegistrado = true;
       this.esAnonimo = false;
     }
+  }
+
+  TomarFoto() {
+    this.camera.getPicture(this.options).then((imageData) => {
+      this.base64Image = 'data:image/jpeg;base64,' + imageData;
+    }, (err) => {
+    });
+  }  
+
+  SubirFoto() {
+    var nombreImg = "usuarios/Cliente1";
+    const storage = getStorage();
+    const storageRef = ref(storage, nombreImg);
+    uploadString(storageRef, this.base64Image, 'data_url').then((snapshot) =>{
+    });
+
+    //this.authService.subirImagenBase64(nombreImg, this.base64Image);
   }
 
 }
