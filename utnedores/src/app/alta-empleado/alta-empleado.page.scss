@@ -71,15 +71,15 @@
     text-align: center;
   }
   
-  #input_pass , #input_confirm_pass {
+  #input_nombre , #input_apellido , #input_dni , #input_cuil , #input_pass , #input_confirm_pass {
     width: 45%;
   }
   
-  #input_pass {
+  #input_nombre , #input_dni , #input_pass {
     margin-right: 2px;
   }
   
-  #input_confirm_pass {
+  #input_apellido , #input_cuil , #input_confirm_pass {
     margin-left: 2px;
   }
   
