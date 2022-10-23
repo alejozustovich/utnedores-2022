@@ -9,7 +9,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  public splash: boolean = true;
+  public splash: boolean = false;
 
   constructor(
     private platform: Platform,
