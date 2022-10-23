@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, Usuario } from '../services/auth.service';
-
-import { getStorage, ref } from "firebase/storage";
-import { uploadString } from '@angular/fire/storage';
-import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-alta-cliente',
@@ -26,40 +23,39 @@ export class AltaClientePage implements OnInit {
   claveConfirmada = "";
   foto = "";
 
-  base64Image = "";
-  options: CameraOptions = {
-    quality: 50,
-    allowEdit: false,
-    correctOrientation: true,
-    encodingType: this.camera.EncodingType.JPEG,
-    mediaType: this.camera.MediaType.PICTURE,
-    saveToPhotoAlbum: true,
-    sourceType: this.camera.PictureSourceType.CAMERA,
-    destinationType: this.camera.DestinationType.DATA_URL
-  }
-
   constructor(
-    private authService: AuthService ,
-    private camera: Camera
+    private toastController : ToastController ,
+    private authService: AuthService
   ) { 
     this.GuardarId();
   }
 
 	GuardarId(){
 		this.authService.getUsers().subscribe(allUsers => {
-
       this.users = allUsers;
-
 			for(var i = 0 ; i < allUsers.length ; i++)
 			{
-				if(Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario))
-				{
+				if(Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {
 					this.idRegistroUsuario = allUsers[i].idUsuario;
 				}
 			}
 			this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
 		});
 	}
+
+  async Alerta( mensaje : string , color : string ) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 1500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+
+    setTimeout(async () => {
+      await toast.present();
+    }, 2200);
+  }
 
   SetNombre( value ) { this.nombre = value; }
   SetApellido( value ) { this.apellido = value; }
@@ -68,14 +64,9 @@ export class AltaClientePage implements OnInit {
   SetClave( value ) { this.clave = value; }
   SetClaveConfirmada( value ) { this.claveConfirmada = value; }
 
-  GuardarUsuario() {
-    this.spinner = true;
-
-    setTimeout(() => {
-      this.spinner = false;
-    }, 3000);
-
-    var unUsuario: Usuario = {
+// INICIO Guardar Usuarios.
+  GuardarUsuarioRegistrado() {
+    var unUsuarioRegistrado: Usuario = {
       idField: "",
       idUsuario: this.idRegistroUsuario,
       nombre: this.nombre,
@@ -85,18 +76,79 @@ export class AltaClientePage implements OnInit {
       dni: this.dni,
       cuil: "",
       foto: "",
-      perfil: "",
-      tipo: "",
+      perfil: "Cliente",
+      tipo: "Registrado",
+      aprobado: "N"
+    };
+    
+    this.authService.addUser(unUsuarioRegistrado); //Guardar usuario a la espera de que se apruebe.
+    this.Alerta('Cliente registrado correctamente' , 'success');
+    setTimeout(() => {
+      this.LimpiarCamposFormulario();
+    }, 2200);
+  }
+
+  GuardarUsuarioAnonimo() {
+    var unUsuarioAnonimo: Usuario = {
+      idField: "",
+      idUsuario: this.idRegistroUsuario,
+      nombre: this.nombre,
+      apellido: "",
+      correo: this.correo,
+      clave: this.clave,
+      dni: "",
+      cuil: "",
+      foto: "",
+      perfil: "Cliente",
+      tipo: "Anónimo",
       aprobado: ""
     };
 
-    //this.authService.addUser(unUsuario);
+    this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
+    this.Alerta('Cliente registrado correctamente' , 'success');
+    setTimeout(() => {
+      this.LimpiarCamposFormulario();
+    }, 2200);
   }
 
   RegistrarUsuario(){
-    var registro = {email: "correo@gmail.com", password: "123456"};
-    //this.authService.register(registro);
+    var registro = {email: this.correo , password: this.clave};
+    this.authService.register(registro);
   }
+
+  GuardarUsuario() {
+    this.spinner = true;
+
+    setTimeout(() => {
+      this.spinner = false;
+    }, 2000);
+
+    if( this.clave == this.claveConfirmada ) {
+        var validarDNI: number = +this.dni;
+        if(!isNaN(validarDNI)) {
+          if(this.correo.includes('@')) {
+            this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
+          } else {
+            this.Alerta('El correo es inválido' , 'danger');
+          }
+        } else {
+          this.Alerta('El DNI es inválido' , 'danger');
+        }
+    } else {
+      this.Alerta('Las claves no coinciden' , 'danger');
+    }
+  }
+
+  LimpiarCamposFormulario() {
+    this.SetNombre( "" );
+    this.SetApellido( "" );
+    this.SetDNI( "" );
+    this.SetCorreo( "" );
+    this.SetClave( "" );
+    this.SetClaveConfirmada( "" );
+  }
+// FIN Guardar Usuarios.
+
 
   ngOnInit() {
 
@@ -114,21 +166,7 @@ export class AltaClientePage implements OnInit {
     }
   }
 
-  TomarFoto() {
-    this.camera.getPicture(this.options).then((imageData) => {
-      this.base64Image = 'data:image/jpeg;base64,' + imageData;
-    }, (err) => {
-    });
-  }  
 
-  SubirFoto() {
-    var nombreImg = "usuarios/Cliente1";
-    const storage = getStorage();
-    const storageRef = ref(storage, nombreImg);
-    uploadString(storageRef, this.base64Image, 'data_url').then((snapshot) =>{
-    });
 
-    //this.authService.subirImagenBase64(nombreImg, this.base64Image);
-  }
 
 }
