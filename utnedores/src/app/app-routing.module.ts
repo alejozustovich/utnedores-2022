@@ -42,7 +42,27 @@ const routes: Routes = [
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full'
+  },  {
+    path: 'home-cliente',
+    loadChildren: () => import('./home-cliente/home-cliente.module').then( m => m.HomeClientePageModule)
+  },
+  {
+    path: 'home-metre',
+    loadChildren: () => import('./home-metre/home-metre.module').then( m => m.HomeMetrePageModule)
+  },
+  {
+    path: 'home-mozo',
+    loadChildren: () => import('./home-mozo/home-mozo.module').then( m => m.HomeMozoPageModule)
+  },
+  {
+    path: 'home-cocina',
+    loadChildren: () => import('./home-cocina/home-cocina.module').then( m => m.HomeCocinaPageModule)
+  },
+  {
+    path: 'encuesta-empleados',
+    loadChildren: () => import('./encuesta-empleados/encuesta-empleados.module').then( m => m.EncuestaEmpleadosPageModule)
   }
+
 ];
 @NgModule({
   imports: [
