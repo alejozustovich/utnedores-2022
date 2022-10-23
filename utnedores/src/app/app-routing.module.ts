@@ -39,10 +39,6 @@ const routes: Routes = [
     loadChildren: () => import('./generar-qr/generar-qr.module').then( m => m.GenerarQRPageModule)
   },
   {
-    path: '**',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  },  {
     path: 'home-cliente',
     loadChildren: () => import('./home-cliente/home-cliente.module').then( m => m.HomeClientePageModule)
   },
@@ -61,8 +57,12 @@ const routes: Routes = [
   {
     path: 'encuesta-empleados',
     loadChildren: () => import('./encuesta-empleados/encuesta-empleados.module').then( m => m.EncuestaEmpleadosPageModule)
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
+    pathMatch: 'full'
   }
-
 ];
 @NgModule({
   imports: [
