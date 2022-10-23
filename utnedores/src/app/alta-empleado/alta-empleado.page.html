@@ -14,14 +14,14 @@
 		</div>
     <form>
       <ion-row>
-        <ion-input id="input_pass" [value]="nombre" (input)="SetNombre($event.target.value)" placeholder="Nombre"></ion-input>
-        <ion-input id="input_confirm_pass" [value]="apellido" (input)="SetApellido($event.target.value)" placeholder="Apellido"></ion-input>     
+        <ion-input id="input_nombre" [value]="nombre" (input)="SetNombre($event.target.value)" placeholder="Nombre"></ion-input>
+        <ion-input id="input_apellido" [value]="apellido" (input)="SetApellido($event.target.value)" placeholder="Apellido"></ion-input>     
       </ion-row>
       <ion-row>
-        <ion-input id="input_pass" [value]="dni" (input)="SetDNI($event.target.value)" placeholder="DNI"></ion-input>
-        <ion-input id="input_confirm_pass" [value]="dni" (input)="SetDNI($event.target.value)" placeholder="CUIL"></ion-input>
+        <ion-input id="input_dni" [value]="dni" (input)="SetDNI($event.target.value)" placeholder="DNI"></ion-input>
+        <ion-input id="input_cuil" [value]="cuil" (input)="SetCUIL($event.target.value)" placeholder="CUIL"></ion-input>
       </ion-row>
-      <ion-select placeholder="Tipo de Empleado" (ionChange)="MostrarMes($event)" interface="popover">
+      <ion-select placeholder="Tipo de Empleado" (ionChange)="SetTipo($event)" interface="popover">
         <ion-select-option value="Bartender">Bartender</ion-select-option>
         <ion-select-option value="Cocinero">Cocinero</ion-select-option>
         <ion-select-option value="Metre">Metre</ion-select-option>
@@ -36,9 +36,9 @@
 				<ion-thumbnail slot="start">
 			  		<ion-img [src]="srcUserPhoto" style="max-width: 100px; max-height: 100px;"></ion-img>
 				</ion-thumbnail>
-			  	<ion-button style="--background: rgb(71, 18, 18);" (click)="this.Crear()"><ion-icon name="camera-outline"></ion-icon></ion-button>
+			  	<ion-button style="--background: rgb(71, 18, 18);"><ion-icon name="camera-outline"></ion-icon></ion-button>
 		  </ion-item>
-		  <ion-button style="--background: rgb(15, 145, 58); height: 50px;" (click)="this.Crear()"><ion-icon name="checkmark-circle-outline"></ion-icon>Crear Empleado</ion-button> 
+		  <ion-button style="--background: rgb(15, 145, 58); height: 50px;" (click)="GuardarUsuario()"><ion-icon name="checkmark-circle-outline"></ion-icon>Crear Empleado</ion-button> 
 		</form>
 	  </div>
 	</ion-grid>
