@@ -1,9 +1,36 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>home-cliente</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="true">
+	<ion-toolbar>
+	  <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
+	  <ion-button id="btn_toolbar"><ion-icon name="log-out-outline" style="transform: scaleX(-1);"></ion-icon></ion-button>
+	</ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true">
+
+	<ion-grid>
+	  <div class="contenido">
+      <div>
+        <img src="../../assets/cliente.png" alt="" width="50" height="50">
+        <h2>Cliente</h2>
+        <ion-button id="encuestas">Ver encuestas</ion-button>
+        <ion-button id="reservar" *ngIf="esRegistrado">Reservar</ion-button>
+        <ion-button id="qr">Escanear QR</ion-button>
+      </div>
+	  </div>
+	</ion-grid>
+
+	<ion-fab horizontal="end" vertical="bottom" >
+	  <ion-fab-button size="small">
+      <ion-icon *ngIf="volumenOff" name="volume-high-outline"></ion-icon>
+      <ion-icon *ngIf="volumenOn" name="volume-mute-outline"></ion-icon>
+	  </ion-fab-button>
+	</ion-fab>
 
 </ion-content>
+
+<div class="custom-loading" *ngIf="spinner">
+	<div class="spinner">
+		<div class="double-bounce1"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+		<div class="double-bounce2"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+	</div>
+</div>

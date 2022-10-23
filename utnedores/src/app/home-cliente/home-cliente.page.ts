@@ -7,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeClientePage implements OnInit {
 
+  volumenOn = true;
+  volumenOff = false;
+  esRegistrado = true;
+
   constructor() { }
 
   ngOnInit() {
