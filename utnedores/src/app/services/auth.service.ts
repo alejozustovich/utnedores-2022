@@ -130,12 +130,15 @@ export interface EncuestaSupervisor{
 })
 export class AuthService {
 
-	
 	constructor(
 		private auth: Auth,
 		private firestore: Firestore
 	) {
 
+	}
+
+	usuarioActual(){
+		return this.auth.currentUser.email;
 	}
 
 	addUser(user: Usuario)
@@ -183,6 +186,7 @@ export class AuthService {
 	addProduct(producto: Producto)
 	{
 		const productRef = collection(this.firestore, 'productos');
+		return addDoc(productRef, producto);
 	}
 
 	getProducts(): Observable<Producto[]>
