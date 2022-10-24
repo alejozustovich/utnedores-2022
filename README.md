@@ -4,104 +4,36 @@
     <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/Logo.png" width="200">
 </p>
 
-### Integrantes:
+<h2 align="center">Integrantes</h2>
 
-> ACUÑA ZUSTOVICH, Alejo.
-> GUELER, Daniel.
-> MOLINI, Ignacio.
+> ACUÑA ZUSTOVICH, Alejo. GUELER, Daniel. MOLINI, Ignacio.
 
-### Responsabilidades:
+<h2 align="center">Semana 1: Sábado 15/10 al Sábado 22/10</h2>
 
-**ACUÑA ZUSTOVICH, Alejo**
+**Tareas realizadas:**
 
-  * *Módulo 1: Alta de Clientes (ALTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
+* **ACUÑA ZUSTOVICH, Alejo**
+  * *Creación del Proyecto*
+  * *Diseño del Logo de la Empresa*
+  * *Creación de los Formularios de Alta*
+  * *Módulos desarrollados*
+    * *1: Alta de Clientes*
+    * *2: Alta de Empleados*
 
-  * *Módulo 2: Alta de Empleados (ALTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
+* **GUELER, Daniel**
+  * *Creación de la Base de Datos*
+  * *Creación del Service para conectarse a la Base de Datos*
+  * *Creación de las Interfaces*
+  * *Módulos desarrollados*
+    * *1: Alta de Productos*
+    * *2: Alta de Mesa*
 
-  * *Módulo 3: QR de Ingreso al Local (QR)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
+* **MOLINI, Ignacio**
+  * *Creación del Splash Screen*
+  * *Creación del Login*
+  * *Módulos desarrollados*
+    * *1: Alta de Dueño/Supervisor*
 
-  * *Módulo 4: Encuesta de Clientes (ENCUESTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
+>NOTA: Se añadieron funcionalidades generales a todas las Altas.
 
-  * *Módulo 5: Agregar Nuevo Cliente Registrado (GESTIÓN)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 6: Ingresar al Local (GESTIÓN)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 7: Agregar Nuevo Cliente (PUSH NOTIFICATION)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 8: Ingresar al Local (PUSH NOTIFICATION)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-**GUELER, Daniel**
-
-  * *Módulo 1: Alta de Productos (ALTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 2: Alta de Mesa (ALTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 3: QR de la Mesa (QR)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 4: Encuesta de Empleados (ENCUESTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 5: Realizar Pedidos (GESTIÓN)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 6: Consultar al Mozo (PUSH NOTIFICATION)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 7: Confirmar Realización del Pedido (PUSH NOTIFICATION)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-**MOLINI, Ignacio**
-
-  * *Módulo 1: Alta de Dueño/Supervisor (ALTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 2: QR de Propina (QR)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 3: Encuesta de Supervisor (ENCUESTAS)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 4: Confirmar Pedidos (GESTIÓN)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 5: Generar Reservas Agendadas (GESTIÓN)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 6: Confirmar Pedido (PUSH NOTIFICATION)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
-
-  * *Módulo 7: Generar Reservas Agendadas (PUSH NOTIFICATION)*
-    * *Fecha de Inicio: -*
-    * *Fecha de Fin: -*
+<img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/Semana1.png" width="600">
