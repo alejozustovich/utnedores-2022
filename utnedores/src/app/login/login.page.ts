@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService, Usuario } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -8,32 +9,70 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+
   formLogin: FormGroup;
   spinner = false;
 
-  constructor(private authService: AuthService,
-    private fb: FormBuilder
-    ) { }
+  users: Usuario[];
+  perfil = "";
+  tipo = "";
+
+  constructor(
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private router: Router
+    ) {
+      this.TraerUsuarios();
+    }
+
+  TraerUsuarios(){
+    this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+    });
+  }
 
   ngOnInit() {
     this.formLogin = this.fb.group(
       {
-        correo: ['', [Validators.required, Validators.email]],
-        clave: ['', [Validators.required, Validators.minLength(6)]]
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]]
       }
     )
   }
 
-  get correo() {
-    return this.formLogin.get('correo');
+  get email() {
+    return this.formLogin.get('email');
   }
 
-  get clave() {
-    return this.formLogin.get('clave');
+  get password() {
+    return this.formLogin.get('password');
   }
 
-  iniciarSesion(){
-    this.authService.login(this.formLogin.value);
+  async iniciarSesion(){
+
+    const user = await this.authService.login(this.formLogin.value);
+    
+    if(user){
+      for(var i = 0 ; i < this.users.length ; i++)
+      {
+        if(((this.users[i].correo).toLocaleLowerCase()).includes((this.formLogin.value.email.toLocaleLowerCase()))) {
+          this.perfil = this.users[i].perfil;
+        }
+      }
+  
+      if(this.perfil.includes("Dueño") || this.perfil.includes("Supervisor")){
+        this.router.navigateByUrl('/home', { replaceUrl: true });
+      }else{
+        if(this.perfil.includes("Cliente")){
+          this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
+        }else{
+          this.router.navigateByUrl('/encuesta-empleados', { replaceUrl: true });
+        }
+      }
+    }
+    else{
+      //MENSAJE ERROR
+    }
   }
 
 }

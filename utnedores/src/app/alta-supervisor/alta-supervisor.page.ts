@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { AuthService, Usuario } from '../services/auth.service';
+import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-alta-supervisor',
@@ -16,7 +18,39 @@ export class AltaSupervisorPage implements OnInit {
   spinner = false;
   srcUserPhoto = "../../assets/user-photo.png";
 
-  constructor(private authService: AuthService, private fb: FormBuilder, private toastController: ToastController) { }
+  result = null;
+  scanActive = false;
+
+  nombreImagen = "";
+  base64Image = "";
+
+  options: CameraOptions = {
+    quality: 50,
+    allowEdit: false,
+    correctOrientation: true,
+    encodingType: this.camera.EncodingType.JPEG,
+    mediaType: this.camera.MediaType.PICTURE,
+    saveToPhotoAlbum: true,
+    sourceType: this.camera.PictureSourceType.CAMERA,
+    destinationType: this.camera.DestinationType.DATA_URL
+  }
+
+  constructor(
+    private authService: AuthService, 
+    private fb: FormBuilder, 
+    private toastController: ToastController,
+    private camera: Camera
+    ) { 
+      this.AsignarNombreFoto();
+    }
+
+    ngAfterViewInit() {
+      BarcodeScanner.prepare();
+    }
+  
+    ngOnDestroy() {
+      this.stopScan();
+    }
 
   ngOnInit() {
     this.traerUsuarios();
@@ -64,6 +98,64 @@ export class AltaSupervisorPage implements OnInit {
         return { cuilIncorrecto: true }
       }
     }
+  }
+
+  PrimeraMayuscula(cadena: String){
+    var mayuscula = cadena[0].toUpperCase();
+    for(var i = 1 ; i < cadena.length ; i++){
+      if(cadena[i] != " "){
+        mayuscula = mayuscula + cadena[i].toLowerCase();
+      }else{
+        mayuscula = mayuscula + " " + cadena[i+1].toUpperCase();
+        i = i + 1;
+      }
+    }
+    return mayuscula;
+  }
+
+  
+  async startScanner(){
+    
+    this.scanActive = true;
+    const result = await BarcodeScanner.startScan();
+    if(result.hasContent){
+      this.scanActive = false;
+      this.result = result.content;
+      var cadena = this.result.split("@");
+      (<HTMLInputElement>document.getElementById('nomHtml')).value = this.PrimeraMayuscula(cadena[2]);
+      (<HTMLInputElement>document.getElementById('apeHtml')).value = this.PrimeraMayuscula(cadena[1]);
+      (<HTMLInputElement>document.getElementById('dniHtml')).value = this.PrimeraMayuscula(cadena[4]);
+    }
+  }
+
+  stopScan()
+  {
+    BarcodeScanner.stopScan();
+    this.scanActive = false;
+  }
+
+  Caracteres(dato: string){
+    var retorno = dato.toString();
+    if(dato.length == 1){
+      retorno = "0" + retorno;
+    }
+    return retorno;
+  }
+
+
+  AsignarNombreFoto(){
+    var date = new Date();
+    this.nombreImagen =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+  }
+
+  Foto(){
+    this.camera.getPicture(this.options).then((imageData) => {
+
+      this.base64Image = 'data:image/jpeg;base64,' + imageData;
+      this.srcUserPhoto = this.base64Image;
+
+    }, (err) => {
+    });
   }
 
   get nombre() {
@@ -123,7 +215,6 @@ export class AltaSupervisorPage implements OnInit {
   traerUsuarios() {
     this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
-      // console.log(this.users);
       this.asignarID(this.users);
     });
   }
@@ -149,17 +240,26 @@ export class AltaSupervisorPage implements OnInit {
       clave: this.clave.value,
       dni: this.dni.value,
       cuil: this.cuil.value,
-      foto: this.foto.value,
+      foto: this.nombreImagen,
       perfil: this.perfil,
       tipo: "",
-      aprobado: "si"
+      aprobado: ""
     };
     const registro = { email: usuario.correo, password: usuario.clave };
-
+    console.log(usuario);
     if (this.verificarUsuario(usuario)) {
       try {
-        // await this.authService.register(registro);
-        // await this.authService.addUser(usuario);
+        this.authService.addUser(usuario);
+        
+        setTimeout(() => {
+          var rutaImagen = "usuarios/" + this.nombreImagen;
+          this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+        }, 2000);
+
+        setTimeout(() => {
+          this.authService.register(registro);
+        }, 4000);
+
         this.presentToast('Usuario creado correctamente!', 'success');
       } catch (e) {
         console.log(e);

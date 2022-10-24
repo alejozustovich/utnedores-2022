@@ -7,26 +7,26 @@
       <h1 class="text-center formato mb-3">Inicio de sesión</h1>
       <form [formGroup]="formLogin" (ngSubmit)="iniciarSesion()">
         <ion-input
-          formControlName="correo"
+          formControlName="email"
           type="text"
           placeholder="Correo"
-          [ngClass]="{'error-borde mb-0': (correo.dirty || correo.touched) && correo.errors}"
+          [ngClass]="{'error-borde mb-0': (email.dirty || email.touched) && email.errors}"
         ></ion-input>
         <small
           class="error"
-          *ngIf="(correo.dirty || correo.touched) && correo.errors"
+          *ngIf="(email.dirty || email.touched) && email.errors"
         >
           Correo requerido
         </small>
         <ion-input
-          formControlName="clave"
+          formControlName="password"
           type="text"
           placeholder="Clave"
-          [ngClass]="{'error-borde mb-0': (clave.dirty || clave.touched) && clave.errors}"
+          [ngClass]="{'error-borde mb-0': (password.dirty || password.touched) && password.errors}"
         ></ion-input>
         <small
           class="error"
-          *ngIf="(clave.dirty || clave.touched) && clave.errors"
+          *ngIf="(password.dirty || password.touched) && password.errors"
         >
           Clave requerida
         </small>

@@ -10,16 +10,16 @@ import { Router } from '@angular/router';
 export class EncuestaEmpleadosPage implements OnInit {
 
   users: Usuario[];
-  perfil = "";
   tipo = "";
 
   constructor(
     private authService: AuthService,
     private router: Router
     ) {
+      //COMIENZO SPINNER
       setTimeout(()=>{
        this.GuardarPerfil();
-      },3000);
+      },1500);
    }
 
   ngOnInit() {
@@ -34,36 +34,26 @@ export class EncuestaEmpleadosPage implements OnInit {
         for(var i = 0 ; i < allUsers.length ; i++)
         {
           if(((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {
-            this.perfil = this.users[i].perfil;
             this.tipo = this.users[i].tipo;
             i = allUsers.length;
           }
         }
+        //FIN SPINNER
       });
-     },1000);
+     },1500);
 	}
 
   SaltarEncuesta(){
-    if(this.perfil.includes("Dueño") || this.perfil.includes("Supervisor")){
-      this.router.navigateByUrl('/home', { replaceUrl: true });
+    if(this.tipo.includes("Metre")){
+      this.router.navigateByUrl('/home-metre', { replaceUrl: true });
     }else{
-      if(this.perfil.includes("Cliente")){
-        this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
+      if(this.tipo.includes("Mozo")){
+        this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
       }else{
-        if(this.perfil.includes("Empleado")){
-          if(this.tipo.includes("Metre")){
-            this.router.navigateByUrl('/home-metre', { replaceUrl: true });
-          }else{
-            if(this.tipo.includes("Mozo")){
-              this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
-            }else{
-              if(this.tipo.includes("Bartender") || this.tipo.includes("Cocinero")){
-                this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
-              }else{
-                //Error
-              }
-            }
-          }
+        if(this.tipo.includes("Bartender") || this.tipo.includes("Cocinero")){
+          this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
+        }else{
+          //Error
         }
       }
     }
