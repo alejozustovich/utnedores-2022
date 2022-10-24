@@ -1,49 +1,94 @@
 <ion-header [translucent]="true">
-	<ion-toolbar>
-	  <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
-	  <ion-button id="btn_toolbar" (click)="Volver()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
-	</ion-toolbar>
+  <ion-toolbar>
+    <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="13%" />
+    <ion-button id="btn_toolbar" (click)="Volver()"
+      ><ion-icon name="arrow-undo"></ion-icon
+    ></ion-button>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-	<ion-grid>
-	  <div class="contenido">
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="contenedor">
+    <ion-grid>
+      <div class="contenido">
+        <div class="titulo_form">
+          <img src="../../assets/table.png" alt="" width="60" height="60" />
+          <h2>Alta de Mesa</h2>
+        </div>
 
-		<div class="titulo_form">
-			<img src="../../assets/table.png" alt="" width="50" height="50">
-			<h2>Alta de Mesa</h2>
-		</div>
+        <form [formGroup]="formMesa" (ngSubmit)="AgregarMesa()">
+          <ion-select
+            style="margin-top: 20px"
+            placeholder="Tipo"
+            interface="popover"
+			formControlName="tipo"
+          >
+            <ion-select-option value="0">Estándar</ion-select-option>
+            <ion-select-option value="1">Discapacitados</ion-select-option>
+            <ion-select-option value="2">VIP</ion-select-option>
+          </ion-select>
 
-		<form>
-			<ion-select style="margin-top: 20px;" id="categoria" placeholder="Tipo" (ionChange)="SelectChange($event)" interface="popover">
-				<ion-select-option value="0">Estándar</ion-select-option>
-				<ion-select-option value="1">Discapacitados</ion-select-option>
-				<ion-select-option value="2">VIP</ion-select-option>
-			</ion-select>
+          <ion-input
+            style="margin-top: 20px"
+			formControlName="capacidad"
+            type="text"
+            placeholder="Capacidad"
+            [ngClass]="{'error-borde mb-0': (capacidad.dirty || capacidad.touched) && capacidad.errors}"
+          ></ion-input>
+          <ion-item style="--min-height: 90px; margin-top: 20px">
+            <ion-thumbnail slot="start" style="margin-top: -10px">
+              <ion-img
+                [src]="mesaPhoto"
+                style="max-width: 100px; max-height: 100px"
+              ></ion-img>
+              <ion-icon
+                (click)="LimpiarFoto()"
+                style="margin-left: 20px; margin-top: 5px"
+                name="trash-outline"
+              ></ion-icon>
+            </ion-thumbnail>
+            <ion-button
+              style="--background: rgb(71, 18, 18)"
+              (click)="Fotos()"
+              [disabled]="fotosLleno"
+              ><ion-icon name="camera-outline"></ion-icon
+            ></ion-button>
+          </ion-item>
 
-			<ion-input style="margin-top: 20px;" [value]="capacidad" (input)="SetCapacidad($event.target.value)" placeholder="Capacidad"></ion-input>
-			<ion-item style="--min-height: 90px; margin-top: 20px;">
-				<ion-thumbnail slot="start" style="margin-top: -10px;">
-			  		<ion-img [src]="mesaPhoto" style="max-width: 100px; max-height: 100px;"></ion-img>
-            <ion-icon (click)="LimpiarFoto(0)" style="margin-left: 20px; margin-top: 5px;" name="trash-outline"></ion-icon>
-				</ion-thumbnail>
-			  	<ion-button style="--background: rgb(71, 18, 18);" (click)="Fotos()" [disabled]="fotosLleno"><ion-icon name="camera-outline"></ion-icon></ion-button>
-		  </ion-item>
+          <ion-button
+            style="
+              --background: rgb(15, 145, 58);
+              height: 50px;
+              margin-top: 40px;
+            "
+            (click)="AgregarMesa()"
+			[disabled]="!formMesa.valid || !fotosLleno"
+            ><ion-icon name="checkmark-circle-outline"></ion-icon>AGREGAR
+            MESA</ion-button
+          >
+        </form>
+      </div>
+    </ion-grid>
 
-		  <ion-button style="--background: rgb(15, 145, 58); height: 50px; margin-top: 40px;" (click)="AgregarMesa()"><ion-icon name="checkmark-circle-outline"></ion-icon>AGREGAR MESA</ion-button> 
-		</form>
-	  </div>
-	</ion-grid>
-
-  <input id="inputFiles" class="custom-file-input" type="file" (change)="Cargar($event)" hidden>
+    <input
+      id="inputFiles"
+      class="custom-file-input"
+      type="file"
+      (change)="Cargar($event)"
+      hidden
+    />
+  </div>
 </ion-content>
 
 <div class="custom-loading" *ngIf="spinner">
-	<div class="spinner">
-		<div class="double-bounce1"><img src="../../assets/Logo.png" style="width: 200px;"></div>
-		<div class="double-bounce2"><img src="../../assets/Logo.png" style="width: 200px;"></div>
-	</div>
+  <div class="spinner">
+    <div class="double-bounce1">
+      <img src="../../assets/Logo.png" style="width: 200px" />
+    </div>
+    <div class="double-bounce2">
+      <img src="../../assets/Logo.png" style="width: 200px" />
+    </div>
+  </div>
 </div>
-
 
 <!--qrcode *ngIf="mostrarQr" (qrCodeURL)="onChangeURL($event)" [qrdata]="myAngularxQrCode" [width]="128" [errorCorrectionLevel]="'M'"></qrcode-->

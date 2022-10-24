@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, Producto } from '../services/auth.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { Auth,	signInWithEmailAndPassword,	createUserWithEmailAndPassword,	signOut } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from '@angular/fire/auth';
 import { Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-alta-producto',
@@ -14,8 +15,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./alta-producto.page.scss'],
 })
 export class AltaProductoPage implements OnInit {
-
-  selectedIndex = 0;
+  formProducto: FormGroup;
   bebida = false;
   elab = false;
   spinner = false;
@@ -34,66 +34,70 @@ export class AltaProductoPage implements OnInit {
     "Postres y Café-Te"];
   prodPhoto = "../../assets/dessert-photo.png";
   srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
-  
-  producto = "";
-  tam = "";
-  descripcion = "";
-  tiempoElaboracion = "";
-  precio = "";
   fotosLleno = false;
-  
-  
+
+
   public myAngularxQrCode: string = "";
   public qrCodeDownloadLink: SafeUrl = "";
 
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) { 
+    private router: Router,
+    private fb: FormBuilder
+  ) {
     this.Actualizar();
   }
 
-  SetTamanio(value){
-    this.tam = value;
+  ngOnInit(): void {
+    this.formProducto = this.fb.group(
+      {
+        categoria: ['', [Validators.required]],
+        producto: ['', [Validators.required, Validators.maxLength(25)]],
+        descripcion: ['', [Validators.required, Validators.maxLength(40)]],
+        tiempoElaboracion: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(1), Validators.maxLength(3)]],
+        tamanio: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(1), Validators.maxLength(5)]],
+        precio: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(1), Validators.maxLength(6)]]
+      }
+    )
   }
 
-  SetDescripcion(value){
-    this.descripcion = value;
+  get categoria() {
+    return this.formProducto.get('categoria');
   }
 
-
-  SetProducto(value){
-    this.producto = value;
+  get producto() {
+    return this.formProducto.get('producto');
   }
 
-  SetElaboracion(value){
-    this.tiempoElaboracion = value;
+  get descripcion() {
+    return this.formProducto.get('descripcion');
   }
 
+  get tiempoElaboracion() {
+    return this.formProducto.get('tiempoElaboracion');
+  }
 
-  
+  get tamanio() {
+    return this.formProducto.get('tamanio');
+  }
 
-  SelectChange(event){
-    this.selectedIndex = Number(event.detail.value);
-    if(this.selectedIndex == 4 || this.selectedIndex == 5){
-      this.bebida = false;
-      this.elab = true;
-      (<HTMLInputElement>document.getElementById('elaboracion')).value = "";
-      this.tiempoElaboracion = "0";
-    }else{
-      this.tam = "0";
+  get precio() {
+    return this.formProducto.get('precio');
+  }
+
+  SelectChange() {
+    if (this.categoria.value == 4 || this.categoria.value == 5) {
+      this.tamanio?.enable();
+      this.tiempoElaboracion?.disable();
+      (<HTMLInputElement>document.getElementById('tiempoElab')).value = "";
+    } else {
+      this.tamanio?.disable();
+      this.tiempoElaboracion?.enable();
       (<HTMLInputElement>document.getElementById('tamanio')).value = "";
-      this.bebida = true;
-      this.elab = false;
     }
-
   }
 
-  SetPrecio(value){
-    this.precio = value;
-  }
-
-  Actualizar(){
+  Actualizar() {
     this.TraerProductos();
     this.AsignarNombreFotos();
   }
@@ -102,22 +106,20 @@ export class AltaProductoPage implements OnInit {
     this.qrCodeDownloadLink = url;
   }
 
-  TraerProductos(){
-		this.authService.getProducts().subscribe(allProducts => {
+  TraerProductos() {
+    this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.AsignarNumeroProducto();
-		});
-	}
+    });
+  }
 
-  Fotos(){
+  Fotos() {
     (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
-  AsignarNumeroProducto(){
-    for(var i = 0 ; i < this.productos.length ; i++)
-    {
-      if(Number(this.numProducto) < Number(this.productos[i].idProducto))
-      {
+  AsignarNumeroProducto() {
+    for (var i = 0; i < this.productos.length; i++) {
+      if (Number(this.numProducto) < Number(this.productos[i].idProducto)) {
         this.numProducto = this.productos[i].idProducto;
       }
     }
@@ -126,56 +128,48 @@ export class AltaProductoPage implements OnInit {
     this.mostrarQr = true;
   }
 
-
-
-  Caracteres(dato: string){
+  Caracteres(dato: string) {
     var retorno = dato.toString();
-    if(dato.length == 1){
+    if (dato.length == 1) {
       retorno = "0" + retorno;
     }
     return retorno;
   }
 
-
-  AsignarNombreFotos(){
+  AsignarNombreFotos() {
     var date = new Date();
     this.nombreFotos[0] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
-    setTimeout(()=>{
+    setTimeout(() => {
       date = new Date();
       this.nombreFotos[1] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
-    },2000);
-    setTimeout(()=>{
+    }, 2000);
+    setTimeout(() => {
       date = new Date();
       this.nombreFotos[2] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
-    },4000);
+    }, 4000);
   }
 
-  ngOnInit() {
-  }
-
-  SubirImagenes(){
+  SubirImagenes() {
     this.authService.subirImagenFile(this.nombreFotos[0], this.files[0]);
-    setTimeout(()=>{
+    setTimeout(() => {
       this.authService.subirImagenFile(this.nombreFotos[1], this.files[1]);
-    },3000);
-    setTimeout(()=>{
+    }, 3000);
+    setTimeout(() => {
       this.authService.subirImagenFile(this.nombreFotos[2], this.files[2]);
-    },6000);
+    }, 6000);
   }
 
-  ImprimirMensaje(mensaje){
+  ImprimirMensaje(mensaje) {
     console.log(mensaje);
-  }  
+  }
 
-  LimpiarFoto(num: number){
+  LimpiarFoto(num: number) {
     this.files[num] = null;
     this.srcProductPhoto[num] = this.prodPhoto;
     this.fotosLleno = false;
   }
 
-
-
-  AsignarImagen(indice: number){
+  AsignarImagen(indice: number) {
     var readerVar = new FileReader();
     readerVar.readAsDataURL(this.files[indice]);
     readerVar.onload = (_event) => {
@@ -183,90 +177,86 @@ export class AltaProductoPage implements OnInit {
     }
   }
 
-
-  Cargar(event:any):void{
-    
+  Cargar(event: any): void {
     var selectFile = event.target.files;
     var num = selectFile.length;
     var cant = 0;
     var indice = 0;
 
-    for(var i = 0 ; i < this.srcProductPhoto.length ; i++)
-    {
-      if(this.srcProductPhoto[i].includes(this.prodPhoto)){
+    for (var i = 0; i < this.srcProductPhoto.length; i++) {
+      if (this.srcProductPhoto[i].includes(this.prodPhoto)) {
         cant = cant + 1;
       }
     }
 
-    if(num <= cant){
+    if (num <= cant) {
 
-      if(this.files[0] == null){
+      if (this.files[0] == null) {
         this.files[0] = event.target.files[indice];
         this.AsignarImagen(0);
         indice = indice + 1;
       }
 
-      if(this.files[1] == null && num >= (indice + 1)){
+      if (this.files[1] == null && num >= (indice + 1)) {
         this.files[1] = event.target.files[indice];
         this.AsignarImagen(1);
         indice = indice + 1;
       }
 
-      if(this.files[2] == null && num >= (indice + 1)){
+      if (this.files[2] == null && num >= (indice + 1)) {
         this.files[2] = event.target.files[indice];
         this.AsignarImagen(2);
       }
       this.fotosLleno = true;
 
-      setTimeout(()=>{
-        for(var i = 0 ; i < 3 ; i++)
-        {
-          if(this.srcProductPhoto[i].includes(this.prodPhoto)){
+      setTimeout(() => {
+        for (var i = 0; i < 3; i++) {
+          if (this.srcProductPhoto[i].includes(this.prodPhoto)) {
             this.fotosLleno = false;
           }
         }
-      },3000);
-      
+      }, 50);
     }
-    else{
-      if(cant == 1)
-      {
+    else {
+      if (cant == 1) {
         this.ImprimirMensaje("Seleccionar 1 imagen");
-      }else
-      {
+      } else {
         this.ImprimirMensaje(("Seleccionar " + cant.toString() + " imágenes"));
       }
     }
   }
 
-  AgregarProducto(){
-    if(this.numProducto == "0"){
+  AgregarProducto() {
+    if (this.numProducto == "0") {
       //ERROR
       this.TraerProductos();
     }
-    else{
-
+    else {
       //AGREGAR FOTOS
       var unProducto: Producto = {
         idField: "",
         idProducto: this.numProducto,
-        categoria: this.categorias[this.selectedIndex],
-        producto: this.producto,
-        tamanio: this.tam,
-        descripcion: this.descripcion,
-        tiempoElaboracion: this.tiempoElaboracion,
+        categoria: this.categorias[this.categoria.value],
+        producto: this.producto.value,
+        tamanio: this.tamanio.value,
+        descripcion: this.descripcion.value,
+        tiempoElaboracion: this.tiempoElaboracion.value,
         foto1: this.nombreFotos[0],
         foto2: this.nombreFotos[1],
         foto3: this.nombreFotos[2],
-        precio: this.precio,
+        precio: this.precio.value,
         qr: this.myAngularxQrCode
       }
-      this.SubirImagenes();
-      this.authService.addProduct(unProducto);
+      console.log(unProducto);
+      this.formProducto.reset();
+      this.srcProductPhoto = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
+      this.fotosLleno = false;
+      // this.SubirImagenes();
+      // this.authService.addProduct(unProducto);
     }
   }
 
-  Volver(){
+  Volver() {
     this.router.navigateByUrl('alta-cliente');
   }
 }
