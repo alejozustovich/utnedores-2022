@@ -10,10 +10,19 @@ export class HomeClientePage implements OnInit {
   volumenOn = true;
   volumenOff = false;
   esRegistrado = true;
+  spinner = false;
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
+  ActivarDesactivarSonido() {
+    if(this.volumenOn) {
+      this.volumenOn = false;
+      this.volumenOff = true;
+    } else {
+      this.volumenOn = true;
+      this.volumenOff = false;
+    }
+  }
 }
