@@ -17,10 +17,9 @@ export class AltaSupervisorPage implements OnInit {
   idRegistroUsuario = "1";
   spinner = false;
   srcUserPhoto = "../../assets/user-photo.png";
-
   result = null;
   scanActive = false;
-
+  fotoCargada = false;
   nombreImagen = "";
   base64Image = "";
 
@@ -36,21 +35,21 @@ export class AltaSupervisorPage implements OnInit {
   }
 
   constructor(
-    private authService: AuthService, 
-    private fb: FormBuilder, 
+    private authService: AuthService,
+    private fb: FormBuilder,
     private toastController: ToastController,
     private camera: Camera
-    ) { 
-      this.AsignarNombreFoto();
-    }
+  ) {
+    this.AsignarNombreFoto();
+  }
 
-    ngAfterViewInit() {
-      BarcodeScanner.prepare();
-    }
-  
-    ngOnDestroy() {
-      this.stopScan();
-    }
+  ngAfterViewInit() {
+    BarcodeScanner.prepare();
+  }
+
+  ngOnDestroy() {
+    this.stopScan();
+  }
 
   ngOnInit() {
     this.traerUsuarios();
@@ -91,7 +90,7 @@ export class AltaSupervisorPage implements OnInit {
       const formGroup = control as FormGroup;
       const valorControlA = formGroup.get(nombreControlA)?.value;
       const valorControlB = formGroup.get(nombreControlB)?.value;
-      const re = new RegExp('^[0-9]{2}-('+valorControlA+')-[0-9]$');
+      const re = new RegExp('^[0-9]{2}-(' + valorControlA + ')-[0-9]$');
       if (re.test(valorControlB)) {
         return null;
       } else {
@@ -100,25 +99,23 @@ export class AltaSupervisorPage implements OnInit {
     }
   }
 
-  PrimeraMayuscula(cadena: String){
+  PrimeraMayuscula(cadena: String) {
     var mayuscula = cadena[0].toUpperCase();
-    for(var i = 1 ; i < cadena.length ; i++){
-      if(cadena[i] != " "){
+    for (var i = 1; i < cadena.length; i++) {
+      if (cadena[i] != " ") {
         mayuscula = mayuscula + cadena[i].toLowerCase();
-      }else{
-        mayuscula = mayuscula + " " + cadena[i+1].toUpperCase();
+      } else {
+        mayuscula = mayuscula + " " + cadena[i + 1].toUpperCase();
         i = i + 1;
       }
     }
     return mayuscula;
   }
 
-  
-  async startScanner(){
-    
+  async startScanner() {
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
-    if(result.hasContent){
+    if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
       var cadena = this.result.split("@");
@@ -128,32 +125,29 @@ export class AltaSupervisorPage implements OnInit {
     }
   }
 
-  stopScan()
-  {
+  stopScan() {
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
 
-  Caracteres(dato: string){
+  Caracteres(dato: string) {
     var retorno = dato.toString();
-    if(dato.length == 1){
+    if (dato.length == 1) {
       retorno = "0" + retorno;
     }
     return retorno;
   }
 
-
-  AsignarNombreFoto(){
+  AsignarNombreFoto() {
     var date = new Date();
-    this.nombreImagen =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    this.nombreImagen = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
   }
 
-  Foto(){
+  Foto() {
     this.camera.getPicture(this.options).then((imageData) => {
-
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
-
+      this.fotoCargada = true;
     }, (err) => {
     });
   }
@@ -250,7 +244,7 @@ export class AltaSupervisorPage implements OnInit {
     if (this.verificarUsuario(usuario)) {
       try {
         this.authService.addUser(usuario);
-        
+
         setTimeout(() => {
           var rutaImagen = "usuarios/" + this.nombreImagen;
           this.authService.subirImagenBase64(rutaImagen, this.base64Image);

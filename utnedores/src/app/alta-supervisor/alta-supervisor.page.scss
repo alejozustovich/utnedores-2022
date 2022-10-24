@@ -2,7 +2,11 @@ ion-header {
   text-align: center !important;
 
   ion-toolbar {
-    --background: linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgb(0, 0, 0) 100%);
+    --background: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgb(0, 0, 0) 100%
+    );
     padding-top: 10px;
     padding-bottom: 10px;
 
@@ -19,7 +23,7 @@ ion-header {
   justify-content: center;
 }
 
-ion-content {
+ion-content{
   --background: linear-gradient(
     45deg,
     rgba(123, 46, 17, 0.8) 0%,
@@ -208,11 +212,11 @@ ion-item {
   height: 50px;
   z-index: 11;
 }
-  
+
 .scan-box {
   border: 2px solid #fff;
   box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
-  content: '';
+  content: "";
   display: block;
   left: 50%;
   height: 300px;
@@ -220,4 +224,23 @@ ion-item {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
+}
+
+.linea {
+  border-bottom-style: groove;
+  border-bottom-width: 4px;
+  border-color: red;
+  animation: mover-linea 2s linear infinite both;
+}
+
+@keyframes mover-linea {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(296px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
