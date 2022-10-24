@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [hidden]="scanActive">
   <ion-toolbar>
     <img id="img_toolbar" src="../../assets/Tenedores.png" width="13%" />
     <ion-button id="btn_toolbar"
@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="contenedor">
+  <div class="contenedor" [hidden]="scanActive">
     <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/manager.png" width="60" height="60" />
@@ -45,6 +45,7 @@
       </div>
       <form [formGroup]="formRegistro" (ngSubmit)="registrarUsuario()">
         <ion-input
+          id="nomHtml"
           formControlName="nombre"
           type="text"
           placeholder="Nombre"
@@ -52,6 +53,7 @@
         ></ion-input>
         <ion-input
           formControlName="apellido"
+          id="apeHtml"
           type="text"
           placeholder="Apellido"
           [ngClass]="{'error-borde mb-0': (apellido.dirty || apellido.touched) && apellido.errors}"
@@ -60,6 +62,7 @@
           <ion-col>
             <ion-input
               formControlName="dni"
+              id="dniHtml"
               type="text"
               placeholder="DNI"
               class="me-1"
@@ -107,11 +110,11 @@
         <ion-item class="foto">
           <ion-thumbnail slot="start">
             <ion-img
-              src="../../assets/user-photo.png"
+              [src]="srcUserPhoto"
               style="max-width: 100px; max-height: 100px"
             ></ion-img>
           </ion-thumbnail>
-          <ion-button style="--background: rgb(71, 18, 18)"
+          <ion-button (click)="Foto()" style="--background: rgb(71, 18, 18)"
             ><ion-icon name="camera-outline"></ion-icon
           ></ion-button>
         </ion-item>
@@ -122,11 +125,20 @@
     </ion-grid>
   </div>
 
-  <ion-fab horizontal="end" vertical="bottom">
-    <ion-fab-button size="large">
+  <ion-fab horizontal="end" vertical="bottom" [hidden]="scanActive">
+    <ion-fab-button (click)="startScanner()" size="large">
       <img src="../../assets/qr.png" />
     </ion-fab-button>
   </ion-fab>
+
+  <ion-row class="scanner-buttons" [hidden]="!scanActive">
+		<ion-col class="ion-no-padding">
+		  <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
+		</ion-col>
+	  </ion-row>
+	
+	  <div class="scan-box" [hidden]="!scanActive">
+	  </div>
 </ion-content>
 
 <div class="custom-loading" *ngIf="spinner">
