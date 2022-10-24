@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" [hidden]="scanActive">
 	<ion-toolbar>
 	  <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
 	  <ion-button id="btn_toolbar"><ion-icon name="arrow-undo"></ion-icon></ion-button>
@@ -6,7 +6,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-	<ion-grid>
+	<ion-grid [hidden]="scanActive">
 	  <div class="contenido">
 		<div class="titulo_form">
 		  <img src="../../assets/cliente.png" alt="" width="50" height="50">
@@ -15,9 +15,9 @@
 		<ion-button *ngIf="esRegistrado" id="btn_anonimo" (click)="CambiarBotonTipoCliente()">¡Quiero ser Cliente Anónimo!</ion-button>
 		<ion-button *ngIf="esAnonimo" id="btn_registrado" (click)="CambiarBotonTipoCliente()">¡Quiero ser Cliente Registrado!</ion-button>
 		<form>
-			<ion-input [value]="nombre" (input)="SetNombre($event.target.value)" placeholder="Nombre"></ion-input>
-			<ion-input [value]="apellido" (input)="SetApellido($event.target.value)" placeholder="Apellido" *ngIf="esRegistrado"></ion-input>
-			<ion-input [value]="dni" (input)="SetDNI($event.target.value)" placeholder="DNI" *ngIf="esRegistrado"></ion-input>
+			<ion-input id="input_nombre" [value]="nombre" (input)="SetNombre($event.target.value)" placeholder="Nombre"></ion-input>
+			<ion-input id="input_apellido" [value]="apellido" (input)="SetApellido($event.target.value)" placeholder="Apellido" *ngIf="esRegistrado"></ion-input>
+			<ion-input id="input_dni" [value]="dni" (input)="SetDNI($event.target.value)" placeholder="DNI" *ngIf="esRegistrado"></ion-input>
 			<ion-input [value]="correo" (input)="SetCorreo($event.target.value)" placeholder="Correo"></ion-input>
 		<ion-row>
 			<ion-input id="input_pass" type="password" [value]="clave" (input)="SetClave($event.target.value)" placeholder="Clave"></ion-input>
@@ -27,18 +27,28 @@
 			<ion-thumbnail slot="start">
 			  <ion-img [src]="srcUserPhoto" style="max-width: 100px; max-height: 100px;"></ion-img>
 			</ion-thumbnail>
-			  <ion-button style="--background: rgb(71, 18, 18);"><ion-icon name="camera-outline"></ion-icon></ion-button>
+			  <ion-button (click)="Foto()" style="--background: rgb(71, 18, 18);"><ion-icon name="camera-outline"></ion-icon></ion-button>
 		  </ion-item>
 		  <ion-button *ngIf="esRegistrado" style="--background: rgb(15, 145, 58); height: 50px;" (click)="GuardarUsuario()"><ion-icon name="checkmark-circle-outline"></ion-icon>Crear Cliente Registrado</ion-button>
 		  <ion-button *ngIf="esAnonimo" style="--background: rgb(15, 145, 58); height: 50px;" (click)="GuardarUsuario()"><ion-icon name="checkmark-circle-outline"></ion-icon>Crear Cliente Anónimo</ion-button> 
 		</form>
 	  </div>
 	</ion-grid>
-	<ion-fab horizontal="end" vertical="bottom" >
-	  <ion-fab-button size="large">
+	<ion-fab horizontal="end" vertical="bottom" [hidden]="scanActive">
+	  <ion-fab-button (click)="startScanner()" size="large">
 		<img src="../../assets/qr.png">
 	  </ion-fab-button>
 	</ion-fab>
+
+	<ion-row class="scanner-buttons" [hidden]="!scanActive">
+		<ion-col class="ion-no-padding">
+		  <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
+		</ion-col>
+	  </ion-row>
+	
+	  <div class="scan-box" [hidden]="!scanActive">
+	  </div>
+
 </ion-content>
 
 <div class="custom-loading" *ngIf="spinner">

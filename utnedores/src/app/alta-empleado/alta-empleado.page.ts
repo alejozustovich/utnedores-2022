@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { AuthService, Usuario } from '../services/auth.service';
 import { ToastController } from '@ionic/angular';
+import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-alta-empleado',
   templateUrl: './alta-empleado.page.html',
   styleUrls: ['./alta-empleado.page.scss'],
 })
-export class AltaEmpleadoPage implements OnInit {
+export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
 
   users: Usuario[];
   idRegistroUsuario = "1";
@@ -25,15 +27,109 @@ export class AltaEmpleadoPage implements OnInit {
   claveConfirmada = "";
   foto = "";
 
+  result = null;
+  scanActive = false;
+  nombreImagen = "";
+  base64Image = "";
+
+  options: CameraOptions = {
+    quality: 50,
+    allowEdit: false,
+    correctOrientation: true,
+    encodingType: this.camera.EncodingType.JPEG,
+    mediaType: this.camera.MediaType.PICTURE,
+    saveToPhotoAlbum: true,
+    sourceType: this.camera.PictureSourceType.CAMERA,
+    destinationType: this.camera.DestinationType.DATA_URL
+  }
+
   constructor(
-    private toastController : ToastController ,
-    private authService: AuthService
+    private toastController : ToastController,
+    private authService: AuthService,
+    private camera: Camera
   ) { 
     this.GuardarId();
+    this.AsignarNombreFoto();
+  }
+
+  PrimeraMayuscula(cadena: String){
+    var mayuscula = cadena[0].toUpperCase();
+    for(var i = 1 ; i < cadena.length ; i++){
+      if(cadena[i] != " "){
+        mayuscula = mayuscula + cadena[i].toLowerCase();
+      }else{
+        mayuscula = mayuscula + " " + cadena[i+1].toUpperCase();
+        i = i + 1;
+      }
+    }
+    return mayuscula;
+  }
+
+  ngAfterViewInit() {
+    BarcodeScanner.prepare();
+  }
+
+  ngOnDestroy() {
+    this.stopScan();
+  }
+
+  async startScanner(){
+    
+    this.scanActive = true;
+    const result = await BarcodeScanner.startScan();
+    if(result.hasContent){
+      this.scanActive = false;
+      this.result = result.content;
+      var cadena = this.result.split("@");
+
+      this.nombre = this.PrimeraMayuscula(cadena[2]);
+      this.apellido = this.PrimeraMayuscula(cadena[1]);
+      this.dni = cadena[4];
+      this.SetNombre(this.nombre);
+      this.SetApellido(this.apellido);
+      this.SetDNI(this.dni);
+    }
+  }
+
+  stopScan()
+  {
+    BarcodeScanner.stopScan();
+    this.scanActive = false;
+  }
+  
+  Caracteres(dato: string){
+    var retorno = dato.toString();
+    if(dato.length == 1){
+      retorno = "0" + retorno;
+    }
+    return retorno;
+  }
+
+
+  AsignarNombreFoto(){
+    var date = new Date();
+    this.nombreImagen =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+  }
+
+  Foto(){
+    this.camera.getPicture(this.options).then((imageData) => {
+
+      this.base64Image = 'data:image/jpeg;base64,' + imageData;
+      this.srcUserPhoto = this.base64Image;
+
+    }, (err) => {
+    });
   }
 
   ngOnInit() {
   }
+
+  LimpiarFoto(){
+    this.srcUserPhoto = "../../assets/user-photo.png";
+    this.base64Image = "";
+  }
+
+
 
   GuardarId(){
 		this.authService.getUsers().subscribe(allUsers => {
@@ -83,17 +179,28 @@ GuardarEmpleado() {
     clave: this.clave,
     dni: this.dni,
     cuil: this.cuil,
-    foto: "",
+    foto: this.nombreImagen,
     perfil: "Empleado",
     tipo: this.tipo,
     aprobado: ""
   };
   
   this.authService.addUser(unUsuario);
+  setTimeout(() => {
+    if(!this.srcUserPhoto.includes("../../assets/user-photo.png")){
+      var rutaImagen = "usuarios/" + this.nombreImagen;
+      this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+    }
+  }, 2000);
+
+  setTimeout(() => {
+    this.RegistrarUsuario();
+  }, 4000);
+  
   this.Alerta('Empleado registrado correctamente' , 'success');
   setTimeout(() => {
-    this.LimpiarCamposFormulario();
-  }, 2200);
+    //Redirigir
+  }, 6000);
 }
 
 RegistrarUsuario(){

@@ -12,7 +12,8 @@ export class LoginPage implements OnInit {
   spinner = false;
 
   constructor(private authService: AuthService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder
+    ) { }
 
   ngOnInit() {
     this.formLogin = this.fb.group(
@@ -32,7 +33,7 @@ export class LoginPage implements OnInit {
   }
 
   iniciarSesion(){
-    
+    this.authService.login(this.formLogin.value);
   }
 
 }
