@@ -12,16 +12,16 @@
       <h1 class="text-center formato mb-3">Inicio de sesión</h1>
       <form [formGroup]="formLogin" (ngSubmit)="iniciarSesion()">
         <ion-input
-          formControlName="correo"
+          formControlName="email"
           type="text"
           placeholder="Correo"
-          [ngClass]="{'error-borde': (correo.dirty || correo.touched) && correo.errors}"
+          [ngClass]="{'error-borde': (email.dirty || email.touched) && email.errors}"
         ></ion-input>
         <ion-input
-          formControlName="clave"
+          formControlName="password"
           type="password"
           placeholder="Clave"
-          [ngClass]="{'error-borde': (clave.dirty || clave.touched) && clave.errors}"
+          [ngClass]="{'error-borde': (password.dirty || password.touched) && password.errors}"
         ></ion-input>
         <ion-button
           type="submit"

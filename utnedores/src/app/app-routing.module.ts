@@ -59,10 +59,19 @@ const routes: Routes = [
     loadChildren: () => import('./encuesta-empleados/encuesta-empleados.module').then( m => m.EncuestaEmpleadosPageModule)
   },
   {
+    path: 'listado-clientes',
+    loadChildren: () => import('./listado-clientes/listado-clientes.module').then( m => m.ListadoClientesPageModule)
+  },
+  {
+    path: 'reservas',
+    loadChildren: () => import('./reservas/reservas.module').then( m => m.ReservasPageModule)
+  },
+  {
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full'
   }
+
 ];
 @NgModule({
   imports: [

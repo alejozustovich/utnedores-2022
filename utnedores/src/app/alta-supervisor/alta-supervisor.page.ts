@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { AuthService, Usuario } from '../services/auth.service';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-supervisor',
@@ -43,9 +44,14 @@ export class AltaSupervisorPage implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private toastController: ToastController,
-    private camera: Camera
+    private camera: Camera,
+    private router: Router
   ) {
     this.AsignarNombreFoto();
+  }
+
+  Volver(){
+    this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
   ImagenCelular(){

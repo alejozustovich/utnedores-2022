@@ -25,7 +25,7 @@
     "@awesome-cordova-plugins/ionic-webview": "^6.0.0",
     "@awesome-cordova-plugins/native-audio": "^6.0.0",
     "@capacitor-community/barcode-scanner": "^3.0.0",
-    "@capacitor/android": "^4.3.0",
+    "@capacitor/android": "^4.4.0",
     "@capacitor/app": "4.0.1",
     "@capacitor/core": "4.3.0",
     "@capacitor/haptics": "^4.0.1",

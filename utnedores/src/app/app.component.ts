@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { UtilidadesService } from './services/utilidades.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ export class AppComponent {
 
   constructor(
     private platform: Platform,
-    public router: Router
+    public router: Router,
+    private utilidades: UtilidadesService
   ) {
     SplashScreen.hide();
     this.initializeApp();
@@ -22,19 +24,23 @@ export class AppComponent {
 
   initializeApp() {
     SplashScreen.hide();
-    this.platform.ready().then(() => {
+
+    this.router.navigateByUrl('home-cliente');
+    this.splash = false;
+    /*this.platform.ready().then(() => {
       // this.router.navigateByUrl('splash');
       if (this.splash) {
         setTimeout(() => {
           this.splash = false;
         }, 6000);
       }
-    });
+    });*/
   }
 
-  Inicializar() {
-    this.platform.ready().then(() => {
-      //CARGAR AUDIOS
+  Inicializar()
+  {
+    this.platform.ready().then(()=>{
+      this.utilidades.PreloadAudio();  
     });
   }
 }
