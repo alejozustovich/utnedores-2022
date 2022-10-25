@@ -3,35 +3,30 @@
     <div class="logo ion-text-center">
       <img src="../../assets/Logo-bg.png" alt="logo" width="250px" />
     </div>
+    <ion-select placeholder="Acceso rápido" (ionChange)="llenarCampos($event)" [interfaceOptions]="customAlertOptions">
+      <ion-select-option *ngFor="let user of users; let i=index" value="{{i}}"
+        >{{user.tipo || user.perfil}}: {{user.correo}}</ion-select-option
+      >
+    </ion-select>
     <div class="card">
       <h1 class="text-center formato mb-3">Inicio de sesión</h1>
       <form [formGroup]="formLogin" (ngSubmit)="iniciarSesion()">
         <ion-input
-          formControlName="email"
+          formControlName="correo"
           type="text"
           placeholder="Correo"
-          [ngClass]="{'error-borde mb-0': (email.dirty || email.touched) && email.errors}"
+          [ngClass]="{'error-borde': (correo.dirty || correo.touched) && correo.errors}"
         ></ion-input>
-        <small
-          class="error"
-          *ngIf="(email.dirty || email.touched) && email.errors"
-        >
-          Correo requerido
-        </small>
         <ion-input
-          formControlName="password"
-          type="text"
+          formControlName="clave"
+          type="password"
           placeholder="Clave"
-          [ngClass]="{'error-borde mb-0': (password.dirty || password.touched) && password.errors}"
+          [ngClass]="{'error-borde': (clave.dirty || clave.touched) && clave.errors}"
         ></ion-input>
-        <small
-          class="error"
-          *ngIf="(password.dirty || password.touched) && password.errors"
-        >
-          Clave requerida
-        </small>
-        <ion-button (click)="iniciarSesion()"
+        <ion-button
+          type="submit"
           class="mt-3"
+          [disabled]="!formLogin.valid"
           style="--background: rgb(15, 145, 58); height: 50px"
           ><ion-icon name="checkmark-circle-outline"></ion-icon
           >Entrar</ion-button

@@ -26,21 +26,25 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 @font-face {
-    font-family: Font-Regular;
-    src: url('./assets/font/Mithella-Regular.otf');
+  font-family: Font-Regular;
+  src: url("./assets/font/Mithella-Regular.otf");
 }
 
 ion-select-option {
-    font-family: Font-Regular;
+  font-family: Font-Regular;
 }
 
 ion-select-popover ion-item {
-    --color: #696969;
-    --inner-border-width: 0;
-    text-align: center;
-    font-family: Font-Regular;
+  --color: #696969;
+  --inner-border-width: 0;
+  text-align: center;
+  font-family: Font-Regular;
 }
 
 * {
   font-family: Font-Regular !important;
+}
+
+.sc-ion-alert-md-h {
+  --min-width: 85% !important;
 }
