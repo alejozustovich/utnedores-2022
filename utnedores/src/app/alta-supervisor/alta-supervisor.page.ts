@@ -17,6 +17,11 @@ export class AltaSupervisorPage implements OnInit {
   idRegistroUsuario = "1";
   spinner = false;
   srcUserPhoto = "../../assets/user-photo.png";
+
+  fotoFile = false;
+  fotoCelular = false;
+  file: File;
+  
   result = null;
   scanActive = false;
   fotoCargada = false;
@@ -41,6 +46,26 @@ export class AltaSupervisorPage implements OnInit {
     private camera: Camera
   ) {
     this.AsignarNombreFoto();
+  }
+
+  ImagenCelular(){
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
+
+  AsignarImagen() {
+    var readerVar = new FileReader();
+    readerVar.readAsDataURL(this.file);
+    readerVar.onload = (_event) => {
+      this.srcUserPhoto = (readerVar.result).toString();
+    }
+  }
+
+  Cargar(event: any): void {
+    this.file = event.target.files[0];
+    this.AsignarImagen();
+    this.fotoCargada = true;
+    this.fotoFile = true;
+    this.fotoCelular = false;
   }
 
   ngAfterViewInit() {
@@ -148,6 +173,9 @@ export class AltaSupervisorPage implements OnInit {
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
       this.fotoCargada = true;
+      this.fotoFile = false;
+      this.fotoCelular = true;
+
     }, (err) => {
     });
   }
@@ -246,8 +274,15 @@ export class AltaSupervisorPage implements OnInit {
         this.authService.addUser(usuario);
 
         setTimeout(() => {
-          var rutaImagen = "usuarios/" + this.nombreImagen;
-          this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+          if(this.fotoCelular){
+            var rutaImagen = "usuarios/" + this.nombreImagen;
+            this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+          }
+      
+          if(this.fotoFile){
+            var imagenStorage = "usuarios/" + this.nombreImagen;
+            this.authService.subirImagenFile(imagenStorage, this.file);
+          }
         }, 2000);
 
         setTimeout(() => {

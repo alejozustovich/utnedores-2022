@@ -138,11 +138,11 @@ export class AltaMesaPage implements OnInit {
       console.log(unaMesa);
       this.formMesa.reset();
       this.LimpiarFoto();
-      // this.authService.addTable(unaMesa);
-      // setTimeout(() => {
-      //   var imagenStorage = "mesas/" + this.nombreFoto;
-      //   this.authService.subirImagenFile(imagenStorage, this.file);
-      // }, 3000);
+      this.authService.addTable(unaMesa);
+      setTimeout(() => {
+         var imagenStorage = "mesas/" + this.nombreFoto;
+         this.authService.subirImagenFile(imagenStorage, this.file);
+      }, 3000);
     }
   }
 

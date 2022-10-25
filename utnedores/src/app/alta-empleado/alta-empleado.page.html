@@ -37,7 +37,8 @@
 			  		<ion-img [src]="srcUserPhoto" style="max-width: 100px; max-height: 100px;"></ion-img>
 					<ion-icon (click)="LimpiarFoto()" style="margin-left: 20px; margin-top: 5px;" name="trash-outline"></ion-icon>
 				</ion-thumbnail>
-			  	<ion-button (click)="Foto()" style="--background: rgb(71, 18, 18);"><ion-icon name="camera-outline"></ion-icon></ion-button>
+				<ion-button (click)="ImagenCelular()" style="--background: rgb(71, 18, 18);" [disabled]="fotosLleno"><ion-icon name="folder-outline"></ion-icon></ion-button>
+				<ion-button (click)="Foto()" style="--background: rgb(71, 18, 18);" [disabled]="fotosLleno"><ion-icon name="camera-outline"></ion-icon></ion-button>
 		  </ion-item>
 		  <ion-button style="--background: rgb(15, 145, 58); height: 50px;" (click)="GuardarUsuario()"><ion-icon name="checkmark-circle-outline"></ion-icon>Crear Empleado</ion-button> 
 		</form>
@@ -49,6 +50,14 @@
 	  </ion-fab-button>
 	</ion-fab>
 
+	<input
+      id="inputFiles"
+      class="custom-file-input"
+      type="file"
+      (change)="Cargar($event)"
+      hidden
+    />
+	
 	<ion-row class="scanner-buttons" [hidden]="!scanActive">
 		<ion-col class="ion-no-padding">
 		  <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
