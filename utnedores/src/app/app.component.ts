@@ -25,7 +25,7 @@ export class AppComponent {
   initializeApp() {
     SplashScreen.hide();
 
-    this.router.navigateByUrl('home-cliente');
+    this.router.navigateByUrl('listado-clientes');
     this.splash = false;
     /*this.platform.ready().then(() => {
       // this.router.navigateByUrl('splash');

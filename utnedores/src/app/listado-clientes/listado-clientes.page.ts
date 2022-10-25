@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService, Usuario } from '../services/auth.service';
 
 @Component({
   selector: 'app-listado-clientes',
@@ -9,10 +10,23 @@ import { Router } from '@angular/router';
 export class ListadoClientesPage implements OnInit {
 
   spinner = false;
+  users: Usuario[];
 
   constructor(
-    private router: Router
-  ) { }
+    private router: Router,
+    private authService: AuthService,
+  ) {
+    this.TraerUsuarios();
+  }
+
+  TraerUsuarios() {
+    this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+    });
+    setTimeout(()=>{
+      console.log(this.users);
+    },3000);
+  }
 
   ngOnInit() {
   }
