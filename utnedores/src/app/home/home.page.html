@@ -22,8 +22,8 @@
 	</ion-grid>
 	<ion-fab horizontal="end" vertical="bottom" >
 		<ion-fab-button size="small" (click)="ActivarDesactivarSonido()">
-			<ion-icon *ngIf="volumenOff" name="volume-high-outline"></ion-icon>
-			<ion-icon *ngIf="volumenOn" name="volume-mute-outline"></ion-icon>
+			<ion-icon *ngIf="!volumenOff" name="volume-high-outline"></ion-icon>
+			<ion-icon *ngIf="!volumenOn" name="volume-mute-outline"></ion-icon>
 		</ion-fab-button>
 	</ion-fab>
 </ion-content>

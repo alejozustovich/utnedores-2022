@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, Mesa } from '../services/auth.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-mesa',
@@ -26,9 +27,16 @@ export class AltaMesaPage implements OnInit {
   nombreFoto = "";
 
   constructor(
-    private authService: AuthService, private fb: FormBuilder
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.Actualizar();
+  }
+
+  Volver(){
+    this.spinner = true;
+    this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
   ngOnInit() {
@@ -144,9 +152,5 @@ export class AltaMesaPage implements OnInit {
          this.authService.subirImagenFile(imagenStorage, this.file);
       }, 3000);
     }
-  }
-
-  Volver() {
-
   }
 }

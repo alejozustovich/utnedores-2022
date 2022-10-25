@@ -3,6 +3,7 @@ import { AuthService, Usuario } from '../services/auth.service';
 import { ToastController } from '@ionic/angular';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -51,10 +52,16 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private toastController : ToastController,
     private authService: AuthService,
-    private camera: Camera
+    private camera: Camera,
+    private router: Router
   ) { 
     this.GuardarId();
     this.AsignarNombreFoto();
+  }
+
+  Volver(){
+    this.spinner = true;
+    this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
   ImagenCelular(){
