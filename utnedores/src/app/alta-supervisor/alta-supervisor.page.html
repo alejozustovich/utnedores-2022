@@ -118,9 +118,8 @@
               style="max-width: 100px; max-height: 100px"
             ></ion-img>
           </ion-thumbnail>
-          <ion-button (click)="Foto()" style="--background: rgb(71, 18, 18)"
-            ><ion-icon name="camera-outline"></ion-icon
-          ></ion-button>
+          <ion-button (click)="ImagenCelular()" style="--background: rgb(71, 18, 18);"><ion-icon name="folder-outline"></ion-icon></ion-button>
+          <ion-button (click)="Foto()" style="--background: rgb(71, 18, 18);"><ion-icon name="camera-outline"></ion-icon></ion-button>
         </ion-item>
         <ion-button
           type="submit"
@@ -139,6 +138,14 @@
       <img src="../../assets/qr.png" />
     </ion-fab-button>
   </ion-fab>
+  <input
+      id="inputFiles"
+      class="custom-file-input"
+      type="file"
+      (change)="Cargar($event)"
+      hidden
+    />
+    
 </ion-content>
 
 <ion-row class="scanner-buttons" [hidden]="!scanActive">

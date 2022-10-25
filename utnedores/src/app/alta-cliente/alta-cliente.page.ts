@@ -24,6 +24,10 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   clave = "";
   claveConfirmada = "";
   foto = "";
+  
+  fotoFile = false;
+  fotoCelular = false;
+  file: File;
 
   result = null;
   scanActive = false;
@@ -51,6 +55,24 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.AsignarNombreFoto();
   }
 
+  ImagenCelular(){
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
+
+  AsignarImagen() {
+    var readerVar = new FileReader();
+    readerVar.readAsDataURL(this.file);
+    readerVar.onload = (_event) => {
+      this.srcUserPhoto = (readerVar.result).toString();
+    }
+  }
+
+  Cargar(event: any): void {
+    this.file = event.target.files[0];
+    this.AsignarImagen();
+    this.fotoFile = true;
+    this.fotoCelular = false;
+  }
 
   ngAfterViewInit() {
     BarcodeScanner.prepare();
@@ -118,6 +140,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
+      this.fotoFile = false;
+      this.fotoCelular = true;
 
     }, (err) => {
     });
@@ -177,8 +201,17 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.addUser(unUsuarioRegistrado); //Guardar usuario a la espera de que se apruebe.
     
     setTimeout(() => {
-      var rutaImagen = "usuarios/" + this.nombreImagen;
-      this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+
+      if(this.fotoCelular){
+        var rutaImagen = "usuarios/" + this.nombreImagen;
+        this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+      }
+
+      if(this.fotoFile){
+        var imagenStorage = "usuarios/" + this.nombreImagen;
+        this.authService.subirImagenFile(imagenStorage, this.file);
+      }
+
     }, 2000);
 
     this.Alerta('Cliente registrado correctamente' , 'success');

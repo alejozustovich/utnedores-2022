@@ -27,6 +27,11 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   claveConfirmada = "";
   foto = "";
 
+  fotosLleno = false;
+  fotoFile = false;
+  fotoCelular = false;
+  file: File;
+  
   result = null;
   scanActive = false;
   nombreImagen = "";
@@ -52,6 +57,26 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     this.AsignarNombreFoto();
   }
 
+  ImagenCelular(){
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
+
+  AsignarImagen() {
+    var readerVar = new FileReader();
+    readerVar.readAsDataURL(this.file);
+    readerVar.onload = (_event) => {
+      this.srcUserPhoto = (readerVar.result).toString();
+    }
+  }
+
+  Cargar(event: any): void {
+    this.file = event.target.files[0];
+    this.AsignarImagen();
+    this.fotosLleno = true;
+    this.fotoFile = true;
+    this.fotoCelular = false;
+  }
+  
   PrimeraMayuscula(cadena: String){
     var mayuscula = cadena[0].toUpperCase();
     for(var i = 1 ; i < cadena.length ; i++){
@@ -116,6 +141,9 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
 
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
+      this.fotosLleno = true;
+      this.fotoFile = false;
+      this.fotoCelular = true;
 
     }, (err) => {
     });
@@ -127,6 +155,9 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   LimpiarFoto(){
     this.srcUserPhoto = "../../assets/user-photo.png";
     this.base64Image = "";
+    this.fotosLleno = false;
+    this.fotoFile = false;
+    this.fotoCelular = false;
   }
 
 
@@ -170,6 +201,9 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
 
 // INICIO Guardar Usuarios.
 GuardarEmpleado() {
+  if(!this.fotoCelular && !this.fotoFile){
+    this.nombreImagen = "";
+  }
   var unUsuario: Usuario = {
     idField: "",
     idUsuario: this.idRegistroUsuario,
@@ -187,10 +221,17 @@ GuardarEmpleado() {
   
   this.authService.addUser(unUsuario);
   setTimeout(() => {
-    if(!this.srcUserPhoto.includes("../../assets/user-photo.png")){
+
+    if(this.fotoCelular){
       var rutaImagen = "usuarios/" + this.nombreImagen;
       this.authService.subirImagenBase64(rutaImagen, this.base64Image);
     }
+
+    if(this.fotoFile){
+      var imagenStorage = "usuarios/" + this.nombreImagen;
+      this.authService.subirImagenFile(imagenStorage, this.file);
+    }
+
   }, 2000);
 
   setTimeout(() => {
