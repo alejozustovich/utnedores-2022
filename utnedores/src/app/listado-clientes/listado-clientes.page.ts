@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { getStorage, ref } from "firebase/storage";
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
+import { getDownloadURL } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-listado-clientes',
@@ -14,42 +16,60 @@ export class ListadoClientesPage implements OnInit {
   spinner = true;
   users: Usuario[];
   pathFoto = "../../assets/user-photo.png";
-  hayPendientes = true;
+  hayPendientes = false;
+  countPendientes = 0;
+  ingresar = true;
 
   constructor(
     private router: Router,
     private authService: AuthService,
   ) {
-    this.TraerUsuarios();
     this.ValidarUsuarios();
   }
 
-  TraerUsuarios() {
-    this.authService.getUsers().subscribe(allUsers => {
-      this.users = allUsers;
-    });
-    setTimeout(()=>{
-      console.log(this.users);
-    },3000);
-  }
+  async ValidarUsuarios() {
 
-  ValidarUsuarios() {
+    this.authService.getUsers().subscribe(allUsers => {
+
+      if(this.ingresar){
+        this.ingresar = false;
+
+        this.users = allUsers;
+        this.users.forEach(u => {
+          if(u.perfil == "Cliente" && u.tipo == "Registrado" && u.aprobado == "No") {
+            
+            var fotoBuscar = "usuarios/" + u.foto;
+            const storage = getStorage();
+            const storageRef = ref(storage, fotoBuscar);
+            getDownloadURL(storageRef).then((response) => {
+              u.foto = response;
+            });
+            this.countPendientes ++;
+          }
+        });
+        setTimeout(() => {
+          this.ingresar = true;
+          if(this.countPendientes > 0){
+            this.hayPendientes = true;
+            this.spinner = false;
+          }else{
+            this.hayPendientes = false;
+          }
+        }, 3000);
+      }
+
+    });
+
     setTimeout(() => {
-      let countPendientes = 0;
-      this.users.forEach(u => {
-        if(u.perfil == "Cliente" && u.tipo == "Registrado" && u.aprobado == "No") {
-          countPendientes ++;
-        }
-      });
-      (countPendientes > 0) ? this.hayPendientes = true : this.hayPendientes = false;
-      console.log(this.hayPendientes);
-    }, 3000);
+      if(this.users.length == 0){
+        //ERROR DE CONEXION
+      }
+      this.spinner = false;
+    }, 7000);
   }
 
   ngOnInit() { 
-    setTimeout(() => {
-      this.spinner = false;
-    }, 3000);
+    
   }
 
   Volver(){
@@ -57,16 +77,23 @@ export class ListadoClientesPage implements OnInit {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
-  ActivarDesactivarSonido() {
-    if(this.volumenOn) {
-      this.volumenOn = false;
-      this.volumenOff = true;
-      localStorage.setItem('sonido', "No");
-    } else {
-      this.volumenOn = true;
-      this.volumenOff = false;
-      localStorage.setItem('sonido', "Si");
-    }
+  AprobarCliente(idField, correo, clave){
+    this.spinner = true;
+    this.authService.register({email: correo, password: clave});
+
+    setTimeout(() => {
+      this.ingresar = true;
+      this.authService.aceptarUsuario(idField);
+      this.spinner = false;
+      //ENVIAR CORREO AUTOMATICO ACEPTANDO AL USUARIO
+    }, 2500);
+    
+    
   }
 
+  RechazarCliente(idField, correo){
+    //ABRIR VENTANA
+      //PEDIR MOTIVO
+        //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
+  }
 }

@@ -137,6 +137,16 @@ export class AuthService {
 
 	}
 
+	aceptarUsuario(idField){
+		const userDoc = doc(this.firestore, `users/${idField}`);
+    	return updateDoc(userDoc, {aprobado: 'Si'});
+	}
+
+	rechazarUsuario(idField){
+		const userDoc = doc(this.firestore, `users/${idField}`);
+    	return updateDoc(userDoc, {aprobado: '0'});
+	}
+
 	usuarioActual(){
 		return this.auth.currentUser.email;
 	}
