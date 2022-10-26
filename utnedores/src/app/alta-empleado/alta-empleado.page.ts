@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Router } from '@angular/router';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -11,28 +12,18 @@ import { Router } from '@angular/router';
   styleUrls: ['./alta-empleado.page.scss'],
 })
 export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
-
+  formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "1";
   spinner = false;
   esRegistrado = true;
   esAnonimo = false;
   srcUserPhoto = "../../assets/user-photo.png";
-  nombre = "";
-  apellido = "";
-  dni = "";
-  cuil = "";
-  tipo = "";
-  correo = "";
-  clave = "";
-  claveConfirmada = "";
   foto = "";
-
   fotosLleno = false;
   fotoFile = false;
   fotoCelular = false;
   file: File;
-  
   result = null;
   scanActive = false;
   nombreImagen = "";
@@ -50,21 +41,101 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   constructor(
-    private toastController : ToastController,
+    private toastController: ToastController,
     private authService: AuthService,
     private camera: Camera,
-    private router: Router
-  ) { 
+    private router: Router,
+    private fb: FormBuilder
+  ) {
     this.GuardarId();
     this.AsignarNombreFoto();
   }
 
-  Volver(){
+  ngOnInit() {
+    this.formRegistro = this.fb.group(
+      {
+        nombre: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        apellido: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        dni: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(7), Validators.maxLength(8)]],
+        cuil: ['', [Validators.required]],
+        tipo: ['', [Validators.required]],
+        correo: ['', [Validators.required, Validators.email]],
+        clave: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
+        claveConfirmada: ['', [Validators.required]]
+      },
+      {
+        validator: [this.sonIguales('clave', 'claveConfirmada'),
+        this.cuilCorrecto('dni', 'cuil')]
+      }
+    )
+  }
+
+  private sonIguales(nombreControlA, nombreControlB): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const formGroup = control as FormGroup;
+      const valorControlA = formGroup.get(nombreControlA).value;
+      const valorControlB = formGroup.get(nombreControlB).value;
+
+      if (valorControlA == valorControlB) {
+        return null;
+      } else {
+        return { noCoinciden: true }
+      }
+    }
+  }
+
+  private cuilCorrecto(nombreControlA, nombreControlB): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const formGroup = control as FormGroup;
+      const valorControlA = formGroup.get(nombreControlA)?.value;
+      const valorControlB = formGroup.get(nombreControlB)?.value;
+      const re = new RegExp('^[0-9]{2}-(' + valorControlA + ')-[0-9]$');
+      if (re.test(valorControlB)) {
+        return null;
+      } else {
+        return { cuilIncorrecto: true }
+      }
+    }
+  }
+
+  get nombre() {
+    return this.formRegistro.get('nombre');
+  }
+
+  get apellido() {
+    return this.formRegistro.get('apellido');
+  }
+
+  get dni() {
+    return this.formRegistro.get('dni');
+  }
+
+  get cuil() {
+    return this.formRegistro.get('cuil');
+  }
+
+  get tipo() {
+    return this.formRegistro.get('tipo');
+  }
+
+  get correo() {
+    return this.formRegistro.get('correo');
+  }
+
+  get clave() {
+    return this.formRegistro.get('clave');
+  }
+
+  get claveConfirmada() {
+    return this.formRegistro.get('claveConfirmada');
+  }
+
+  Volver() {
     this.spinner = true;
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
-  ImagenCelular(){
+  ImagenCelular() {
     (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
@@ -83,14 +154,14 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     this.fotoFile = true;
     this.fotoCelular = false;
   }
-  
-  PrimeraMayuscula(cadena: String){
+
+  PrimeraMayuscula(cadena: String) {
     var mayuscula = cadena[0].toUpperCase();
-    for(var i = 1 ; i < cadena.length ; i++){
-      if(cadena[i] != " "){
+    for (var i = 1; i < cadena.length; i++) {
+      if (cadena[i] != " ") {
         mayuscula = mayuscula + cadena[i].toLowerCase();
-      }else{
-        mayuscula = mayuscula + " " + cadena[i+1].toUpperCase();
+      } else {
+        mayuscula = mayuscula + " " + cadena[i + 1].toUpperCase();
         i = i + 1;
       }
     }
@@ -105,61 +176,50 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     this.stopScan();
   }
 
-  async startScanner(){
-    
+  async startScanner() {
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
-    if(result.hasContent){
+    if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
       var cadena = this.result.split("@");
 
-      this.nombre = this.PrimeraMayuscula(cadena[2]);
-      this.apellido = this.PrimeraMayuscula(cadena[1]);
-      this.dni = cadena[4];
-      this.SetNombre(this.nombre);
-      this.SetApellido(this.apellido);
-      this.SetDNI(this.dni);
+      this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+      this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
+      this.dni.setValue(cadena[4]);
     }
   }
 
-  stopScan()
-  {
+  stopScan() {
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
-  
-  Caracteres(dato: string){
+
+  Caracteres(dato: string) {
     var retorno = dato.toString();
-    if(dato.length == 1){
+    if (dato.length == 1) {
       retorno = "0" + retorno;
     }
     return retorno;
   }
 
-
-  AsignarNombreFoto(){
+  AsignarNombreFoto() {
     var date = new Date();
-    this.nombreImagen =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    this.nombreImagen = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
   }
 
-  Foto(){
+  Foto() {
     this.camera.getPicture(this.options).then((imageData) => {
-
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
       this.fotosLleno = true;
       this.fotoFile = false;
       this.fotoCelular = true;
-
     }, (err) => {
     });
   }
 
-  ngOnInit() {
-  }
-
-  LimpiarFoto(){
+  LimpiarFoto() {
     this.srcUserPhoto = "../../assets/user-photo.png";
     this.base64Image = "";
     this.fotosLleno = false;
@@ -167,22 +227,19 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     this.fotoCelular = false;
   }
 
-
-
-  GuardarId(){
-		this.authService.getUsers().subscribe(allUsers => {
+  GuardarId() {
+    this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
-			for(var i = 0 ; i < allUsers.length ; i++)
-			{
-				if(Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {
-					this.idRegistroUsuario = allUsers[i].idUsuario;
-				}
-			}
-			this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
-		});
-	}
+      for (var i = 0; i < allUsers.length; i++) {
+        if (Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {
+          this.idRegistroUsuario = allUsers[i].idUsuario;
+        }
+      }
+      this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
+    });
+  }
 
-  async Alerta( mensaje : string , color : string ) {
+  async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
@@ -196,106 +253,66 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     }, 2200);
   }
 
-  SetNombre( value ) { this.nombre = value; }
-  SetApellido( value ) { this.apellido = value; }
-  SetDNI( value ) { this.dni = value; }
-  SetCUIL ( value ) { this.cuil = value; }
-  SetTipo ( e ) { this.tipo = e.detail.value; }
-  SetCorreo( value ) { this.correo = value; }
-  SetClave( value ) { this.clave = value; }
-  SetClaveConfirmada( value ) { this.claveConfirmada = value; }
-
-
-// INICIO Guardar Usuarios.
-GuardarEmpleado() {
-  if(!this.fotoCelular && !this.fotoFile){
-    this.nombreImagen = "";
-  }
-  var unUsuario: Usuario = {
-    idField: "",
-    idUsuario: this.idRegistroUsuario,
-    nombre: this.nombre,
-    apellido: this.apellido,
-    correo: this.correo,
-    clave: this.clave,
-    dni: this.dni,
-    cuil: this.cuil,
-    foto: this.nombreImagen,
-    perfil: "Empleado",
-    tipo: this.tipo,
-    aprobado: ""
-  };
-  
-  this.authService.addUser(unUsuario);
-  setTimeout(() => {
-
-    if(this.fotoCelular){
-      var rutaImagen = "usuarios/" + this.nombreImagen;
-      this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+  // INICIO Guardar Usuarios.
+  GuardarEmpleado() {
+    this.spinner = true;
+    setTimeout(() => {
+      this.spinner = false;
+    }, 2000);
+    if (!this.fotoCelular && !this.fotoFile) {
+      this.nombreImagen = "";
     }
+    var unUsuario: Usuario = {
+      idField: "",
+      idUsuario: this.idRegistroUsuario,
+      nombre: this.nombre.value,
+      apellido: this.apellido.value,
+      correo: this.correo.value,
+      clave: this.clave.value,
+      dni: this.dni.value,
+      cuil: this.cuil.value,
+      foto: this.nombreImagen,
+      perfil: "Empleado",
+      tipo: this.tipo.value,
+      aprobado: ""
+    };
+    console.log(unUsuario);
 
-    if(this.fotoFile){
-      var imagenStorage = "usuarios/" + this.nombreImagen;
-      this.authService.subirImagenFile(imagenStorage, this.file);
-    }
+    // this.authService.addUser(unUsuario);
+    // setTimeout(() => {
 
-  }, 2000);
+    //   if (this.fotoCelular) {
+    //     var rutaImagen = "usuarios/" + this.nombreImagen;
+    //     this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+    //   }
 
-  setTimeout(() => {
-    this.RegistrarUsuario();
-  }, 4000);
-  
-  this.Alerta('Empleado registrado correctamente' , 'success');
-  setTimeout(() => {
-    //Redirigir
-  }, 6000);
-}
+    //   if (this.fotoFile) {
+    //     var imagenStorage = "usuarios/" + this.nombreImagen;
+    //     this.authService.subirImagenFile(imagenStorage, this.file);
+    //   }
 
-RegistrarUsuario(){
-  var registro = {email: this.correo , password: this.clave};
-  this.authService.register(registro);
-}
+    // }, 2000);
 
-GuardarUsuario() {
-  this.spinner = true;
+    setTimeout(() => {
+      //this.RegistrarUsuario();
+    }, 4000);
 
-  setTimeout(() => {
-    this.spinner = false;
-  }, 2000);
-
-  if( this.clave == this.claveConfirmada ) {
-      var validarDNI: number = +this.dni;
-      if(!isNaN(validarDNI)) {
-        var validarCUIL: number =+this.cuil;
-        if(!isNaN(validarCUIL) && this.cuil.includes(this.dni)) {
-          if(this.correo.includes('@')) {
-            this.GuardarEmpleado();
-          } 
-          else { 
-            this.Alerta('El correo es inválido' , 'danger');
-          }
-        }
-        else {
-          this.Alerta('El CUIL es inválido' , 'danger');
-        }
-      } else {
-        this.Alerta('El DNI es inválido' , 'danger');
-      }
-    } else {
-    this.Alerta('Las claves no coinciden' , 'danger');
+    this.Alerta('Empleado registrado correctamente', 'success');
+    setTimeout(() => {
+      //Redirigir
+    }, 6000);
   }
-}
 
-LimpiarCamposFormulario() {
-  this.SetNombre( "" );
-  this.SetApellido( "" );
-  this.SetDNI( "" );
-  this.SetCUIL( "" );
-  this.SetCorreo( "" );
-  this.SetClave( "" );
-  this.SetClaveConfirmada( "" );
-}
-// FIN Guardar Usuarios.
+  RegistrarUsuario() {
+    var registro = { email: this.correo.value, password: this.clave.value };
+    this.authService.register(registro);
+  }
+
+  LimpiarCamposFormulario() {
+    this.formRegistro.reset();
+    this.LimpiarFoto();
+  }
+  // FIN Guardar Usuarios.
 
 }
 

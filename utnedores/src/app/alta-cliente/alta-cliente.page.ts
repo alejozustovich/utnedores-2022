@@ -3,6 +3,7 @@ import { AuthService, Usuario } from '../services/auth.service';
 import { ToastController } from '@ionic/angular';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-alta-cliente',
@@ -10,28 +11,20 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
   styleUrls: ['./alta-cliente.page.scss'],
 })
 export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
-
+  formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "1";
   spinner = false;
   esRegistrado = true;
   esAnonimo = false;
   srcUserPhoto = "../../assets/user-photo.png";
-  nombre = "";
-  apellido = "";
-  dni = "";
-  correo = "";
-  clave = "";
-  claveConfirmada = "";
   foto = "";
-  
   fotoFile = false;
   fotoCelular = false;
+  fotoCargada = false;
   file: File;
-
   result = null;
   scanActive = false;
-
   nombreImagen = "";
   base64Image = "";
 
@@ -49,10 +42,65 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private toastController : ToastController,
     private authService: AuthService,
-    private camera: Camera
+    private camera: Camera,
+    private fb: FormBuilder
   ) { 
     this.GuardarId();
     this.AsignarNombreFoto();
+  }
+
+  ngOnInit() {
+    this.formRegistro = this.fb.group(
+      {
+        nombre: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        apellido: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        dni: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(7), Validators.maxLength(8)]],
+        correo: ['', [Validators.required, Validators.email]],
+        clave: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
+        claveConfirmada: ['', [Validators.required]]
+      },
+      {
+        validator: this.sonIguales('clave', 'claveConfirmada')
+      }
+    )
+  }
+
+  private sonIguales(nombreControlA, nombreControlB): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const formGroup = control as FormGroup;
+      const valorControlA = formGroup.get(nombreControlA).value;
+      const valorControlB = formGroup.get(nombreControlB).value;
+
+      if (valorControlA == valorControlB) {
+        return null;
+      } else {
+        return { noCoinciden: true }
+      }
+    }
+  }
+
+  get nombre() {
+    return this.formRegistro.get('nombre');
+  }
+
+  get apellido() {
+    return this.formRegistro.get('apellido');
+  }
+
+  get dni() {
+    return this.formRegistro.get('dni');
+  }
+
+  get correo() {
+    return this.formRegistro.get('correo');
+  }
+
+  get clave() {
+    return this.formRegistro.get('clave');
+  }
+
+  get claveConfirmada() {
+    return this.formRegistro.get('claveConfirmada');
   }
 
   ImagenCelular(){
@@ -70,6 +118,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   Cargar(event: any): void {
     this.file = event.target.files[0];
     this.AsignarImagen();
+    this.fotoCargada = true;
     this.fotoFile = true;
     this.fotoCelular = false;
   }
@@ -81,7 +130,6 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.stopScan();
   }
-
 
   PrimeraMayuscula(cadena: String){
     var mayuscula = cadena[0].toUpperCase();
@@ -96,27 +144,20 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     return mayuscula;
   }
 
-  
   async startScanner(){
-    
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
     if(result.hasContent){
       this.scanActive = false;
       this.result = result.content;
       var cadena = this.result.split("@");
-
-      this.nombre = this.PrimeraMayuscula(cadena[2]);
-      this.apellido = this.PrimeraMayuscula(cadena[1]);
-      this.dni = cadena[4];
-      this.SetNombre(this.nombre);
-      this.SetApellido(this.apellido);
-      this.SetDNI(this.dni);
+      this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+      this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
+      this.dni.setValue(cadena[4]);
     }
   }
 
-  stopScan()
-  {
+  stopScan(){
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
@@ -129,7 +170,6 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     return retorno;
   }
 
-
   AsignarNombreFoto(){
     var date = new Date();
     this.nombreImagen =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
@@ -137,12 +177,11 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   Foto(){
     this.camera.getPicture(this.options).then((imageData) => {
-
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
       this.fotoFile = false;
+      this.fotoCargada = true;
       this.fotoCelular = true;
-
     }, (err) => {
     });
   }
@@ -174,23 +213,16 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     }, 2200);
   }
 
-  SetNombre( value ) { this.nombre = value; }
-  SetApellido( value ) { this.apellido = value; }
-  SetDNI( value ) { this.dni = value; }
-  SetCorreo( value ) { this.correo = value; }
-  SetClave( value ) { this.clave = value; }
-  SetClaveConfirmada( value ) { this.claveConfirmada = value; }
-
 // INICIO Guardar Usuarios.
   GuardarUsuarioRegistrado() {
     var unUsuarioRegistrado: Usuario = {
       idField: "",
       idUsuario: this.idRegistroUsuario,
-      nombre: this.nombre,
-      apellido: this.apellido,
-      correo: this.correo,
-      clave: this.clave,
-      dni: this.dni,
+      nombre: this.nombre.value,
+      apellido: this.apellido.value,
+      correo: this.correo.value,
+      clave: this.clave.value,
+      dni: this.dni.value,
       cuil: "",
       foto: this.nombreImagen,
       perfil: "Cliente",
@@ -224,10 +256,10 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     var unUsuarioAnonimo: Usuario = {
       idField: "",
       idUsuario: this.idRegistroUsuario,
-      nombre: this.nombre,
+      nombre: this.nombre.value,
       apellido: "",
-      correo: this.correo,
-      clave: this.clave,
+      correo: this.correo.value,
+      clave: this.clave.value,
       dni: "",
       cuil: "",
       foto: this.nombreImagen,
@@ -268,7 +300,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     if( this.clave == this.claveConfirmada ) {
         var validarDNI: number = +this.dni;
         if(!isNaN(validarDNI)) {
-          if(this.correo.includes('@')) {
+          if(this.correo.value.includes('@')) {
             this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
           } else {
             this.Alerta('El correo es inválido' , 'danger');
@@ -282,22 +314,11 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   LimpiarCamposFormulario() {
-    this.SetNombre( "" );
-    this.SetApellido( "" );
-    this.SetDNI( "" );
-    this.SetCorreo( "" );
-    this.SetClave( "" );
-    this.SetClaveConfirmada( "" );
+    this.formRegistro.reset();
   }
 // FIN Guardar Usuarios.
 
-
-  ngOnInit() {
-
-  }
-
   CambiarBotonTipoCliente() {
-
     if(this.esRegistrado) {
       this.esRegistrado = false;
       this.esAnonimo = true;
@@ -307,8 +328,4 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       this.esAnonimo = false;
     }
   }
-
-
-
-
 }

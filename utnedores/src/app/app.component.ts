@@ -25,16 +25,15 @@ export class AppComponent {
   initializeApp() {
     SplashScreen.hide();
 
-    this.router.navigateByUrl('home-cliente');
+    // this.router.navigateByUrl('home-cliente');
     this.splash = false;
-    /*this.platform.ready().then(() => {
-      // this.router.navigateByUrl('splash');
+    this.platform.ready().then(() => {
       if (this.splash) {
         setTimeout(() => {
           this.splash = false;
         }, 6000);
       }
-    });*/
+    });
   }
 
   Inicializar()

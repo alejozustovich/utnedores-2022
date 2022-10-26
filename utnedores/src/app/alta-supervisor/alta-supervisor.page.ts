@@ -18,11 +18,9 @@ export class AltaSupervisorPage implements OnInit {
   idRegistroUsuario = "1";
   spinner = false;
   srcUserPhoto = "../../assets/user-photo.png";
-
   fotoFile = false;
   fotoCelular = false;
   file: File;
-  
   result = null;
   scanActive = false;
   fotoCargada = false;
@@ -90,7 +88,6 @@ export class AltaSupervisorPage implements OnInit {
         apellido: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
         dni: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(7), Validators.maxLength(8)]],
         cuil: ['', [Validators.required]],
-        foto: ['', [Validators.required]],
         correo: ['', [Validators.required, Validators.email]],
         clave: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
         claveConfirmada: ['', [Validators.required]]
@@ -181,7 +178,6 @@ export class AltaSupervisorPage implements OnInit {
       this.fotoCargada = true;
       this.fotoFile = false;
       this.fotoCelular = true;
-
     }, (err) => {
     });
   }
@@ -200,10 +196,6 @@ export class AltaSupervisorPage implements OnInit {
 
   get cuil() {
     return this.formRegistro.get('cuil');
-  }
-
-  get foto() {
-    return this.formRegistro.get('foto');
   }
 
   get correo() {
