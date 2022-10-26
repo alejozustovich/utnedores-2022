@@ -9,14 +9,19 @@ import { AuthService, Usuario } from '../services/auth.service';
 })
 export class ListadoClientesPage implements OnInit {
 
-  spinner = false;
+  volumenOn = true;
+  volumenOff = false;
+  spinner = true;
   users: Usuario[];
+  pathFoto = "../../assets/user-photo.png";
+  hayPendientes = true;
 
   constructor(
     private router: Router,
     private authService: AuthService,
   ) {
     this.TraerUsuarios();
+    this.ValidarUsuarios();
   }
 
   TraerUsuarios() {
@@ -28,12 +33,40 @@ export class ListadoClientesPage implements OnInit {
     },3000);
   }
 
-  ngOnInit() {
+  ValidarUsuarios() {
+    setTimeout(() => {
+      let countPendientes = 0;
+      this.users.forEach(u => {
+        if(u.perfil == "Cliente" && u.tipo == "Registrado" && u.aprobado == "No") {
+          countPendientes ++;
+        }
+      });
+      (countPendientes > 0) ? this.hayPendientes = true : this.hayPendientes = false;
+      console.log(this.hayPendientes);
+    }, 3000);
+  }
+
+  ngOnInit() { 
+    setTimeout(() => {
+      this.spinner = false;
+    }, 3000);
   }
 
   Volver(){
     this.spinner = true;
     this.router.navigateByUrl('/home', { replaceUrl: true });
+  }
+
+  ActivarDesactivarSonido() {
+    if(this.volumenOn) {
+      this.volumenOn = false;
+      this.volumenOff = true;
+      localStorage.setItem('sonido', "No");
+    } else {
+      this.volumenOn = true;
+      this.volumenOff = false;
+      localStorage.setItem('sonido', "Si");
+    }
   }
 
 }
