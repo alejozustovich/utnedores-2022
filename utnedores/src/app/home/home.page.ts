@@ -11,7 +11,6 @@ import { UtilidadesService } from '../services/utilidades.service';
 export class HomePage implements OnInit {
 
   volumenOn = true;
-  volumenOff = false;
   spinner = false;
   perfil = "Perfil";
   users: Usuario[];
@@ -22,8 +21,23 @@ export class HomePage implements OnInit {
     private utilidades: UtilidadesService
     ) { 
       this.ActivarSpinner();
+      this.Sonido();
       this.GuardarPerfil();
+      this.ChequearConexion();
     }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
 
   GuardarPerfil(){
     var usuarioLogueado
@@ -42,7 +56,16 @@ export class HomePage implements OnInit {
         }
         this.spinner = false;
       });
-    },3000);
+    },3500);
+  }
+
+  ChequearConexion(){
+    setTimeout(()=>{
+      this.spinner = false;
+      if(this.users.length == 0){
+        //ERROR DE CONEXION
+      }
+    },5500);
   }
 
   ngOnInit() { }
@@ -79,23 +102,16 @@ export class HomePage implements OnInit {
   ActivarDesactivarSonido() {
     if(this.volumenOn) {
       this.volumenOn = false;
-      this.volumenOff = true;
       localStorage.setItem('sonido', "No");
     } else {
       this.volumenOn = true;
-      this.volumenOff = false;
       localStorage.setItem('sonido', "Si");
     }
   }
 
   SonidoEgreso(){
-    var reproducir = localStorage.getItem('sonido');
-    try {
-      if(reproducir.includes("Si")){
-        this.utilidades.PlayLogout();
-      }  
-    } catch (error) {
-      
+    if(this.volumenOn) {
+      this.utilidades.PlayLogout();
     }
     localStorage.clear();
   }
@@ -104,6 +120,7 @@ export class HomePage implements OnInit {
     this.spinner = true;
     this.SonidoEgreso();
     this.authService.logout();
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
 }

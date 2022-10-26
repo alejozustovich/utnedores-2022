@@ -24,15 +24,15 @@ export class AppComponent {
 
   initializeApp() {
     SplashScreen.hide();
-    //this.router.navigateByUrl('listado-clientes');
-    this.splash = false;
+    this.router.navigateByUrl('login');
+    /*this.splash = false;
     this.platform.ready().then(() => {
       if (this.splash) {
         setTimeout(() => {
           this.splash = false;
         }, 6000);
       }
-    });
+    });*/
   }
 
   Inicializar()
