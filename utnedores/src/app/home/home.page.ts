@@ -13,7 +13,7 @@ export class HomePage implements OnInit {
   volumenOn = true;
   volumenOff = false;
   spinner = false;
-  perfil = "";
+  perfil = "Perfil";
   users: Usuario[];
 
   constructor(
