@@ -19,7 +19,6 @@ export class HomeMetrePage implements OnInit {
     private router: Router,
     private utilidades: UtilidadesService
     ) { 
-      this.ActivarSpinner();
       this.Sonido();
       this.GuardarPerfil();
       this.ChequearConexion();
