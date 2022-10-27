@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-home-cliente',
@@ -16,13 +17,36 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   scanActive = false;
   users: Usuario[];
   mesas: Mesa[];
+  listaEspera: Espera[];
 
   volumenOn = true;
   esRegistrado = true;
-  spinner = false;
+  spinner = true;
   qrLocal = "LOCALUTNEDORES";
-  idUsuario = "0";
-  usuarioLogueado: Usuario;
+  usuarioLogueado: Usuario = {
+    idField: "0",
+    idUsuario: "0",
+    nombre: "0",
+    apellido: "0",
+    correo: "0",
+    clave: "0",
+    dni: "0",
+    cuil: "0",
+    foto: "0",
+    perfil: "0",
+    tipo: "0",
+    aprobado: "0"
+  };
+  mensajeEstado = ""; 
+  estado = 0;
+
+  cantidadPersonas = 0;
+  ingresarCantidad = false;
+
+  //0   => Escanear QR Local
+  //1   => En lista de espera
+  //2   => Mesa asignada
+  //3   => 
 
   constructor(
     private toastController : ToastController,
@@ -30,8 +54,14 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private utilidades: UtilidadesService
   ) { 
-    this.ObtenerId();
+    this.ObtenerUsuario();
     this.TraerMesas();
+    this.TraerEsperas();
+
+    setTimeout(()=>{
+      this.spinner = false;
+      this.VerEstado(false);
+    },6000);
 /*
     setTimeout(()=>{
       var date = new Date();
@@ -48,8 +78,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       }
       this.authService.agregarEspera(espera);
     },2500);*/
-
-
   }
 
   Caracteres(dato: string){
@@ -60,11 +88,10 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     return retorno;
   }
 
-  ObtenerId(){
+  ObtenerUsuario(){
     setTimeout(()=>{
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
-        this.idUsuario = user.idUsuario;
-        this.spinner = false;
+        this.usuarioLogueado = (user as Usuario);
       });
     },2500);
   }
@@ -72,6 +99,12 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   TraerMesas(){
     this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
+    });
+  }
+
+  TraerEsperas(){
+    this.authService.listaEspera().subscribe(esperas => {
+      this.listaEspera = esperas;
     });
   }
 
@@ -117,14 +150,20 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   async startScanner(){
     
     var verificar = true;
-    if(this.mesas.length == 0){
+    if(this.mesas.length == 0 || this.mesas == null){
       this.TraerMesas();
       verificar = false;
     }
-    if(this.idUsuario.includes("0")){
-      this.ObtenerId();
+
+    if(this.listaEspera.length == 0 || this.listaEspera == null){
+      this.TraerEsperas();
       verificar = false;
     }
+    if(this.usuarioLogueado.idUsuario.includes("0")){
+      this.ObtenerUsuario();
+      verificar = false;
+    }
+    
     if(verificar){
       this.scanActive = true;
       const result = await BarcodeScanner.startScan();
@@ -138,27 +177,130 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  ModificarEstado(mensaje: string){
+    this.mensajeEstado = mensaje;
+  }
+
+  AbrirOpcionesMesa(){
+
+    //CANTIDAD DE PERONAS: 0
+    //nombre
+    //apellido
+    //foto
+    //idUsuario:
+    //Fecha
+    //Hora
+    //ABRIR VENTANA: INDICAR LA CANTIDAD DE PERSONAS
+      //CANCELAR
+
+      //ACEPTAR
+        //this.estado = 1;//EN LISTA DE ESPERA
+        //this.ModificarEstado("EN LISTA DE ESPERA");
+        //this.AgregarListaEspera();  
+  }
+
+  ModificarOpcionesMesa(){
+      //CANTIDAD DE PERONAS: INDICAR
+      //idField:
+
+      //ABRIR VENTANA: INDICAR LA CANTIDAD DE PERSONAS
+        //CANCELAR
+
+        //ACEPTAR
+          //this.estado = 1;//EN LISTA DE ESPERA
+          //this.ModificarEstado("EN LISTA DE ESPERA");
+          //this.ModificarListaEspera(); 
+  }
+
+  AgregarListaEspera(){
+
+  }
+
+  ModificarListaEspera(){
+
+  }
+
+  AbrirMenu(){
+
+  }
+
+  VerEstado(flag: boolean){
+    this.estado = 0;  //ESCANEAR QR LOCAL
+
+    this.listaEspera.forEach(u => {
+      if(u.idUsuario == this.usuarioLogueado.idUsuario) {
+        this.estado = 1;//EN LISTA DE ESPERA
+        this.ModificarEstado("EN LISTA DE ESPERA");
+        if(flag){
+          this.ModificarOpcionesMesa();
+        }
+      }
+    });
+
+    if(this.estado == 0){
+      var mesasDisponibles = "";
+      var cant = 0;
+      this.mesas.forEach(u => {
+        if(u.idUsuario == this.usuarioLogueado.idUsuario) {
+          this.estado = 2;//TIENE AL MENOS 1 MESA ASIGNADA
+
+          cant = cant + 1;
+          if(cant == 1){
+            mesasDisponibles = u.numMesa;
+          }else{
+            mesasDisponibles = mesasDisponibles + ", " + u.numMesa;
+          }
+        }
+      });
+      if(cant == 0){
+        this.ModificarEstado("ESCANEAR CÓDIGO QR");
+      }else{
+        if(cant == 1){
+          this.ModificarEstado(("MESA DISPONIBLE: " + mesasDisponibles));
+        }else{
+          this.ModificarEstado(("MESAS DISPONIBLES: " + mesasDisponibles));
+        }
+      }
+    }
+  }
+
+  
+
   AnalizarResultado(){
 
     if(this.result.includes(this.qrLocal)){
-      //PREGUNTAR MESA POR MESA SI ESTA EL ID DE ESTE USUARIO
-        //SI => YA TIENE LA MESA X ASIGNADA
-        //NO
-          //BUSCO EN LISTA DE ESPERA
-            //SI  => YA ESTA EN LA LISTA DE ESPERA
-            //NO  => LO AGREGO EN LA LISTA DE ESPERA
-    }else{
-      var mesaNoEncontrada = true;
-      for(var i = 0 ; i < this.mesas.length ; i++ ){
-        if(this.result.includes(this.mesas[i].qr)){
-          //ENCUENTRO MESA Y PREGUNTO SI TIENE ASIGNADO EL ID DEL USUARIO
-            //SI  =>  ABRO OPCIONES
-            //NO  =>  MESA NO DISPONIBLE
-          mesaNoEncontrada = false;
-        }
+      
+      this.VerEstado(true);
+
+      if(this.estado == 0){
+        this.AbrirOpcionesMesa();
       }
-      if(mesaNoEncontrada){
+
+    }else{
+      var estadoMesa = 0;
+      //0 MESA NO ENCONTRADA
+      //1 ENCONTRADA Y NO DISPONIBLE
+      //2 ENCONTRADA Y ASIGNADA
+
+      this.mesas.forEach(u => {
+        if(this.result.includes(u.qr)){
+          estadoMesa = 1;
+          if(this.usuarioLogueado.idUsuario == u.idUsuario){
+            estadoMesa = 2;
+          }
+        }
+      });
+
+      if(estadoMesa == 0){
         this.Alerta("Código inválido", 'danger');
+      }else{
+        if(estadoMesa == 1){
+          this.Alerta("MESA NO ASIGNADA", 'danger');
+        }else{
+          if(estadoMesa == 2){
+            this.AbrirMenu();
+          }
+        }
       }
     }
   }

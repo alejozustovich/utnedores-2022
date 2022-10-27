@@ -162,3 +162,38 @@
       transform: translate(-50%, -50%);
       width: 80%;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    .custom-loading2{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 999;
+      background: rgba(2, 2, 2, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .divInterno2{
+      width: 80%;
+      height: 200px;
+      border-style: solid;
+      border-color: rgb(247,216,129);
+      background-color: rgba(247,216,129,0.9);
+    }
