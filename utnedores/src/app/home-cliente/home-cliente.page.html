@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" [hidden]="scanActive">
 	<ion-toolbar>
 		<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
 		<ion-button id="btn_toolbar" (click)="CerrarSesion()">
@@ -7,23 +7,32 @@
 	</ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [hidden]="scanActive">
 	<ion-grid>
 		<div class="contenido">
 			<img src="../../assets/cliente.png" alt="" width="50" height="50">
 			<h2>Cliente</h2>
 			<button (click)="IrEncuestas()"><img src="../../assets/home-cliente/ver-encuestas.png" width="30" height="30"> Encuestas</button>
 			<button (click)="IrReservar()" *ngIf="esRegistrado"><img src="../../assets/home-cliente/reservar.png" width="30" height="30"> Reservar</button>
-			<button (click)="IrEscanear()"><img src="../../assets/home-cliente/escanear-qr.png" width="30" height="30"> Escanear QR</button>
+			<button (click)="startScanner()"><img src="../../assets/home-cliente/escanear-qr.png" width="30" height="30"> Escanear QR</button>
 		</div>
 	</ion-grid>
 	<ion-fab horizontal="end" vertical="bottom" >
 		<ion-fab-button size="small" (click)="ActivarDesactivarSonido()">
-			<ion-icon *ngIf="!volumenOff" name="volume-high-outline"></ion-icon>
+			<ion-icon *ngIf="volumenOn" name="volume-high-outline"></ion-icon>
 			<ion-icon *ngIf="!volumenOn" name="volume-mute-outline"></ion-icon>
 		</ion-fab-button>
 	</ion-fab>
 </ion-content>
+
+<ion-row class="scanner-buttons" [hidden]="!scanActive">
+	<ion-col class="ion-no-padding">
+	  <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
+	</ion-col>
+</ion-row>
+
+<div class="scan-box" [hidden]="!scanActive">
+</div>
 
 <div class="custom-loading" *ngIf="spinner">
 	<div class="spinner">

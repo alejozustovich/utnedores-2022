@@ -11,20 +11,34 @@ import { UtilidadesService } from '../services/utilidades.service';
 export class HomePage implements OnInit {
 
   volumenOn = true;
-  spinner = false;
+  spinner = true;
   perfil = "Perfil";
-  users: Usuario[];
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private utilidades: UtilidadesService
     ) { 
-      this.ActivarSpinner();
       this.Sonido();
-      this.GuardarPerfil();
-      this.ChequearConexion();
+      this.ObtenerPerfil();
+      this.DesactivarSpinner();
     }
+
+  DesactivarSpinner(){
+    setTimeout(()=>{
+      this.spinner = false;
+    },5000);
+  }
+
+  ObtenerPerfil(){
+    setTimeout(()=>{
+      this.authService.getUser(this.authService.usuarioActual()).then(user => {
+        this.perfil = user.perfil;
+        this.spinner = false;
+      });
+    },2500);
+  }
+
 
   Sonido(){
     try {
@@ -39,34 +53,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  GuardarPerfil(){
-    var usuarioLogueado
-    setTimeout(()=>{
-      usuarioLogueado = this.authService.usuarioActual();
-    },2000);
-    setTimeout(()=>{
-      this.authService.getUsers().subscribe(allUsers => {
-        this.users = allUsers;
-        for(var i = 0 ; i < allUsers.length ; i++)
-        {
-          if(((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {
-            this.perfil = this.users[i].perfil;
-            i = allUsers.length;
-          }
-        }
-        this.spinner = false;
-      });
-    },3500);
-  }
-
-  ChequearConexion(){
-    setTimeout(()=>{
-      this.spinner = false;
-      if(this.users.length == 0){
-        //ERROR DE CONEXION
-      }
-    },9000);
-  }
 
   ngOnInit() {}
 

@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, Producto } from '../services/auth.service';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from '@angular/fire/auth';
-import { Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { getStorage, ref } from "firebase/storage";
-import { getDownloadURL } from '@angular/fire/storage';
+import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-alta-producto',
@@ -41,11 +37,13 @@ export class AltaProductoPage implements OnInit {
   public qrCodeDownloadLink: SafeUrl = "";
 
   constructor(
+    private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder
   ) {
-    this.Actualizar();
+    this.TraerProductos();
+    this.AsignarNombreFotos();
   }
 
   ngOnInit(): void {
@@ -97,10 +95,6 @@ export class AltaProductoPage implements OnInit {
     }
   }
 
-  Actualizar() {
-    this.TraerProductos();
-    this.AsignarNombreFotos();
-  }
 
   onChangeURL(url: SafeUrl) {
     this.qrCodeDownloadLink = url;
@@ -159,10 +153,6 @@ export class AltaProductoPage implements OnInit {
     }, 6000);
   }
 
-  ImprimirMensaje(mensaje) {
-    console.log(mensaje);
-  }
-
   LimpiarFoto(num: number) {
     this.files[num] = null;
     this.srcProductPhoto[num] = this.prodPhoto;
@@ -219,16 +209,33 @@ export class AltaProductoPage implements OnInit {
     }
     else {
       if (cant == 1) {
-        this.ImprimirMensaje("Seleccionar 1 imagen");
+        this.Alerta("Seleccionar 1 imagen", 'info');
       } else {
-        this.ImprimirMensaje(("Seleccionar " + cant.toString() + " imágenes"));
+        this.Alerta(("Seleccionar " + cant.toString() + " imágenes"), 'info');
       }
     }
   }
 
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 1500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+
+    setTimeout(async () => {
+      await toast.present();
+    }, 2200);
+  }
+
   AgregarProducto() {
-    if (this.numProducto == "0") {
+    this.spinner = true;
+    if (this.numProducto.includes("0")) {
       //ERROR
+      this.spinner = false
+      this.Alerta("Ocurrió un error! Reintentar", 'danger');
       this.TraerProductos();
     }
     else {
@@ -247,12 +254,13 @@ export class AltaProductoPage implements OnInit {
         precio: this.precio.value,
         qr: this.myAngularxQrCode
       }
-      console.log(unProducto);
       this.formProducto.reset();
       this.srcProductPhoto = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
       this.fotosLleno = false;
-      // this.SubirImagenes();
-      // this.authService.addProduct(unProducto);
+      this.SubirImagenes();
+      this.authService.addProduct(unProducto);
+      this.spinner = false;
+      //VERIFICAR ALTA
     }
   }
 

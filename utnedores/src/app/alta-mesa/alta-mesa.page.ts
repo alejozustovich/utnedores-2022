@@ -3,6 +3,7 @@ import { AuthService, Mesa } from '../services/auth.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-alta-mesa',
@@ -27,11 +28,13 @@ export class AltaMesaPage implements OnInit {
   nombreFoto = "";
 
   constructor(
+    private toastController: ToastController,
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router
   ) {
-    this.Actualizar();
+    this.AsignarNombreFotos();
+    this.TraerMesas();
   }
 
   Volver(){
@@ -54,11 +57,6 @@ export class AltaMesaPage implements OnInit {
 
   get capacidad() {
     return this.formMesa.get('capacidad');
-  }
-
-  Actualizar() {
-    this.TraerMesas();
-    this.AsignarNombreFotos();
   }
 
   LimpiarFoto() {
@@ -101,8 +99,18 @@ export class AltaMesaPage implements OnInit {
     this.fotosLleno = true;
   }
 
-  ImprimirMensaje(mensaje) {
-    console.log(mensaje);
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 1500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+
+    setTimeout(async () => {
+      await toast.present();
+    }, 2200);
   }
 
   AsignarNumeroMesa() {
@@ -124,11 +132,14 @@ export class AltaMesaPage implements OnInit {
     (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
+
+
   AgregarMesa() {
-    if (this.numMesa == "0") {
-      //ERROR
+    this.spinner = true;
+    if (this.numMesa.includes("0")) {
+      this.spinner = false;
+      this.Alerta("Ocurrió un error! Reintentar", 'danger');
       this.TraerMesas();
-      this.ImprimirMensaje("Surgio un error! Reintentar");
     }
     else {
       var unaMesa: Mesa = {
@@ -143,13 +154,15 @@ export class AltaMesaPage implements OnInit {
         cuenta: "0",
         pedirCuenta: "No"
       };
-      console.log(unaMesa);
-      this.formMesa.reset();
-      this.LimpiarFoto();
       this.authService.addTable(unaMesa);
       setTimeout(() => {
-         var imagenStorage = "mesas/" + this.nombreFoto;
-         this.authService.subirImagenFile(imagenStorage, this.file);
+        this.spinner = false;
+        var imagenStorage = "mesas/" + this.nombreFoto;
+        this.authService.subirImagenFile(imagenStorage, this.file);
+        this.Alerta("Mesa agregada con éxito!", 'success');
+        //REDIRIGIR
+      //this.formMesa.reset();
+      //this.LimpiarFoto();
       }, 3000);
     }
   }

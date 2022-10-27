@@ -29,7 +29,6 @@ export class LoginPage implements OnInit {
     private utilidades: UtilidadesService
   ) {
     this.TraerUsuarios();
-    localStorage.setItem('sonido', "Si");
   }
 
   TraerUsuarios() {
@@ -50,7 +49,6 @@ export class LoginPage implements OnInit {
         this.selectTitle = "Acceso rápido";
         this.selectNoDisponible = false;
       }
-      
     });
   }
 
@@ -94,6 +92,11 @@ export class LoginPage implements OnInit {
     this.utilidades.PlayLogin();
   }
 
+  Registrarse(){
+    this.spinner = true;
+    this.router.navigateByUrl('/alta-cliente', { replaceUrl: true });
+  }
+
   async iniciarSesion() {
     this.spinner = true;
     const data = { email: this.email.value, password: this.password.value }
@@ -106,6 +109,7 @@ export class LoginPage implements OnInit {
           break;
         }
       }
+      localStorage.setItem('sonido', "Si");
       if (this.perfil.includes("Dueño") || this.perfil.includes("Supervisor")) {
         this.router.navigateByUrl('/home', { replaceUrl: true });
         this.SonidoIngreso();

@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-cliente',
@@ -13,8 +14,8 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn,
 export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   formRegistro: FormGroup;
   users: Usuario[];
-  idRegistroUsuario = "1";
-  spinner = false;
+  idRegistroUsuario = "0";
+  spinner = true;
   esRegistrado = true;
   esAnonimo = false;
   srcUserPhoto = "../../assets/user-photo.png";
@@ -27,7 +28,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   scanActive = false;
   nombreImagen = "";
   base64Image = "";
-
+  perfil = "Perfil";
+  
   options: CameraOptions = {
     quality: 50,
     allowEdit: false,
@@ -43,10 +45,45 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     private toastController : ToastController,
     private authService: AuthService,
     private camera: Camera,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) { 
     this.GuardarId();
     this.AsignarNombreFoto();
+    
+    setTimeout(()=>{
+      this.ObtenerPerfil();
+    },2500);
+    this.DesactivarSpinner();
+  }
+
+  ObtenerPerfil(){
+    this.authService.getUser(this.authService.usuarioActual()).then(user => {
+      this.perfil = user.perfil;
+      this.spinner = false;
+    });
+  }
+
+  DesactivarSpinner(){
+    setTimeout(()=>{
+      this.spinner = false;
+    },5000);
+  }
+  
+
+  Volver(){
+    this.spinner = true;
+    if(this.perfil.includes('Cliente') == true){
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    }else{
+      if(this.perfil.includes('Empleado') == true){
+        this.router.navigateByUrl('/home-metre', { replaceUrl: true });
+      }else{
+        this.spinner = false;
+        this.ObtenerPerfil();
+        this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      }
+    }
   }
 
   ngOnInit() {
@@ -293,22 +330,27 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   GuardarUsuario() {
     this.spinner = true;
 
-    setTimeout(() => {
-      this.spinner = false;
-    }, 2000);
-
     if( this.clave == this.claveConfirmada ) {
         var validarDNI: number = +this.dni;
         if(!isNaN(validarDNI)) {
           if(this.correo.value.includes('@')) {
-            this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
+            if(!this.idRegistroUsuario.includes("0")){
+              this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
+            }else{
+              this.spinner = false;
+              this.GuardarId();
+              this.Alerta("Ocurrió un error! Reintentar", 'danger');
+            }
           } else {
+            this.spinner = false;
             this.Alerta('El correo es inválido' , 'danger');
           }
         } else {
+          this.spinner = false;
           this.Alerta('El DNI es inválido' , 'danger');
         }
     } else {
+      this.spinner = false;
       this.Alerta('Las claves no coinciden' , 'danger');
     }
   }

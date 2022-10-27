@@ -95,5 +95,10 @@ export class ListadoClientesPage implements OnInit {
     //ABRIR VENTANA
       //PEDIR MOTIVO
         //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
+        //this.Rechazar(idField);
+  }
+
+  Rechazar(idField){
+    this.authService.rechazarUsuario(idField);
   }
 }

@@ -15,7 +15,7 @@ export class AltaSupervisorPage implements OnInit {
   users: Usuario[];
   formRegistro: FormGroup;
   perfil: string = 'Dueño';
-  idRegistroUsuario = "1";
+  idRegistroUsuario = "0";
   spinner = false;
   srcUserPhoto = "../../assets/user-photo.png";
   fotoFile = false;
@@ -251,52 +251,60 @@ export class AltaSupervisorPage implements OnInit {
 
   async registrarUsuario() {
     this.spinner = true;
-    const usuario: Usuario = {
-      idField: "",
-      idUsuario: this.idRegistroUsuario,
-      nombre: this.nombre.value,
-      apellido: this.apellido.value,
-      correo: this.correo.value,
-      clave: this.clave.value,
-      dni: this.dni.value,
-      cuil: this.cuil.value,
-      foto: this.nombreImagen,
-      perfil: this.perfil,
-      tipo: this.perfil,
-      aprobado: ""
-    };
-    const registro = { email: usuario.correo, password: usuario.clave };
-    console.log(usuario);
-    if (this.verificarUsuario(usuario)) {
-      try {
-        this.authService.addUser(usuario);
 
-        setTimeout(() => {
-          if(this.fotoCelular){
-            var rutaImagen = "usuarios/" + this.nombreImagen;
-            this.authService.subirImagenBase64(rutaImagen, this.base64Image);
-          }
-      
-          if(this.fotoFile){
-            var imagenStorage = "usuarios/" + this.nombreImagen;
-            this.authService.subirImagenFile(imagenStorage, this.file);
-          }
-        }, 2000);
+    if(!this.idRegistroUsuario.includes("0")){
+      const usuario: Usuario = {
+        idField: "",
+        idUsuario: this.idRegistroUsuario,
+        nombre: this.nombre.value,
+        apellido: this.apellido.value,
+        correo: this.correo.value,
+        clave: this.clave.value,
+        dni: this.dni.value,
+        cuil: this.cuil.value,
+        foto: this.nombreImagen,
+        perfil: this.perfil,
+        tipo: this.perfil,
+        aprobado: ""
+      };
+      const registro = { email: usuario.correo, password: usuario.clave };
+      console.log(usuario);
+      if (this.verificarUsuario(usuario)) {
+        try {
+          this.authService.addUser(usuario);
 
-        setTimeout(() => {
-          this.authService.register(registro);
-        }, 4000);
+          setTimeout(() => {
+            if(this.fotoCelular){
+              var rutaImagen = "usuarios/" + this.nombreImagen;
+              this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+            }
+        
+            if(this.fotoFile){
+              var imagenStorage = "usuarios/" + this.nombreImagen;
+              this.authService.subirImagenFile(imagenStorage, this.file);
+            }
+          }, 2000);
 
-        this.presentToast('Usuario creado correctamente!', 'success');
-      } catch (e) {
-        console.log(e);
-        this.presentToast('Error al crear usuario!', 'danger');
-      } finally {
+          setTimeout(() => {
+            this.authService.register(registro);
+          }, 4000);
+
+          this.presentToast('Usuario creado correctamente!', 'success');
+        } catch (e) {
+          console.log(e);
+          this.presentToast('Error al crear usuario!', 'danger');
+        } finally {
+          this.spinner = false;
+        }
+      } else {
         this.spinner = false;
+        this.presentToast('Ya existe un usuario con esos datos!', 'danger');
       }
-    } else {
+
+    }else{
       this.spinner = false;
-      this.presentToast('Ya existe un usuario con esos datos!', 'danger');
+      this.presentToast("Ocurrió un error! Reintentar", 'danger');
+      this.traerUsuarios();
     }
   }
 

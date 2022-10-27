@@ -12,9 +12,10 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn,
   styleUrls: ['./alta-empleado.page.scss'],
 })
 export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
+  
   formRegistro: FormGroup;
   users: Usuario[];
-  idRegistroUsuario = "1";
+  idRegistroUsuario = "0";
   spinner = false;
   esRegistrado = true;
   esAnonimo = false;
@@ -239,6 +240,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+
   async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -256,51 +258,54 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   // INICIO Guardar Usuarios.
   GuardarEmpleado() {
     this.spinner = true;
-    setTimeout(() => {
+
+    if(!this.idRegistroUsuario.includes("0")){
+      if (!this.fotoCelular && !this.fotoFile) {
+        this.nombreImagen = "";
+      }
+      var unUsuario: Usuario = {
+        idField: "",
+        idUsuario: this.idRegistroUsuario,
+        nombre: this.nombre.value,
+        apellido: this.apellido.value,
+        correo: this.correo.value,
+        clave: this.clave.value,
+        dni: this.dni.value,
+        cuil: this.cuil.value,
+        foto: this.nombreImagen,
+        perfil: "Empleado",
+        tipo: this.tipo.value,
+        aprobado: ""
+      };
+  
+      this.authService.addUser(unUsuario);
+      setTimeout(() => {
+  
+        if (this.fotoCelular) {
+           var rutaImagen = "usuarios/" + this.nombreImagen;
+           this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+         }
+  
+         if (this.fotoFile) {
+           var imagenStorage = "usuarios/" + this.nombreImagen;
+           this.authService.subirImagenFile(imagenStorage, this.file);
+         }
+  
+      }, 2000);
+  
+      setTimeout(() => {
+        this.RegistrarUsuario();
+      }, 4000);
+  
+      this.Alerta('Empleado registrado correctamente', 'success');
+      setTimeout(() => {
+        //Redirigir
+      }, 6000);
+    }else{
       this.spinner = false;
-    }, 2000);
-    if (!this.fotoCelular && !this.fotoFile) {
-      this.nombreImagen = "";
-    }
-    var unUsuario: Usuario = {
-      idField: "",
-      idUsuario: this.idRegistroUsuario,
-      nombre: this.nombre.value,
-      apellido: this.apellido.value,
-      correo: this.correo.value,
-      clave: this.clave.value,
-      dni: this.dni.value,
-      cuil: this.cuil.value,
-      foto: this.nombreImagen,
-      perfil: "Empleado",
-      tipo: this.tipo.value,
-      aprobado: ""
-    };
-    console.log(unUsuario);
-
-    // this.authService.addUser(unUsuario);
-    // setTimeout(() => {
-
-    //   if (this.fotoCelular) {
-    //     var rutaImagen = "usuarios/" + this.nombreImagen;
-    //     this.authService.subirImagenBase64(rutaImagen, this.base64Image);
-    //   }
-
-    //   if (this.fotoFile) {
-    //     var imagenStorage = "usuarios/" + this.nombreImagen;
-    //     this.authService.subirImagenFile(imagenStorage, this.file);
-    //   }
-
-    // }, 2000);
-
-    setTimeout(() => {
-      //this.RegistrarUsuario();
-    }, 4000);
-
-    this.Alerta('Empleado registrado correctamente', 'success');
-    setTimeout(() => {
-      //Redirigir
-    }, 6000);
+      this.GuardarId();
+      this.Alerta("Ocurrió un error! Reintentar", 'danger');
+    }    
   }
 
   RegistrarUsuario() {
