@@ -67,12 +67,13 @@ const routes: Routes = [
     loadChildren: () => import('./reservas/reservas.module').then( m => m.ReservasPageModule)
   },
   {
+    path: 'lista-espera',
+    loadChildren: () => import('./lista-espera/lista-espera.module').then( m => m.ListaEsperaPageModule)
+  },
+  {
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full'
-  },  {
-    path: 'lista-espera',
-    loadChildren: () => import('./lista-espera/lista-espera.module').then( m => m.ListaEsperaPageModule)
   }
 
 
