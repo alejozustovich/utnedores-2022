@@ -3,10 +3,14 @@
     <div class="logo ion-text-center">
       <img src="../../assets/Logo-bg.png" alt="logo" width="250px" />
     </div>
-    <ion-select [disabled]="selectNoDisponible" placeholder="Acceso rápido" (ionChange)="llenarCampos($event)" [interfaceOptions]="customAlertOptions">
+
+    <form style="margin-top: -10px;">
+      <ion-select [disabled]="selectNoDisponible" placeholder={{selectTitle}} (ionChange)="llenarCampos($event)" [interfaceOptions]="customAlertOptions">
       <ion-select-option *ngFor="let user of users; let i=index" value="{{i}}">
-        {{user.perfil}}: {{user.correo}}</ion-select-option>
+        {{user.tipo}}: {{user.correo}}</ion-select-option>
       </ion-select>
+    </form>
+
     <div class="card">
       <h1 class="text-center formato mb-3">Inicio de sesión</h1>
       <form [formGroup]="formLogin" (ngSubmit)="iniciarSesion()">

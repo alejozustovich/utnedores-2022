@@ -262,7 +262,7 @@ export class AltaSupervisorPage implements OnInit {
       cuil: this.cuil.value,
       foto: this.nombreImagen,
       perfil: this.perfil,
-      tipo: "",
+      tipo: this.perfil,
       aprobado: ""
     };
     const registro = { email: usuario.correo, password: usuario.clave };

@@ -65,10 +65,10 @@ export class HomePage implements OnInit {
       if(this.users.length == 0){
         //ERROR DE CONEXION
       }
-    },5500);
+    },9000);
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   ActivarSpinner(){
     this.spinner = true;
@@ -124,4 +124,3 @@ export class HomePage implements OnInit {
   }
 
 }
-

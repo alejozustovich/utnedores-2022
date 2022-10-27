@@ -19,6 +19,7 @@ export class LoginPage implements OnInit {
   perfil = "";
   tipo = "";
   selectNoDisponible = true;
+  selectTitle = "Cargando...";
 
   constructor(
     private authService: AuthService,
@@ -36,14 +37,20 @@ export class LoginPage implements OnInit {
       this.users = allUsers;
       for(var i = 0 ; i < this.users.length - 1; i++){
         for(var k = i + 1; k < this.users.length ; k++){
-          if((this.users[i].perfil).localeCompare(this.users[k].perfil) == 1){
+          if((this.users[i].tipo).localeCompare(this.users[k].tipo) == 1){
             var userA = this.users[i];
             this.users[i] = this.users[k];
             this.users[k] = userA;
           }
         }
       }
-      this.selectNoDisponible = false;
+      if(this.users.length == 0){
+        this.selectTitle = "Error en la conexión";
+      }else{
+        this.selectTitle = "Acceso rápido";
+        this.selectNoDisponible = false;
+      }
+      
     });
   }
 

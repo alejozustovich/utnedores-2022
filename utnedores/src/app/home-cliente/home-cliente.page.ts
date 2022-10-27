@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UtilidadesService } from '../services/utilidades.service';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-cliente',
@@ -15,6 +16,7 @@ export class HomeClientePage implements OnInit {
   spinner = false;
 
   constructor(
+    private router: Router,
     private authService: AuthService,
     private utilidades: UtilidadesService
   ) { }
@@ -50,5 +52,6 @@ export class HomeClientePage implements OnInit {
     this.spinner = true;
     this.SonidoEgreso();
     this.authService.logout();
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }
