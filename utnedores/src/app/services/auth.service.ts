@@ -27,9 +27,12 @@ export interface Usuario{
 	aprobado: string;
 }
 
-export interface ListaEspera{
+export interface Espera{
 	idField: string;
 	idUsuario: string;
+	nombre: string;
+	apellido: string;
+	foto: string;
 	fecha: string;
 	hora: string;
 	cantPersonas: string;
@@ -143,10 +146,15 @@ export class AuthService {
 		return (await getDocs(q)).docs[0].data();
 	}
 
-	listaEspera(): Observable<ListaEspera[]>
+	agregarEspera(espera: Espera){
+		const esperaRef = collection(this.firestore, 'listaespera');
+		return addDoc(esperaRef, espera);
+	}
+
+	listaEspera(): Observable<Espera[]>
 	{
 		const listaRef = collection(this.firestore, 'listaespera');
-		return collectionData(listaRef, {idField: 'idField'}) as Observable<ListaEspera[]>;
+		return collectionData(listaRef, {idField: 'idField'}) as Observable<Espera[]>;
 	}
 
 	aceptarUsuario(idField){

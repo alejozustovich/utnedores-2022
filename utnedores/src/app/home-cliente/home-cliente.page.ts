@@ -1,5 +1,5 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Mesa, Usuario } from '../services/auth.service';
+import { AuthService, Mesa, Usuario, Espera } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
@@ -32,8 +32,33 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   ) { 
     this.ObtenerId();
     this.TraerMesas();
+/*
+    setTimeout(()=>{
+      var date = new Date();
+
+      var espera: Espera = {
+        fecha: this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString(),
+        hora : this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString()),
+        idUsuario : "10",
+        nombre : "Luis",
+        apellido : "Casado",
+        foto : "10.jpg",
+        cantPersonas : "6",
+        idField: ""
+      }
+      this.authService.agregarEspera(espera);
+    },2500);*/
+
+
   }
 
+  Caracteres(dato: string){
+    var retorno = dato.toString();
+    if(dato.length == 1){
+      retorno = "0" + retorno;
+    }
+    return retorno;
+  }
 
   ObtenerId(){
     setTimeout(()=>{
@@ -82,7 +107,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    BarcodeScanner.prepare();
+    //BarcodeScanner.prepare();
   }
 
   ngOnDestroy() {

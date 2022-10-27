@@ -24,7 +24,7 @@ export class AppComponent {
 
   initializeApp() {
     SplashScreen.hide();
-    this.router.navigateByUrl('login');
+    this.router.navigateByUrl('lista-espera');
     /*this.splash = false;
     this.platform.ready().then(() => {
       if (this.splash) {

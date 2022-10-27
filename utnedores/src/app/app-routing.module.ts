@@ -69,14 +69,7 @@ const routes: Routes = [
   {
     path: 'lista-espera',
     loadChildren: () => import('./lista-espera/lista-espera.module').then( m => m.ListaEsperaPageModule)
-  },
-  {
-    path: '**',
-    redirectTo: 'login',
-    pathMatch: 'full'
   }
-
-
 ];
 @NgModule({
   imports: [
