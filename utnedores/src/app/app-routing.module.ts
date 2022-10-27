@@ -70,7 +70,11 @@ const routes: Routes = [
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full'
+  },  {
+    path: 'lista-espera',
+    loadChildren: () => import('./lista-espera/lista-espera.module').then( m => m.ListaEsperaPageModule)
   }
+
 
 ];
 @NgModule({

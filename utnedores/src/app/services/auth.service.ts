@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { waitForAsync } from '@angular/core/testing';
 import { Auth,	signInWithEmailAndPassword,	createUserWithEmailAndPassword,	signOut } from '@angular/fire/auth';
-import { Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc } from '@angular/fire/firestore';
+import { query, where, Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc, getDocs } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { deleteObject, listAll, getDownloadURL, uploadString } from '@angular/fire/storage';
@@ -135,6 +135,18 @@ export class AuthService {
 		private firestore: Firestore
 	) {
 
+	}
+
+	async getUser(correo) {
+		const userRef = collection(this.firestore, 'users');
+		const q = query(userRef, where("correo", "==", correo));
+		return (await getDocs(q)).docs[0].data();
+	}
+
+	listaEspera(): Observable<ListaEspera[]>
+	{
+		const listaRef = collection(this.firestore, 'listaespera');
+		return collectionData(listaRef, {idField: 'idField'}) as Observable<ListaEspera[]>;
 	}
 
 	aceptarUsuario(idField){
