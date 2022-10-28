@@ -16,7 +16,9 @@
 			<button (click)="IrReservar()" *ngIf="esRegistrado"><img src="../../assets/home-cliente/reservar.png" width="30" height="30"> Reservar</button>
 			<button (click)="startScanner()"><img src="../../assets/home-cliente/escanear-qr.png" width="30" height="30"> Escanear QR</button>
 		</div>
-		{{mensajeEstado}}
+		<div id="msjEstado">
+			{{mensajeEstado}}
+		</div>
 	</ion-grid>
 	<ion-fab horizontal="end" vertical="bottom" >
 		<ion-fab-button size="small" (click)="ActivarDesactivarSonido()">
@@ -52,12 +54,14 @@
 
 	<div class="divInterno2">
 		<form class="form">
-			
-			+	{{cantidadPersonas}}  -
-			<br>
-			<br>
-			<ion-button (click)="Aceptar()" style="font-family: 'Rock Salt', cursive; margin-left: 15%; width: 70%; margin-top: 25px; font-size: 1em; color: red; --background:rgb(247,216,129);">Aceptar</ion-button>
-			<ion-button (click)="Cancelar()" style="font-family: 'Rock Salt', cursive; margin-left: 15%; width: 70%; margin-top: 5px; font-size: 1em; color: red; --background:rgb(247,216,129);">Cancelar</ion-button>
+			<h2>Cantidad de personas</h2>
+			<p>
+				<ion-button fill="clear">+</ion-button>
+					{{cantidadPersonas}}
+				<ion-button fill="clear">-</ion-button>
+			</p>
+			<ion-button (click)="Aceptar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Aceptar</ion-button>
+			<ion-button (click)="Cancelar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
 		</form>
 	</div>
 
