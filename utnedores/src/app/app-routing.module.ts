@@ -69,7 +69,11 @@ const routes: Routes = [
   {
     path: 'lista-espera',
     loadChildren: () => import('./lista-espera/lista-espera.module').then( m => m.ListaEsperaPageModule)
+  },  {
+    path: 'encuesta-clientes',
+    loadChildren: () => import('./encuesta-clientes/encuesta-clientes.module').then( m => m.EncuestaClientesPageModule)
   }
+
 ];
 @NgModule({
   imports: [

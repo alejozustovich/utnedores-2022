@@ -31,15 +31,35 @@ ion-content {
   );
 }
 
+hr{
+  margin: 0;
+  opacity: .75;
+  border-top: 2px solid white;
+}
+
+.preguntas {
+  background: rgba(46, 17, 3, 0.3);
+  border: 2px solid white;
+  border-radius: 5px;
+  margin-bottom: 2px;
+  color: #fff;
+}
+
+.error-borde {
+  box-shadow: 0px 0px 3px 3px #ff3c3c;
+}
+
 ion-input {
   color: rgb(255, 255, 255);
   background-color: rgba(46, 17, 3, 0.5);
   border: 2px solid white;
   border-radius: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
   opacity: 70%;
   text-align: center;
+}
+
+.sc-ion-input-md-h{
+  --padding-start: 0 !important;
 }
 
 ion-input:hover {
@@ -52,9 +72,15 @@ ion-button {
   white-space: normal;
 }
 
+ion-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 ion-col {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: flex-start;
   padding: 0;
   ion-radio {
@@ -81,39 +107,12 @@ ion-checkbox::part(container) {
   --border-color-checked: rgba(46, 17, 3, 0.8);
 }
 
-.foto {
-  margin-top: 5px;
-  --background: rgba(46, 17, 3, 0.3);
-  border: 2px solid white;
-  border-radius: 5px;
-  margin-bottom: 2px;
-}
-
-.pregunta {
-  background: rgba(46, 17, 3, 0.3);
-  border: 2px solid white;
-  padding: 8px;
-  border-radius: 5px;
-  margin-bottom: 2px;
-  color: #fff;
-}
-
-.error-borde {
-  box-shadow: 0px 0px 3px 3px #ff3c3c;
-}
-
-ion-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 ion-select {
-  margin-top: 5px;
   text-align: center;
   background-color: rgba(46, 17, 3, 0.3) !important;
   border-radius: 10px !important;
   width: 100%;
+  border: 2px solid white;
 }
 ion-select::part(icon) {
   margin-right: 7px;

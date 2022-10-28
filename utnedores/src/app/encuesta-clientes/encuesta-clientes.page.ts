@@ -1,40 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, Usuario } from '../services/auth.service';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AuthService, Usuario } from '../services/auth.service';
 
 @Component({
-  selector: 'app-encuesta-empleados',
-  templateUrl: './encuesta-empleados.page.html',
-  styleUrls: ['./encuesta-empleados.page.scss'],
+  selector: 'app-encuesta-clientes',
+  templateUrl: './encuesta-clientes.page.html',
+  styleUrls: ['./encuesta-clientes.page.scss'],
 })
-export class EncuestaEmpleadosPage implements OnInit {
-  
+export class EncuestaClientesPage implements OnInit {
   formEncuesta: FormGroup;
-  spinner: boolean = true;
+  spinner: boolean = false;
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
-  srcUserPhoto = "../../assets/user-photo.png";
+  srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
   fotoCargada = false;
+  fotosLleno = false;
 
   constructor(
-    private toastController : ToastController,
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder
   ) {
+    //COMIENZO SPINNER
     setTimeout(() => {
       this.GuardarPerfil();
-    }, 2000);
-    this.DesactivarSpinner();
-  }
-
-  DesactivarSpinner(){
-    setTimeout(() => {
-      this.spinner = false;
-    }, 6000);
+    }, 1500);
   }
 
   ngOnInit() {
@@ -47,17 +39,6 @@ export class EncuestaEmpleadosPage implements OnInit {
         preguntaCinco: ['1', [Validators.required]]
       }
     )
-  }
-
-  async Alerta( mensaje : string , color : string ) {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      position: 'top',
-      duration: 2500,
-      color: color,
-      cssClass: 'custom-toast'
-    });
-    await toast.present();
   }
 
   get preguntaUno() {
@@ -104,6 +85,16 @@ export class EncuestaEmpleadosPage implements OnInit {
     }
   }
 
+  Fotos() {
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
+
+  LimpiarFoto(num: number) {
+    // this.files[num] = null;
+    // this.srcProductPhoto[num] = this.prodPhoto;
+    // this.fotosLleno = false;
+  }
+
   ImagenCelular() { }
 
   Foto() { }
@@ -119,13 +110,12 @@ export class EncuestaEmpleadosPage implements OnInit {
             i = allUsers.length;
           }
         }
-        this.spinner = false;
+        //FIN SPINNER
       });
     }, 1500);
   }
 
   SaltarEncuesta() {
-    this.spinner = true;
     if (this.tipo.includes("Metre")) {
       this.router.navigateByUrl('/home-metre', { replaceUrl: true });
     } else {
@@ -135,9 +125,7 @@ export class EncuestaEmpleadosPage implements OnInit {
         if (this.tipo.includes("Bartender") || this.tipo.includes("Cocinero")) {
           this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
         } else {
-          this.spinner = false;
-          this.Alerta("Ocurrió un error! Reintentar", 'danger');
-          this.GuardarPerfil();
+          //Error
         }
       }
     }
