@@ -18,11 +18,9 @@ export class HomeMetrePage implements OnInit {
     private authService: AuthService,
     private router: Router,
     private utilidades: UtilidadesService
-    ) { 
-      this.Sonido();
-      this.GuardarPerfil();
-      this.ChequearConexion();
-    }
+  ) { 
+    this.Sonido();
+  }
 
   Sonido(){
     try {
@@ -37,34 +35,6 @@ export class HomeMetrePage implements OnInit {
     }
   }
 
-  GuardarPerfil(){
-    var usuarioLogueado
-    setTimeout(()=>{
-      usuarioLogueado = this.authService.usuarioActual();
-    },2000);
-    setTimeout(()=>{
-      this.authService.getUsers().subscribe(allUsers => {
-        this.users = allUsers;
-        for(var i = 0 ; i < allUsers.length ; i++)
-        {
-          if(((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {
-            i = allUsers.length;
-          }
-        }
-        this.spinner = false;
-      });
-    },3500);
-  }
-
-  ChequearConexion(){
-    setTimeout(()=>{
-      this.spinner = false;
-      if(this.users.length == 0){
-        //ERROR DE CONEXION
-      }
-    },9000);
-  }
-
   ngOnInit() {}
 
   ActivarSpinner(){
@@ -76,24 +46,9 @@ export class HomeMetrePage implements OnInit {
     this.router.navigateByUrl('/alta-cliente', { replaceUrl: true });
   }
 
-  IrAltaEmpleado(){
+  IrListaEspera(){
     this.ActivarSpinner();
-    this.router.navigateByUrl('/alta-empleado', { replaceUrl: true });
-  }
-
-  IrAltaMesa(){
-    this.ActivarSpinner();
-    this.router.navigateByUrl('/alta-mesa', { replaceUrl: true });
-  }
-
-  IrAprobarClientes(){
-    this.ActivarSpinner();
-    this.router.navigateByUrl('/listado-clientes', { replaceUrl: true });
-  }
-
-  IrVerReservas(){
-    this.ActivarSpinner();
-    this.router.navigateByUrl('/reservas', { replaceUrl: true });
+    this.router.navigateByUrl('/lista-espera', { replaceUrl: true });
   }
 
   ActivarDesactivarSonido() {
@@ -114,7 +69,7 @@ export class HomeMetrePage implements OnInit {
   }
 
   CerrarSesion(){
-    this.spinner = true;
+    this.ActivarSpinner();
     this.SonidoEgreso();
     this.authService.logout();
     this.router.navigateByUrl('/login', { replaceUrl: true });

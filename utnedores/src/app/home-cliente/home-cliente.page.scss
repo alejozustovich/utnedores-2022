@@ -73,6 +73,17 @@
     }
   }
 
+  #msjEstado {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    background: rgba(46, 17, 3, 0.4);
+    margin-left: -5px;
+    margin-right: -5px;
+    padding: 10px;
+  }
+
   #img_toolbar {
     float: right;
     margin-right: 10px;
@@ -161,4 +172,59 @@
       top: 50%;
       transform: translate(-50%, -50%);
       width: 80%;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    .custom-loading2{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 999;
+      background: rgba(2, 2, 2, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .divInterno2{
+      width: 80%;
+      height: 220px;
+      border-style: solid;
+      border-color: rgb(206, 170, 156);
+      background-color: rgb(11, 6, 3);
+
+      .form {
+        text-align: center;
+
+        h2 {
+          color: rgb(206, 170, 156);
+          font-size: 15px;
+        }
+
+        p {
+          margin-top: 15px;
+          color: rgb(206, 170, 156);
+          font-size: 25px;
+        }
+
+        ion-button {
+          color: rgb(206, 170, 156);
+          font-size: 25px;
+        }
+      }
     }
