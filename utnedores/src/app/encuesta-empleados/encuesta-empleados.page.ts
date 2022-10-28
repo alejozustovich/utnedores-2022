@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, Usuario } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-encuesta-empleados',
@@ -9,8 +10,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./encuesta-empleados.page.scss'],
 })
 export class EncuestaEmpleadosPage implements OnInit {
+  
   formEncuesta: FormGroup;
-  spinner: boolean = false;
+  spinner: boolean = true;
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
@@ -18,14 +20,21 @@ export class EncuestaEmpleadosPage implements OnInit {
   fotoCargada = false;
 
   constructor(
+    private toastController : ToastController,
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder
   ) {
-    //COMIENZO SPINNER
     setTimeout(() => {
       this.GuardarPerfil();
-    }, 1500);
+    }, 2000);
+    this.DesactivarSpinner();
+  }
+
+  DesactivarSpinner(){
+    setTimeout(() => {
+      this.spinner = false;
+    }, 6000);
   }
 
   ngOnInit() {
@@ -38,6 +47,17 @@ export class EncuestaEmpleadosPage implements OnInit {
         preguntaCinco: ['1', [Validators.required]]
       }
     )
+  }
+
+  async Alerta( mensaje : string , color : string ) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present();
   }
 
   get preguntaUno() {
@@ -99,12 +119,13 @@ export class EncuestaEmpleadosPage implements OnInit {
             i = allUsers.length;
           }
         }
-        //FIN SPINNER
+        this.spinner = false;
       });
     }, 1500);
   }
 
   SaltarEncuesta() {
+    this.spinner = true;
     if (this.tipo.includes("Metre")) {
       this.router.navigateByUrl('/home-metre', { replaceUrl: true });
     } else {
@@ -114,7 +135,9 @@ export class EncuestaEmpleadosPage implements OnInit {
         if (this.tipo.includes("Bartender") || this.tipo.includes("Cocinero")) {
           this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
         } else {
-          //Error
+          this.spinner = false;
+          this.Alerta("Ocurrió un error! Reintentar", 'danger');
+          this.GuardarPerfil();
         }
       }
     }

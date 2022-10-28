@@ -29,6 +29,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   scanActive = false;
   nombreImagen = "";
   base64Image = "";
+  empleadoAgregado = false;
 
   options: CameraOptions = {
     quality: 50,
@@ -51,7 +52,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     this.GuardarId();
     this.AsignarNombreFoto();
   }
-
+  
   ngOnInit() {
     this.formRegistro = this.fb.group(
       {
@@ -133,6 +134,10 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
 
   Volver() {
     this.spinner = true;
+    this.Redirigir();
+  }
+
+  Redirigir(){
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
@@ -183,11 +188,26 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
+
+      var dniValido = true;
       var cadena = this.result.split("@");
 
-      this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
-      this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
-      this.dni.setValue(cadena[4]);
+      if(cadena.length < 4){
+        dniValido = false;
+      }else{
+        if(!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))){
+          dniValido = false;
+        }
+      }
+
+      if(dniValido){
+        this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+        this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
+        this.dni.setValue(cadena[4]);
+        this.cuil.setValue(("-" + cadena[4] + "-"));
+      }else{
+        this.Alerta("Código no válido", 'danger');
+      }
     }
   }
 
@@ -240,26 +260,29 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-
   async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
-      duration: 1500,
+      duration: 2500,
       color: color,
       cssClass: 'custom-toast'
     });
+    await toast.present();
+  }
 
-    setTimeout(async () => {
-      await toast.present();
-    }, 2200);
+  DesactivarVentanas(){
+    setTimeout(()=>{
+      this.empleadoAgregado = false;
+      this.spinner = false;
+    },12000);
   }
 
   // INICIO Guardar Usuarios.
   GuardarEmpleado() {
     this.spinner = true;
-
-    if(!this.idRegistroUsuario.includes("0")){
+    this.DesactivarVentanas();
+    if(this.idRegistroUsuario != "0"){
       if (!this.fotoCelular && !this.fotoFile) {
         this.nombreImagen = "";
       }
@@ -290,17 +313,18 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
            var imagenStorage = "usuarios/" + this.nombreImagen;
            this.authService.subirImagenFile(imagenStorage, this.file);
          }
+
+         setTimeout(() => {
+          this.RegistrarUsuario();
+
+          this.spinner = false;
+          this.empleadoAgregado = true;
+          setTimeout(() => {
+            this.Redirigir();
+          }, 2500);
+        }, 2000);
   
       }, 2000);
-  
-      setTimeout(() => {
-        this.RegistrarUsuario();
-      }, 4000);
-  
-      this.Alerta('Empleado registrado correctamente', 'success');
-      setTimeout(() => {
-        //Redirigir
-      }, 6000);
     }else{
       this.spinner = false;
       this.GuardarId();

@@ -80,6 +80,9 @@
   </div>
 </ion-content>
 
+<!--qrcode *ngIf="mostrarQr" (qrCodeURL)="onChangeURL($event)" [qrdata]="myAngularxQrCode" [width]="128" [errorCorrectionLevel]="'M'"></qrcode-->
+
+
 <div class="custom-loading" *ngIf="spinner">
   <div class="spinner">
     <div class="double-bounce1">
@@ -91,4 +94,14 @@
   </div>
 </div>
 
-<!--qrcode *ngIf="mostrarQr" (qrCodeURL)="onChangeURL($event)" [qrdata]="myAngularxQrCode" [width]="128" [errorCorrectionLevel]="'M'"></qrcode-->
+
+<div class="custom-loading2" *ngIf="mesaAgregado">
+
+	<div class="divInterno2">
+		<form class="form">
+			<h2 style="margin-top: 30px;">Mesa agregada con éxito!</h2>
+      <h2 style="margin-top: 40px;">Redirigiendo</h2>
+		</form>
+	</div>
+
+</div>

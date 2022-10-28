@@ -31,7 +31,7 @@ export class AltaProductoPage implements OnInit {
   prodPhoto = "../../assets/dessert-photo.png";
   srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
   fotosLleno = false;
-
+  productoAgregado = false;
 
   public myAngularxQrCode: string = "";
   public qrCodeDownloadLink: SafeUrl = "";
@@ -144,13 +144,21 @@ export class AltaProductoPage implements OnInit {
   }
 
   SubirImagenes() {
-    this.authService.subirImagenFile(this.nombreFotos[0], this.files[0]);
     setTimeout(() => {
-      this.authService.subirImagenFile(this.nombreFotos[1], this.files[1]);
-    }, 3000);
+      this.authService.subirImagenFile(this.nombreFotos[0], this.files[0]);
+      setTimeout(() => {
+        this.authService.subirImagenFile(this.nombreFotos[1], this.files[1]);
+      }, 3000);
+      setTimeout(() => {
+        this.authService.subirImagenFile(this.nombreFotos[2], this.files[2]);
+      }, 6000);
+    }, 2000);
+    
+    this.spinner = false;
+    this.productoAgregado = true;
     setTimeout(() => {
-      this.authService.subirImagenFile(this.nombreFotos[2], this.files[2]);
-    }, 6000);
+      this.Redirigir();
+    }, 2500);
   }
 
   LimpiarFoto(num: number) {
@@ -220,19 +228,24 @@ export class AltaProductoPage implements OnInit {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
-      duration: 1500,
+      duration: 2500,
       color: color,
       cssClass: 'custom-toast'
     });
+    await toast.present()
+  }
 
-    setTimeout(async () => {
-      await toast.present();
-    }, 2200);
+  DesactivarVentanas(){
+    setTimeout(()=>{
+      this.spinner = false;
+      this.productoAgregado = false;
+    },13000);
   }
 
   AgregarProducto() {
     this.spinner = true;
-    if (this.numProducto.includes("0")) {
+    this.DesactivarVentanas();
+    if (this.numProducto == "0") {
       //ERROR
       this.spinner = false
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
@@ -259,12 +272,15 @@ export class AltaProductoPage implements OnInit {
       this.fotosLleno = false;
       this.SubirImagenes();
       this.authService.addProduct(unProducto);
-      this.spinner = false;
-      //VERIFICAR ALTA
     }
   }
 
   Volver() {
-    this.router.navigateByUrl('alta-cliente');
+    this.spinner = true;
+    this.Redirigir();
+  }
+
+  Redirigir(){
+    this.router.navigateByUrl('home-cocina');
   }
 }

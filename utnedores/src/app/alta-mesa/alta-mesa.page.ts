@@ -27,6 +27,8 @@ export class AltaMesaPage implements OnInit {
   fotosLleno = false;
   nombreFoto = "";
 
+  mesaAgregado = false;
+  
   constructor(
     private toastController: ToastController,
     private authService: AuthService,
@@ -39,6 +41,10 @@ export class AltaMesaPage implements OnInit {
 
   Volver(){
     this.spinner = true;
+    this.Redirigir();
+  }
+
+  Redirigir(){
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
@@ -103,14 +109,11 @@ export class AltaMesaPage implements OnInit {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
-      duration: 1500,
+      duration: 2500,
       color: color,
       cssClass: 'custom-toast'
     });
-
-    setTimeout(async () => {
-      await toast.present();
-    }, 2200);
+    await toast.present();
   }
 
   AsignarNumeroMesa() {
@@ -132,11 +135,17 @@ export class AltaMesaPage implements OnInit {
     (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
-
+  DesactivarVentanas(){
+    setTimeout(()=>{
+      this.spinner = false;
+      this.mesaAgregado = false;
+    },12000);
+  }
 
   AgregarMesa() {
     this.spinner = true;
-    if (this.numMesa.includes("0")) {
+    this.DesactivarVentanas();
+    if (this.numMesa == "0") {
       this.spinner = false;
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
       this.TraerMesas();
@@ -156,13 +165,13 @@ export class AltaMesaPage implements OnInit {
       };
       this.authService.addTable(unaMesa);
       setTimeout(() => {
-        this.spinner = false;
         var imagenStorage = "mesas/" + this.nombreFoto;
         this.authService.subirImagenFile(imagenStorage, this.file);
-        this.Alerta("Mesa agregada con éxito!", 'success');
-        //REDIRIGIR
-      //this.formMesa.reset();
-      //this.LimpiarFoto();
+        this.spinner = false;
+        this.mesaAgregado = true;
+        setTimeout(() => {
+          this.Redirigir();
+        }, 2500);
       }, 3000);
     }
   }

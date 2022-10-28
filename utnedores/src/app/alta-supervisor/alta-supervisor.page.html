@@ -76,6 +76,7 @@
           <ion-col>
             <ion-input
               formControlName="cuil"
+              id="cuilHtml"
               type="text"
               placeholder="CUIL: xx-DNI-x"
               class="ms-1"
@@ -166,4 +167,15 @@
       <img src="../../assets/Logo.png" style="width: 200px" />
     </div>
   </div>
+</div>
+
+<div class="custom-loading2" *ngIf="usuarioAgregado">
+
+	<div class="divInterno2">
+		<form class="form">
+			<h2 style="margin-top: 30px;">Usuario agregado con éxito!</h2>
+      <h2 style="margin-top: 40px;">Redirigiendo</h2>
+		</form>
+	</div>
+
 </div>
