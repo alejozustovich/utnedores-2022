@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { SplashScreen } from '@capacitor/splash-screen';
 import { UtilidadesService } from './services/utilidades.service';
+import { Plugins } from '@capacitor/core';
+const { SplashScreen } = Plugins;
 
 @Component({
   selector: 'app-root',
@@ -20,10 +21,13 @@ export class AppComponent {
     this.Inicializar();
   }
 
-  initializeApp() {
-    SplashScreen.hide();
+  public initializeApp() 
+  {
     this.platform.ready().then(() => {
-      this.router.navigateByUrl('/splash', { replaceUrl: true });
+      setTimeout(() => {
+        SplashScreen.hide();
+        this.router.navigateByUrl('/splash');
+      }, 1000);
     });
   }
 
