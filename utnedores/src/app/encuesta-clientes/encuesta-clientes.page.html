@@ -12,14 +12,14 @@
     <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
-        <h2>Encuesta empleado</h2>
+        <h2>Encuesta cliente</h2>
       </div>
       <form [formGroup]="formEncuesta" (ngSubmit)="enviarEncuesta()">
         <div class="preguntas">
           <div class="pe-3 py-2">
             <ion-row>
               <ion-col>
-                <label>Ambiente laboral:</label>
+                <label>Atencion recibida:</label>
               </ion-col>
               <ion-col>
                 <ion-input
@@ -34,7 +34,7 @@
           </div>
           <hr />
           <div class="pt-1">
-            <ion-label class="ps-2">Orden de mesas y sillas:</ion-label>
+            <ion-label class="ps-2">Relacion precio-calidad:</ion-label>
             <ion-row>
               <ion-col *ngFor="let valor of valores">
                 <ion-item lines="none">
@@ -51,7 +51,7 @@
           <div class="pe-2 py-2">
             <ion-row>
               <ion-col>
-                <ion-label>Limpieza de los pisos:</ion-label>
+                <ion-label>Ambiente:</ion-label>
               </ion-col>
               <ion-col>
                 <ion-select
@@ -70,7 +70,7 @@
           </div>
           <hr />
           <div class="p-2 pt-1">
-            <label>Estado de la cocina:</label>
+            <label>Limpieza del local:</label>
             <ion-radio-group
               formControlName="preguntaCuatro"
             >
@@ -84,7 +84,7 @@
           </div>
           <hr />
           <div class="px-2 pt-1">
-            <label>Estado de los baños:</label>
+            <label>Rapidez del pedido:</label>
             <ion-row class="mt-4">
               <span>1</span>
               <ion-range
@@ -100,12 +100,39 @@
           </div>
           <hr />
           <div>
-            <ion-item lines="none">
-              <ion-thumbnail slot="start">
+            <ion-item style="--min-height: 90px">
+              <ion-thumbnail slot="start" style="margin-top: -10px">
                 <ion-img
-                  [src]="srcUserPhoto"
+                  [src]="srcProductPhoto[0]"
                   style="max-width: 100px; max-height: 100px"
                 ></ion-img>
+                <ion-icon
+                  (click)="LimpiarFoto(0)"
+                  style="margin-left: 20px; margin-top: 5px"
+                  name="trash-outline"
+                ></ion-icon>
+              </ion-thumbnail>
+              <ion-thumbnail slot="start" style="margin-top: -10px">
+                <ion-img
+                  [src]="srcProductPhoto[1]"
+                  style="max-width: 100px; max-height: 100px"
+                ></ion-img>
+                <ion-icon
+                  (click)="LimpiarFoto(1)"
+                  style="margin-left: 20px; margin-top: 5px"
+                  name="trash-outline"
+                ></ion-icon>
+              </ion-thumbnail>
+              <ion-thumbnail slot="start" style="margin-top: -10px">
+                <ion-img
+                  [src]="srcProductPhoto[2]"
+                  style="max-width: 100px; max-height: 100px"
+                ></ion-img>
+                <ion-icon
+                  (click)="LimpiarFoto(2)"
+                  style="margin-left: 20px; margin-top: 5px"
+                  name="trash-outline"
+                ></ion-icon>
               </ion-thumbnail>
               <ion-button
                 (click)="ImagenCelular()"

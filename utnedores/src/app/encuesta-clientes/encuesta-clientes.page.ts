@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, Usuario } from '../services/auth.service';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService, Usuario } from '../services/auth.service';
 
 @Component({
-  selector: 'app-encuesta-empleados',
-  templateUrl: './encuesta-empleados.page.html',
-  styleUrls: ['./encuesta-empleados.page.scss'],
+  selector: 'app-encuesta-clientes',
+  templateUrl: './encuesta-clientes.page.html',
+  styleUrls: ['./encuesta-clientes.page.scss'],
 })
-export class EncuestaEmpleadosPage implements OnInit {
+export class EncuestaClientesPage implements OnInit {
   formEncuesta: FormGroup;
   spinner: boolean = false;
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
-  srcUserPhoto = "../../assets/user-photo.png";
+  srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
   fotoCargada = false;
+  fotosLleno = false;
 
   constructor(
     private authService: AuthService,
@@ -82,6 +83,16 @@ export class EncuestaEmpleadosPage implements OnInit {
     } else {
       this.preguntaDos.setValue(resultado);
     }
+  }
+
+  Fotos() {
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
+
+  LimpiarFoto(num: number) {
+    // this.files[num] = null;
+    // this.srcProductPhoto[num] = this.prodPhoto;
+    // this.fotosLleno = false;
   }
 
   ImagenCelular() { }
