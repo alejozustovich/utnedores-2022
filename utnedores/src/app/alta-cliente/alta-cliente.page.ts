@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./alta-cliente.page.scss'],
 })
 export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
+  
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
@@ -29,7 +30,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   nombreImagen = "";
   base64Image = "";
   perfil = "Perfil";
-  
+  clienteAgregado = false;
+
   options: CameraOptions = {
     quality: 50,
     allowEdit: false,
@@ -50,7 +52,6 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   ) { 
     this.GuardarId();
     this.AsignarNombreFoto();
-    
     setTimeout(()=>{
       this.ObtenerPerfil();
     },2500);
@@ -58,21 +59,20 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ObtenerPerfil(){
-    this.authService.getUser(this.authService.usuarioActual()).then(user => {
-      this.perfil = user.perfil;
-      this.spinner = false;
-    });
+    var unPerfil = localStorage.getItem('Perfil');
+
+    if(unPerfil === "Cliente"){
+      this.perfil = "Cliente";
+      localStorage.setItem('Perfil', '');
+    }else{
+      this.authService.getUser(this.authService.usuarioActual()).then(user => {
+        this.perfil = user.perfil;
+        this.spinner = false;
+      });
+    }    
   }
 
-  DesactivarSpinner(){
-    setTimeout(()=>{
-      this.spinner = false;
-    },5000);
-  }
-  
-
-  Volver(){
-    this.spinner = true;
+  Redirigir(){
     if(this.perfil.includes('Cliente') == true){
       this.router.navigateByUrl('/login', { replaceUrl: true });
     }else{
@@ -80,10 +80,16 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
         this.router.navigateByUrl('/home-metre', { replaceUrl: true });
       }else{
         this.spinner = false;
+        this.clienteAgregado = false;
         this.ObtenerPerfil();
         this.Alerta("Ocurrió un error! Reintentar", 'danger');
       }
     }
+  }
+
+  Volver(){
+    this.spinner = true;
+    this.Redirigir();
   }
 
   ngOnInit() {
@@ -187,10 +193,26 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     if(result.hasContent){
       this.scanActive = false;
       this.result = result.content;
+
+      var dniValido = true;
       var cadena = this.result.split("@");
-      this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
-      this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
-      this.dni.setValue(cadena[4]);
+
+      if(cadena.length < 4){
+        dniValido = false;
+      }else{
+        if(!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))){
+          dniValido = false;
+        }
+      }
+
+      if(dniValido){
+        this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+        this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
+        this.dni.setValue(cadena[4]);
+
+      }else{
+        this.Alerta("Código no válido", 'danger');
+      }
     }
   }
 
@@ -240,14 +262,11 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
-      duration: 1500,
+      duration: 2500,
       color: color,
       cssClass: 'custom-toast'
     });
-
-    setTimeout(async () => {
-      await toast.present();
-    }, 2200);
+    await toast.present();
   }
 
 // INICIO Guardar Usuarios.
@@ -281,13 +300,14 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
         this.authService.subirImagenFile(imagenStorage, this.file);
       }
 
-    }, 2000);
-
-    this.Alerta('Cliente registrado correctamente' , 'success');
-    setTimeout(() => {
-      this.LimpiarCamposFormulario();
-    }, 5000);
+      this.spinner = false;
+      this.clienteAgregado = true;
+      setTimeout(() => {
+        this.Redirigir();
+      }, 2500);
+    }, 2500);
   }
+
 
   GuardarUsuarioAnonimo() {
     var unUsuarioAnonimo: Usuario = {
@@ -310,16 +330,17 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       var rutaImagen = "usuarios/" + this.nombreImagen;
       this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+
+      setTimeout(() => {
+        this.RegistrarUsuario();
+
+        this.spinner = false;
+        this.clienteAgregado = true;
+        setTimeout(() => {
+          this.Redirigir();
+        }, 2500);
+      }, 2000);
     }, 2000);
-
-    setTimeout(() => {
-      this.RegistrarUsuario();
-    }, 4000);
-
-    this.Alerta('Cliente registrado correctamente' , 'success');
-    setTimeout(() => {
-      //Redirigir
-    }, 6000);
   }
 
   RegistrarUsuario(){
@@ -327,14 +348,27 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.register(registro);
   }
 
+  DesactivarVentanas(){
+    setTimeout(()=>{
+      this.clienteAgregado = false;
+      this.spinner = false;
+    },12000);
+  }
+
+  DesactivarSpinner(){
+    setTimeout(()=>{
+      this.spinner = false;
+    },7000);
+  }
+
   GuardarUsuario() {
     this.spinner = true;
-
+    this.DesactivarVentanas();
     if( this.clave == this.claveConfirmada ) {
         var validarDNI: number = +this.dni;
         if(!isNaN(validarDNI)) {
           if(this.correo.value.includes('@')) {
-            if(!this.idRegistroUsuario.includes("0")){
+            if(this.idRegistroUsuario != "0"){
               this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
             }else{
               this.spinner = false;

@@ -146,6 +146,16 @@ export class AuthService {
 		return (await getDocs(q)).docs[0].data();
 	}
 
+	eliminarEspera(idField: string){
+		const esperaDocRef = doc(this.firestore, `listaespera/${idField}`);
+		return deleteDoc(esperaDocRef);
+	}
+
+	modificarEspera(idField: string, num: string){
+		const espDoc = doc(this.firestore, `listaespera/${idField}`);
+		return updateDoc(espDoc, {cantPersonas: num});
+	}
+
 	agregarEspera(espera: Espera){
 		const esperaRef = collection(this.firestore, 'listaespera');
 		return addDoc(esperaRef, espera);

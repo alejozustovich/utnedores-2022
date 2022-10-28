@@ -10,29 +10,21 @@ import { UtilidadesService } from './services/utilidades.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  public splash: boolean = false;
 
   constructor(
     private platform: Platform,
     public router: Router,
     private utilidades: UtilidadesService
   ) {
-    SplashScreen.hide();
     this.initializeApp();
     this.Inicializar();
   }
 
   initializeApp() {
     SplashScreen.hide();
-    this.router.navigateByUrl('home-cliente');
-    /*this.splash = false;
     this.platform.ready().then(() => {
-      if (this.splash) {
-        setTimeout(() => {
-          this.splash = false;
-        }, 6000);
-      }
-    });*/
+      this.router.navigateByUrl('/splash', { replaceUrl: true });
+    });
   }
 
   Inicializar()

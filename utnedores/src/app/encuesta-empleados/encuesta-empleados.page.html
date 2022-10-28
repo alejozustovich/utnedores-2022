@@ -168,9 +168,8 @@
           class="mt-3"
           style="--background: rgb(15, 145, 58); height: 50px"
           [disabled]="!formEncuesta.valid || !fotoCargada"
-          ><ion-icon name="checkmark-circle-outline"></ion-icon>Enviar
-          encuesta</ion-button
-        >
+          ><ion-icon name="checkmark-circle-outline"></ion-icon>Enviar encuesta</ion-button>
+          <ion-button (click)="SaltarEncuesta()">Saltar encuesta</ion-button>
       </form>
     </ion-grid>
   </div>

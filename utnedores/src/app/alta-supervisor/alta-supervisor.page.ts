@@ -27,6 +27,8 @@ export class AltaSupervisorPage implements OnInit {
   nombreImagen = "";
   base64Image = "";
 
+  usuarioAgregado = false;
+
   options: CameraOptions = {
     quality: 50,
     allowEdit: false,
@@ -48,7 +50,19 @@ export class AltaSupervisorPage implements OnInit {
     this.AsignarNombreFoto();
   }
 
+  DesactivarVentanas(){
+    setTimeout(()=>{
+      this.spinner = false;
+      this.usuarioAgregado = false;
+    },12000);
+  }
+
   Volver(){
+    this.spinner = true;
+    this.Redirigir();
+  }
+
+  Redirigir(){
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
@@ -146,10 +160,26 @@ export class AltaSupervisorPage implements OnInit {
     if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
+
+      var dniValido = true;
       var cadena = this.result.split("@");
-      (<HTMLInputElement>document.getElementById('nomHtml')).value = this.PrimeraMayuscula(cadena[2]);
-      (<HTMLInputElement>document.getElementById('apeHtml')).value = this.PrimeraMayuscula(cadena[1]);
-      (<HTMLInputElement>document.getElementById('dniHtml')).value = this.PrimeraMayuscula(cadena[4]);
+
+      if(cadena.length < 4){
+        dniValido = false;
+      }else{
+        if(!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))){
+          dniValido = false;
+        }
+      }
+
+      if(dniValido){
+        (<HTMLInputElement>document.getElementById('nomHtml')).value = this.PrimeraMayuscula(cadena[2]);
+        (<HTMLInputElement>document.getElementById('apeHtml')).value = this.PrimeraMayuscula(cadena[1]);
+        (<HTMLInputElement>document.getElementById('dniHtml')).value = cadena[4];
+        (<HTMLInputElement>document.getElementById('cuilHtml')).value = ("-" + cadena[4] + "-");
+      }else{
+        this.Alerta("Código no válido", 'danger');
+      }
     }
   }
 
@@ -210,13 +240,15 @@ export class AltaSupervisorPage implements OnInit {
     return this.formRegistro.get('claveConfirmada');
   }
 
-  async presentToast(message: string, color: string) {
+  async Alerta( mensaje : string , color : string ) {
     const toast = await this.toastController.create({
-      message,
-      color,
-      duration: 2500
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
     });
-    toast.present();
+    await toast.present();
   }
 
   cambiarPerfil(perfil: string) {
@@ -251,8 +283,8 @@ export class AltaSupervisorPage implements OnInit {
 
   async registrarUsuario() {
     this.spinner = true;
-
-    if(!this.idRegistroUsuario.includes("0")){
+    this.DesactivarVentanas();
+    if(this.idRegistroUsuario != "0"){
       const usuario: Usuario = {
         idField: "",
         idUsuario: this.idRegistroUsuario,
@@ -268,7 +300,6 @@ export class AltaSupervisorPage implements OnInit {
         aprobado: ""
       };
       const registro = { email: usuario.correo, password: usuario.clave };
-      console.log(usuario);
       if (this.verificarUsuario(usuario)) {
         try {
           this.authService.addUser(usuario);
@@ -283,27 +314,30 @@ export class AltaSupervisorPage implements OnInit {
               var imagenStorage = "usuarios/" + this.nombreImagen;
               this.authService.subirImagenFile(imagenStorage, this.file);
             }
+
+            setTimeout(() => {
+              this.authService.register(registro);
+
+              this.spinner = false;
+              this.usuarioAgregado = true;
+              setTimeout(() => {
+                this.Redirigir();
+              }, 2500);
+            }, 2000);
+
           }, 2000);
-
-          setTimeout(() => {
-            this.authService.register(registro);
-          }, 4000);
-
-          this.presentToast('Usuario creado correctamente!', 'success');
         } catch (e) {
-          console.log(e);
-          this.presentToast('Error al crear usuario!', 'danger');
-        } finally {
           this.spinner = false;
+          this.Alerta('Error al crear usuario!', 'danger');
         }
       } else {
         this.spinner = false;
-        this.presentToast('Ya existe un usuario con esos datos!', 'danger');
+        this.Alerta('Ya existe un usuario con esos datos!', 'danger');
       }
 
     }else{
       this.spinner = false;
-      this.presentToast("Ocurrió un error! Reintentar", 'danger');
+      this.Alerta("Ocurrió un error! Reintentar", 'danger');
       this.traerUsuarios();
     }
   }

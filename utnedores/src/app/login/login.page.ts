@@ -69,13 +69,15 @@ export class LoginPage implements OnInit {
     return this.formLogin.get('password');
   }
 
-  async presentToast(message: string, color: string) {
+  async Alerta( mensaje : string , color : string ) {
     const toast = await this.toastController.create({
-      message,
-      color,
-      duration: 2500
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
     });
-    toast.present();
+    await toast.present();
   }
 
   customAlertOptions = {
@@ -94,6 +96,7 @@ export class LoginPage implements OnInit {
 
   Registrarse(){
     this.spinner = true;
+    localStorage.setItem('Perfil', 'Cliente');
     this.router.navigateByUrl('/alta-cliente', { replaceUrl: true });
   }
 
@@ -103,9 +106,8 @@ export class LoginPage implements OnInit {
     const user = await this.authService.login(data);
     if (user) {
       for (var i = 0; i < this.users.length; i++) {
-        if (((this.users[i].correo).toLocaleLowerCase()).includes((this.email.value.toLocaleLowerCase()))) {
+        if (((this.users[i].correo).toLocaleLowerCase()) === ((this.email.value.toLocaleLowerCase()))) {
           this.perfil = this.users[i].perfil;
-          this.presentToast(`Bienvenido ${this.users[i].nombre}!`, 'success');
           break;
         }
       }
@@ -129,8 +131,8 @@ export class LoginPage implements OnInit {
       }
     }
     else {
-      this.presentToast('Correo o clave incorrecto/a!', 'danger');
       this.spinner = false;
+      this.Alerta('Correo o clave incorrecto/a!', 'danger');
     }
   }
 

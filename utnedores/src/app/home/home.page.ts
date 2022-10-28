@@ -20,8 +20,8 @@ export class HomePage implements OnInit {
     private utilidades: UtilidadesService
     ) { 
       this.Sonido();
-      this.ObtenerPerfil();
       this.DesactivarSpinner();
+      this.ObtenerPerfil();
     }
 
   DesactivarSpinner(){
@@ -38,7 +38,6 @@ export class HomePage implements OnInit {
       });
     },2500);
   }
-
 
   Sonido(){
     try {
@@ -108,5 +107,4 @@ export class HomePage implements OnInit {
     this.authService.logout();
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
-
 }
