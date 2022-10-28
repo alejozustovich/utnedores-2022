@@ -98,8 +98,8 @@ export class AltaSupervisorPage implements OnInit {
     this.traerUsuarios();
     this.formRegistro = this.fb.group(
       {
-        nombre: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
-        apellido: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        nombre: ['', [Validators.required, Validators.pattern('[a-zA-ZÀ-ÿ\u00f1\u00d1 ]{3,15}')]],
+        apellido: ['', [Validators.required, Validators.pattern('[a-zA-ZÀ-ÿ\u00f1\u00d1 ]{3,15}')]],
         dni: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(7), Validators.maxLength(8)]],
         cuil: ['', [Validators.required]],
         correo: ['', [Validators.required, Validators.email]],
@@ -132,7 +132,7 @@ export class AltaSupervisorPage implements OnInit {
       const formGroup = control as FormGroup;
       const valorControlA = formGroup.get(nombreControlA)?.value;
       const valorControlB = formGroup.get(nombreControlB)?.value;
-      const re = new RegExp('^[0-9]{2}-(' + valorControlA + ')-[0-9]$');
+      const re = new RegExp('^[0-9]{2}(?:-)?(' + valorControlA + ')(?:-)?[0-9]$');
       if (re.test(valorControlB)) {
         return null;
       } else {

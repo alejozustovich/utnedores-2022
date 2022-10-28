@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./alta-cliente.page.scss'],
 })
 export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
-  
+
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
@@ -44,41 +44,41 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   constructor(
-    private toastController : ToastController,
+    private toastController: ToastController,
     private authService: AuthService,
     private camera: Camera,
     private fb: FormBuilder,
     private router: Router
-  ) { 
+  ) {
     this.GuardarId();
     this.AsignarNombreFoto();
-    setTimeout(()=>{
+    setTimeout(() => {
       this.ObtenerPerfil();
-    },2500);
+    }, 2500);
     this.DesactivarSpinner();
   }
 
-  ObtenerPerfil(){
+  ObtenerPerfil() {
     var unPerfil = localStorage.getItem('Perfil');
 
-    if(unPerfil === "Cliente"){
+    if (unPerfil === "Cliente") {
       this.perfil = "Cliente";
       localStorage.setItem('Perfil', '');
-    }else{
+    } else {
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.perfil = user.perfil;
         this.spinner = false;
       });
-    }    
+    }
   }
 
-  Redirigir(){
-    if(this.perfil.includes('Cliente') == true){
+  Redirigir() {
+    if (this.perfil.includes('Cliente') == true) {
       this.router.navigateByUrl('/login', { replaceUrl: true });
-    }else{
-      if(this.perfil.includes('Empleado') == true){
+    } else {
+      if (this.perfil.includes('Empleado') == true) {
         this.router.navigateByUrl('/home-metre', { replaceUrl: true });
-      }else{
+      } else {
         this.spinner = false;
         this.clienteAgregado = false;
         this.ObtenerPerfil();
@@ -87,7 +87,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  Volver(){
+  Volver() {
     this.spinner = true;
     this.Redirigir();
   }
@@ -95,8 +95,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.formRegistro = this.fb.group(
       {
-        nombre: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
-        apellido: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        nombre: ['', [Validators.required, Validators.pattern('[a-zA-ZÀ-ÿ\u00f1\u00d1 ]{3,15}')]],
+        apellido: ['', [Validators.required, Validators.pattern('[a-zA-ZÀ-ÿ\u00f1\u00d1 ]{3,15}')]],
         dni: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(7), Validators.maxLength(8)]],
         correo: ['', [Validators.required, Validators.email]],
         clave: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
@@ -146,7 +146,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     return this.formRegistro.get('claveConfirmada');
   }
 
-  ImagenCelular(){
+  ImagenCelular() {
     (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
@@ -174,67 +174,67 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.stopScan();
   }
 
-  PrimeraMayuscula(cadena: String){
+  PrimeraMayuscula(cadena: String) {
     var mayuscula = cadena[0].toUpperCase();
-    for(var i = 1 ; i < cadena.length ; i++){
-      if(cadena[i] != " "){
+    for (var i = 1; i < cadena.length; i++) {
+      if (cadena[i] != " ") {
         mayuscula = mayuscula + cadena[i].toLowerCase();
-      }else{
-        mayuscula = mayuscula + " " + cadena[i+1].toUpperCase();
+      } else {
+        mayuscula = mayuscula + " " + cadena[i + 1].toUpperCase();
         i = i + 1;
       }
     }
     return mayuscula;
   }
 
-  async startScanner(){
+  async startScanner() {
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
-    if(result.hasContent){
+    if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
 
       var dniValido = true;
       var cadena = this.result.split("@");
 
-      if(cadena.length < 4){
+      if (cadena.length < 4) {
         dniValido = false;
-      }else{
-        if(!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))){
+      } else {
+        if (!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))) {
           dniValido = false;
         }
       }
 
-      if(dniValido){
+      if (dniValido) {
         this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
         this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
         this.dni.setValue(cadena[4]);
 
-      }else{
+      } else {
         this.Alerta("Código no válido", 'danger');
       }
     }
   }
 
-  stopScan(){
+  stopScan() {
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
-  
-  Caracteres(dato: string){
+
+  Caracteres(dato: string) {
     var retorno = dato.toString();
-    if(dato.length == 1){
+    if (dato.length == 1) {
       retorno = "0" + retorno;
     }
     return retorno;
   }
 
-  AsignarNombreFoto(){
+  AsignarNombreFoto() {
     var date = new Date();
-    this.nombreImagen =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    this.nombreImagen = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
   }
 
-  Foto(){
+  Foto() {
     this.camera.getPicture(this.options).then((imageData) => {
       this.base64Image = 'data:image/jpeg;base64,' + imageData;
       this.srcUserPhoto = this.base64Image;
@@ -245,20 +245,19 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-	GuardarId(){
-		this.authService.getUsers().subscribe(allUsers => {
+  GuardarId() {
+    this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
-			for(var i = 0 ; i < allUsers.length ; i++)
-			{
-				if(Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {
-					this.idRegistroUsuario = allUsers[i].idUsuario;
-				}
-			}
-			this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
-		});
-	}
+      for (var i = 0; i < allUsers.length; i++) {
+        if (Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {
+          this.idRegistroUsuario = allUsers[i].idUsuario;
+        }
+      }
+      this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
+    });
+  }
 
-  async Alerta( mensaje : string , color : string ) {
+  async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
@@ -269,7 +268,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     await toast.present();
   }
 
-// INICIO Guardar Usuarios.
+  // INICIO Guardar Usuarios.
   GuardarUsuarioRegistrado() {
     var unUsuarioRegistrado: Usuario = {
       idField: "",
@@ -285,17 +284,17 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       tipo: "Registrado",
       aprobado: "No"
     };
-    
+
     this.authService.addUser(unUsuarioRegistrado); //Guardar usuario a la espera de que se apruebe.
-    
+
     setTimeout(() => {
 
-      if(this.fotoCelular){
+      if (this.fotoCelular) {
         var rutaImagen = "usuarios/" + this.nombreImagen;
         this.authService.subirImagenBase64(rutaImagen, this.base64Image);
       }
 
-      if(this.fotoFile){
+      if (this.fotoFile) {
         var imagenStorage = "usuarios/" + this.nombreImagen;
         this.authService.subirImagenFile(imagenStorage, this.file);
       }
@@ -326,7 +325,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     };
 
     this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
-    
+
     setTimeout(() => {
       var rutaImagen = "usuarios/" + this.nombreImagen;
       this.authService.subirImagenBase64(rutaImagen, this.base64Image);
@@ -343,59 +342,42 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     }, 2000);
   }
 
-  RegistrarUsuario(){
-    var registro = {email: this.correo , password: this.clave};
+  RegistrarUsuario() {
+    var registro = { email: this.correo, password: this.clave };
     this.authService.register(registro);
   }
 
-  DesactivarVentanas(){
-    setTimeout(()=>{
+  DesactivarVentanas() {
+    setTimeout(() => {
       this.clienteAgregado = false;
       this.spinner = false;
-    },12000);
+    }, 12000);
   }
 
-  DesactivarSpinner(){
-    setTimeout(()=>{
+  DesactivarSpinner() {
+    setTimeout(() => {
       this.spinner = false;
-    },7000);
+    }, 7000);
   }
 
   GuardarUsuario() {
     this.spinner = true;
-    this.DesactivarVentanas();
-    if( this.clave == this.claveConfirmada ) {
-        var validarDNI: number = +this.dni;
-        if(!isNaN(validarDNI)) {
-          if(this.correo.value.includes('@')) {
-            if(this.idRegistroUsuario != "0"){
-              this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
-            }else{
-              this.spinner = false;
-              this.GuardarId();
-              this.Alerta("Ocurrió un error! Reintentar", 'danger');
-            }
-          } else {
-            this.spinner = false;
-            this.Alerta('El correo es inválido' , 'danger');
-          }
-        } else {
-          this.spinner = false;
-          this.Alerta('El DNI es inválido' , 'danger');
-        }
+    if (this.idRegistroUsuario != "0") {
+      this.esRegistrado ? this.GuardarUsuarioRegistrado() : this.GuardarUsuarioAnonimo();
     } else {
       this.spinner = false;
-      this.Alerta('Las claves no coinciden' , 'danger');
+      this.GuardarId();
+      this.Alerta("Ocurrió un error! Reintentar", 'danger');
     }
   }
 
   LimpiarCamposFormulario() {
     this.formRegistro.reset();
   }
-// FIN Guardar Usuarios.
+  // FIN Guardar Usuarios.
 
   CambiarBotonTipoCliente() {
-    if(this.esRegistrado) {
+    if (this.esRegistrado) {
       this.esRegistrado = false;
       this.esAnonimo = true;
     }

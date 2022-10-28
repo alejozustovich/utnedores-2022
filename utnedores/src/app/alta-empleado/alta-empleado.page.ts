@@ -56,8 +56,8 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.formRegistro = this.fb.group(
       {
-        nombre: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
-        apellido: ['', [Validators.required, Validators.pattern('[a-zA-Z ]{3,15}')]],
+        nombre: ['', [Validators.required, Validators.pattern('[a-zA-ZÀ-ÿ\u00f1\u00d1 ]{3,15}')]],
+        apellido: ['', [Validators.required, Validators.pattern('[a-zA-ZÀ-ÿ\u00f1\u00d1 ]{3,15}')]],
         dni: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(7), Validators.maxLength(8)]],
         cuil: ['', [Validators.required]],
         tipo: ['', [Validators.required]],
