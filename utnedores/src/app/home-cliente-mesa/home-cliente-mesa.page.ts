@@ -25,11 +25,9 @@ export class HomeClienteMesaPage implements OnInit {
 
   ngOnInit() { }
 
-  CerrarSesion(){
+  Volver(){
     this.spinner = true;
-    this.SonidoEgreso();
-    this.authService.logout();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+    this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
   }
 
   SonidoEgreso(){
@@ -47,6 +45,27 @@ export class HomeClienteMesaPage implements OnInit {
       this.volumenOn = true;
       localStorage.setItem('sonido', "Si");
     }
+  }
+
+  IrPedido(){
+
+  }
+
+  EstadoPedido(){
+
+  }
+
+  ConsultarMozo(){
+    
+  }
+
+  IrJuegos(){
+    
+  }
+
+  IrEncuestas(){
+    this.spinner = true;
+    this.router.navigateByUrl('/encuesta-clientes', { replaceUrl: true });
   }
 
 }

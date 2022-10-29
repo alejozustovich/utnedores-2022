@@ -59,11 +59,14 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.TraerEsperas();
     this.ObtenerUsuario();
 
+    this.DesactivarSpinner();
+  }
+
+  DesactivarSpinner(){
     setTimeout(()=>{
       this.spinner = false;
     },8000);
   }
-
   ngOnInit() {}
 
   async Alerta( mensaje : string , color : string ) {
@@ -276,8 +279,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  AbrirMenu(){
-    console.log("Abrir menu");
+  DirigirMenu(){
+    this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
   }
 
   VerEstado(flag: boolean){
@@ -360,7 +363,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
           this.Alerta("MESA NO ASIGNADA", 'danger');
         }else{
           if(estadoMesa == 2){
-            this.AbrirMenu();
+            this.DirigirMenu();
           }
         }
       }

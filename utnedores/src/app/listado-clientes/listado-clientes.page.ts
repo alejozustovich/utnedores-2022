@@ -24,6 +24,9 @@ export class ListadoClientesPage implements OnInit {
   ingresarMotivoRechazo = false;
   cargando = true;
 
+  idFieldRechazar = "";
+  correoRechazar = "";
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -39,7 +42,7 @@ export class ListadoClientesPage implements OnInit {
     setTimeout(() => {
       this.spinner = false;
       this.cargando = false;
-    }, 6000);
+    }, 7000);
   }
 
   ObtenerPerfil() {
@@ -98,7 +101,7 @@ export class ListadoClientesPage implements OnInit {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
-  AprobarCliente(idField, correo, clave){
+  AprobarCliente(idField: string, correo: string, clave: string){
     this.spinner = true;
     this.authService.aceptarUsuario(idField);
 
@@ -112,19 +115,47 @@ export class ListadoClientesPage implements OnInit {
     
   }
 
-  RechazarCliente(idField, correo){
+  RechazarCliente(idField: string, correo: string){
+    this.idFieldRechazar = idField;
+    this.correoRechazar = correo;
     this.ingresarMotivoRechazo = true;
-    //ABRIR VENTANA
-      //PEDIR MOTIVO
+  }
+
+  AceptarRechazo(){
+
+    var motivoRechazo = (<HTMLInputElement>document.getElementById('motivoRechazo')).value;
+
+    setTimeout(() => {
+      this.ingresarMotivoRechazo = false;
+      this.spinner = true;
+      this.DesactivarSpinner();
+    }, 500);
+
+    this.authService.rechazarUsuario(this.idFieldRechazar);
+    
+    setTimeout(() => {
+      if(motivoRechazo.length == 0){
         //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
-        //this.Rechazar(idField);
+          //this.correoRechazar
+          //NO SE INGRESO EL MOTIVO
+      }else{
+        //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
+          //this.correoRechazar
+          //this.motivoRechazo
+      }
+
+      setTimeout(() => {
+        this.idFieldRechazar = "";
+        this.correoRechazar = "";
+        this.spinner = false;
+      }, 2000);
+
+    }, 3000);
   }
 
-  Rechazar(idField){
-    this.authService.rechazarUsuario(idField);
-  }
-
-  Cancelar() {
+  CancelarRechazo() {
+    this.idFieldRechazar = "";
+    this.correoRechazar = "";
     this.ingresarMotivoRechazo = false;
   }
 }

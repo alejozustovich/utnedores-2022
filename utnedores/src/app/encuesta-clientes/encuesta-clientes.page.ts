@@ -138,4 +138,9 @@ export class EncuestaClientesPage implements OnInit {
     console.log(this.preguntaCuatro.value);
     console.log(this.preguntaCinco.value);
   }
+
+  Volver(){
+    this.spinner = true;
+    this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+  }
 }
