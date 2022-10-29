@@ -22,7 +22,7 @@ export class ListadoClientesPage implements OnInit {
   currentEmail = "";
   currentPassword = "";
   ingresarMotivoRechazo = false;
-
+  cargando = true;
 
   constructor(
     private router: Router,
@@ -38,14 +38,14 @@ export class ListadoClientesPage implements OnInit {
   DesactivarSpinner() {
     setTimeout(() => {
       this.spinner = false;
-    }, 5500);
+      this.cargando = false;
+    }, 6000);
   }
 
   ObtenerPerfil() {
     this.authService.getUser(this.authService.usuarioActual()).then(user => {
       this.currentEmail = user.correo;
       this.currentPassword = user.clave;
-      this.spinner = false;
     });
   }
 
@@ -84,6 +84,7 @@ export class ListadoClientesPage implements OnInit {
       if(this.users.length == 0){
         //ERROR DE CONEXION
       }
+      this.cargando = false;
       this.spinner = false;
     }, 7000);
   }
