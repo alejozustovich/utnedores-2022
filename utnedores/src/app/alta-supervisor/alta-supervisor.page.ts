@@ -26,6 +26,9 @@ export class AltaSupervisorPage implements OnInit {
   fotoCargada = false;
   nombreImagen = "";
   base64Image = "";
+  
+  currentEmail = "";
+  currentPassword = "";
 
   usuarioAgregado = false;
 
@@ -47,7 +50,26 @@ export class AltaSupervisorPage implements OnInit {
     private camera: Camera,
     private router: Router
   ) {
+    this.spinner = true;
+    this.DesactivarSpinner();
     this.AsignarNombreFoto();
+    setTimeout(() => {
+      this.ObtenerPerfil();
+    }, 2500);
+  }
+
+  DesactivarSpinner() {
+    setTimeout(() => {
+      this.spinner = false;
+    }, 7000);
+  }
+
+  ObtenerPerfil() {
+    this.authService.getUser(this.authService.usuarioActual()).then(user => {
+      this.currentEmail = user.correo;
+      this.currentPassword = user.clave;
+      this.spinner = false;
+    });
   }
 
   DesactivarVentanas(){
@@ -299,7 +321,7 @@ export class AltaSupervisorPage implements OnInit {
         tipo: this.perfil,
         aprobado: ""
       };
-      const registro = { email: usuario.correo, password: usuario.clave };
+      const registro = { emailNuevo: usuario.correo, passwordNuevo: usuario.clave };
       if (this.verificarUsuario(usuario)) {
         try {
           this.authService.addUser(usuario);
@@ -316,14 +338,16 @@ export class AltaSupervisorPage implements OnInit {
             }
 
             setTimeout(() => {
-              this.authService.register(registro);
+
+              var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
+              this.authService.register(registro, currentUser);
 
               this.spinner = false;
               this.usuarioAgregado = true;
               setTimeout(() => {
                 this.Redirigir();
               }, 2500);
-            }, 2000);
+            }, 2500);
 
           }, 2000);
         } catch (e) {

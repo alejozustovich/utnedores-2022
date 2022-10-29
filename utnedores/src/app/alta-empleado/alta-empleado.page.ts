@@ -31,6 +31,9 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   base64Image = "";
   empleadoAgregado = false;
 
+  currentEmail = "";
+  currentPassword = "";
+
   options: CameraOptions = {
     quality: 50,
     allowEdit: false,
@@ -49,10 +52,29 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private fb: FormBuilder
   ) {
+    this.spinner = true;
+    this.DesactivarSpinner();
     this.GuardarId();
     this.AsignarNombreFoto();
+    setTimeout(() => {
+      this.ObtenerPerfil();
+    }, 2500);
   }
   
+  DesactivarSpinner() {
+    setTimeout(() => {
+      this.spinner = false;
+    }, 7000);
+  }
+
+  ObtenerPerfil() {
+    this.authService.getUser(this.authService.usuarioActual()).then(user => {
+      this.currentEmail = user.correo;
+      this.currentPassword = user.clave;
+      this.spinner = false;
+    });
+  }
+
   ngOnInit() {
     this.formRegistro = this.fb.group(
       {
@@ -322,7 +344,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
           setTimeout(() => {
             this.Redirigir();
           }, 2500);
-        }, 2000);
+        }, 2500);
   
       }, 2000);
     }else{
@@ -333,8 +355,9 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   RegistrarUsuario() {
-    var registro = { email: this.correo.value, password: this.clave.value };
-    this.authService.register(registro);
+    var registro = { emailNuevo: this.correo.value, passwordNuevo: this.clave.value };
+    var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
+    this.authService.register(registro, currentUser);
   }
 
   LimpiarCamposFormulario() {

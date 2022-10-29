@@ -236,10 +236,17 @@ export class AuthService {
 	}
 
 
-  	async register({ email, password }) {
+  	async register({emailNuevo, passwordNuevo}, {emailCurrent, passwordCurrent}) {
 		try {
-			const user = await createUserWithEmailAndPassword(this.auth, email, password);
-			return user;
+			const user = await createUserWithEmailAndPassword(this.auth, emailNuevo, passwordNuevo);
+			setTimeout(()=>{
+				this.logout();
+				setTimeout(()=>{
+					if(emailCurrent != ""){
+						this.login({email: emailCurrent, password: passwordCurrent});
+					}
+				},2500);
+			},3000);
 		} catch (e) {
 			return null;
 		}
