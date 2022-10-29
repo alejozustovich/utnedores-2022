@@ -339,14 +339,16 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
          setTimeout(() => {
           this.RegistrarUsuario();
 
-          this.spinner = false;
-          this.empleadoAgregado = true;
           setTimeout(() => {
-            this.Redirigir();
-          }, 2500);
+            this.spinner = false;
+            this.empleadoAgregado = true;
+            setTimeout(() => {
+              this.Redirigir();
+            }, 3000);
+          }, 3000);
+
         }, 2500);
-  
-      }, 2000);
+      }, 2500);
     }else{
       this.spinner = false;
       this.GuardarId();

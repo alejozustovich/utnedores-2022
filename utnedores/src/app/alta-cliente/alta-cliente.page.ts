@@ -171,7 +171,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    BarcodeScanner.prepare();
+    //BarcodeScanner.prepare();
   }
 
   ngOnDestroy() {
@@ -331,23 +331,33 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
 
     setTimeout(() => {
-      var rutaImagen = "usuarios/" + this.nombreImagen;
-      this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+
+      if (this.fotoCelular) {
+        var rutaImagen = "usuarios/" + this.nombreImagen;
+        this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+      }
+
+      if (this.fotoFile) {
+        var imagenStorage = "usuarios/" + this.nombreImagen;
+        this.authService.subirImagenFile(imagenStorage, this.file);
+      }
 
       setTimeout(() => {
         this.RegistrarUsuario();
 
-        this.spinner = false;
-        this.clienteAgregado = true;
         setTimeout(() => {
-          this.Redirigir();
-        }, 2500);
-      }, 2000);
+          this.spinner = false;
+          this.clienteAgregado = true;
+          setTimeout(() => {
+            this.Redirigir();
+          }, 3000);
+        }, 3000);
+      }, 2500);
     }, 2500);
   }
 
   RegistrarUsuario() {
-    var registro = { emailNuevo: this.correo, passwordNuevo: this.clave };
+    var registro = { emailNuevo: this.correo.value, passwordNuevo: this.clave.value };
     var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
     this.authService.register(registro, currentUser);
   }

@@ -22,6 +22,7 @@ export class ListadoClientesPage implements OnInit {
   currentEmail = "";
   currentPassword = "";
 
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -36,7 +37,7 @@ export class ListadoClientesPage implements OnInit {
   DesactivarSpinner() {
     setTimeout(() => {
       this.spinner = false;
-    }, 7000);
+    }, 5500);
   }
 
   ObtenerPerfil() {
@@ -73,8 +74,7 @@ export class ListadoClientesPage implements OnInit {
           }
           setTimeout(() => {
             this.ingresar = true;
-            this.spinner = false;
-          }, 2000);
+          }, 5500);
         }, 3000);
       }
     });
@@ -101,12 +101,11 @@ export class ListadoClientesPage implements OnInit {
     this.authService.aceptarUsuario(idField);
 
     setTimeout(() => {
-      this.ingresar = true;
       var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
-      this.authService.register({emailNuevo: correo, passwordNuevo: clave}, currentUser);  
-      this.spinner = false;
+      this.authService.register({emailNuevo: correo, passwordNuevo: clave}, currentUser);
+      this.DesactivarSpinner();
       //ENVIAR CORREO AUTOMATICO ACEPTANDO AL USUARIO
-    }, 2500);
+    }, 3000);
     
     
   }

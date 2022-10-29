@@ -338,18 +338,18 @@ export class AltaSupervisorPage implements OnInit {
             }
 
             setTimeout(() => {
-
               var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
               this.authService.register(registro, currentUser);
 
-              this.spinner = false;
-              this.usuarioAgregado = true;
               setTimeout(() => {
-                this.Redirigir();
-              }, 2500);
+                this.spinner = false;
+                this.usuarioAgregado = true;
+                setTimeout(() => {
+                  this.Redirigir();
+                }, 3000);
+              }, 3000);
             }, 2500);
-
-          }, 2000);
+          }, 2500);
         } catch (e) {
           this.spinner = false;
           this.Alerta('Error al crear usuario!', 'danger');
