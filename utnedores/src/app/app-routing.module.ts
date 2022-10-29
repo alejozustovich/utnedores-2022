@@ -76,6 +76,10 @@ const routes: Routes = [
   {
     path: 'home-cliente-mesa',
     loadChildren: () => import('./home-cliente-mesa/home-cliente-mesa.module').then( m => m.HomeClienteMesaPageModule)
+  },
+  {
+    path: 'encuesta-supervisor',
+    loadChildren: () => import('./encuesta-supervisor/encuesta-supervisor.module').then( m => m.EncuestaSupervisorPageModule)
   }
 
 ];

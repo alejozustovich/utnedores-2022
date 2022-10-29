@@ -9,15 +9,12 @@ import { SplashScreen } from '@capacitor/splash-screen';
 })
 export class SplashPage implements OnInit {
 
-  constructor(private router: Router
-  ) {
-    
+  constructor(private router: Router){
   }
 
   ngOnInit() {
-    SplashScreen.hide();
     setTimeout(()=>{
       this.router.navigateByUrl('/login', { replaceUrl: true });
-    },5000);
+    },3500);
   }
 }
