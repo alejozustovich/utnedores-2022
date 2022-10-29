@@ -13,8 +13,9 @@
 			<img src="../../assets/cliente.png" alt="" width="50" height="50">
 			<h2>Cliente</h2>
 			<button (click)="IrEncuestas()"><img src="../../assets/home-cliente/ver-encuestas.png" width="30" height="30"> Encuestas</button>
-			<button (click)="IrReservar()" *ngIf="esRegistrado"><img src="../../assets/home-cliente/reservar.png" width="30" height="30"> Reservar</button>
 			<button (click)="startScanner()"><img src="../../assets/home-cliente/escanear-qr.png" width="30" height="30"> Escanear QR</button>
+			<button *ngIf="esRegistrado" (click)="IrReservar()" ><img src="../../assets/home-cliente/reservar.png" width="30" height="30"> Reservar</button>
+			<button *ngIf="!esRegistrado" style="color: rgb(133, 133, 133);" ><img src="../../assets/home-cliente/sinreserva.png" width="30" height="30"> Reservar</button>
 		</div>
 		<div id="msjEstado">
 			{{mensajeEstado}}

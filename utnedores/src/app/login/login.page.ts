@@ -16,6 +16,7 @@ export class LoginPage implements OnInit {
   spinner = false;
 
   users: Usuario[];
+  usersSelect: Usuario[];
   perfil = "";
   tipo = "";
   selectNoDisponible = true;
@@ -41,6 +42,12 @@ export class LoginPage implements OnInit {
             this.users[i] = this.users[k];
             this.users[k] = userA;
           }
+        }
+      }
+      this.usersSelect = new Array();
+      for(var i = 0 ; i < this.users.length - 1; i++){
+        if(this.users[i].clave != "111111111111"){
+          this.usersSelect.push(this.users[i]);
         }
       }
       if(this.users.length == 0){
@@ -86,8 +93,8 @@ export class LoginPage implements OnInit {
   };
 
   llenarCampos(event) {
-    this.email.setValue(this.users[event.target.value].correo);
-    this.password.setValue(this.users[event.target.value].clave);
+    this.email.setValue(this.usersSelect[event.target.value].correo);
+    this.password.setValue(this.usersSelect[event.target.value].clave);
   }
 
   SonidoIngreso(){
@@ -100,14 +107,19 @@ export class LoginPage implements OnInit {
     this.router.navigateByUrl('/alta-cliente', { replaceUrl: true });
   }
 
+  Anonimo(){
+    this.spinner = true;
+    this.router.navigateByUrl('/alta-anonimo', { replaceUrl: true });
+  }
+
   async iniciarSesion() {
     this.spinner = true;
     const data = { email: this.email.value, password: this.password.value }
     const user = await this.authService.login(data);
     if (user) {
-      for (var i = 0; i < this.users.length; i++) {
-        if (((this.users[i].correo).toLocaleLowerCase()) === ((this.email.value.toLocaleLowerCase()))) {
-          this.perfil = this.users[i].perfil;
+      for (var i = 0; i < this.usersSelect.length; i++) {
+        if (((this.usersSelect[i].correo).toLocaleLowerCase()) === ((this.email.value.toLocaleLowerCase()))) {
+          this.perfil = this.usersSelect[i].perfil;
           break;
         }
       }

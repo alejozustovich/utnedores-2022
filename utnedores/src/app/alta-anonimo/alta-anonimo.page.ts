@@ -5,20 +5,21 @@ import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
-  selector: 'app-alta-cliente',
-  templateUrl: './alta-cliente.page.html',
-  styleUrls: ['./alta-cliente.page.scss'],
+  selector: 'app-alta-anonimo',
+  templateUrl: './alta-anonimo.page.html',
+  styleUrls: ['./alta-anonimo.page.scss'],
 })
-export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
+export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
 
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
   spinner = true;
-  esRegistrado = true;
-  esAnonimo = false;
+  esRegistrado = false;
+  esAnonimo = true;
   srcUserPhoto = "../../assets/user-photo.png";
   foto = "";
   fotoFile = false;
@@ -31,8 +32,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   base64Image = "";
   perfil = "Perfil";
   clienteAgregado = false;
-  currentEmail = "";
-  currentPassword = "";
+  claveRegistro = "111111111111";
 
   options: CameraOptions = {
     quality: 50,
@@ -50,31 +50,27 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private camera: Camera,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private utilidades: UtilidadesService
   ) {
     this.GuardarId();
     this.AsignarNombreFoto();
-    this.ObtenerPerfil();
     this.DesactivarSpinner();
   }
 
-  ObtenerPerfil() {
-    this.perfil = localStorage.getItem('Perfil');
-    localStorage.setItem('Perfil', '');
+  SonidoIngreso(){
+    this.utilidades.PlayLogin();
   }
 
   Redirigir() {
-    if (this.perfil.includes('Cliente') == true) {
-      this.router.navigateByUrl('/login', { replaceUrl: true });
-    }
-    if (this.perfil.includes('Empleado') == true) {
-      this.router.navigateByUrl('/home-metre', { replaceUrl: true });
-    }
+    localStorage.setItem('sonido', "Si");
+    this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
+    this.SonidoIngreso();
   }
 
   Volver() {
     this.spinner = true;
-    this.Redirigir();
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
   ngOnInit() {
@@ -192,9 +188,6 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       if (dniValido) {
         this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
-        this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
-        this.dni.setValue(cadena[4]);
-
       } else {
         this.Alerta("Código no válido", 'danger');
       }
@@ -295,54 +288,69 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
 
   GuardarUsuarioAnonimo() {
-    var unUsuarioAnonimo: Usuario = {
-      idField: "",
-      idUsuario: this.idRegistroUsuario,
-      nombre: this.nombre.value,
-      apellido: "",
-      correo: this.correo.value,
-      clave: this.clave.value,
-      dni: "",
-      cuil: "",
-      foto: this.nombreImagen,
-      perfil: "Cliente",
-      tipo: "Anónimo",
-      aprobado: ""
-    };
 
-    this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
+    var encontrado = false;
 
-    setTimeout(() => {
-
-      if (this.fotoCelular) {
-        var rutaImagen = "usuarios/" + this.nombreImagen;
-        this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+    this.users.forEach(user => {
+      if(((user.correo).toLocaleLowerCase()).includes(((this.correo.value).toLocaleLowerCase())) == true && ((user.nombre).toLocaleLowerCase()).includes(((this.nombre.value).toLocaleLowerCase())) == true) {
+        encontrado = true;
       }
+    })
 
-      if (this.fotoFile) {
-        var imagenStorage = "usuarios/" + this.nombreImagen;
-        this.authService.subirImagenFile(imagenStorage, this.file);
-      }
+    if(encontrado){
+      this.authService.login({email: this.correo.value, password: this.claveRegistro});
+      
+      setTimeout(() => {
+        this.Redirigir();
+      }, 3000);
+      
+    }else{
+      var unUsuarioAnonimo: Usuario = {
+        idField: "",
+        idUsuario: this.idRegistroUsuario,
+        nombre: this.nombre.value,
+        apellido: "",
+        correo: this.correo.value,
+        clave: this.claveRegistro,
+        dni: "",
+        cuil: "",
+        foto: this.nombreImagen,
+        perfil: "Cliente",
+        tipo: "Anónimo",
+        aprobado: ""
+      };
+
+      this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
 
       setTimeout(() => {
-        this.RegistrarUsuario();
+
+        if (this.fotoCelular) {
+          var rutaImagen = "usuarios/" + this.nombreImagen;
+          this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+        }
+
+        if (this.fotoFile) {
+          var imagenStorage = "usuarios/" + this.nombreImagen;
+          this.authService.subirImagenFile(imagenStorage, this.file);
+        }
 
         setTimeout(() => {
-          this.spinner = false;
-          this.clienteAgregado = true;
+          var registro = { emailNuevo: this.correo.value, passwordNuevo: this.claveRegistro };
+          this.authService.ingresoAnonimo(registro);
+
           setTimeout(() => {
-            this.Redirigir();
-          }, 3000);
-        }, 3000);
+            this.spinner = false;
+            this.clienteAgregado = true;
+            setTimeout(() => {
+              this.Redirigir();
+            }, 2000);
+          }, 1000);
+
+        }, 2500);
       }, 2500);
-    }, 2500);
+    }
   }
 
-  RegistrarUsuario() {
-    var registro = { emailNuevo: this.correo.value, passwordNuevo: this.clave.value };
-    var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
-    this.authService.register(registro, currentUser);
-  }
 
   DesactivarVentanas() {
     setTimeout(() => {
@@ -372,4 +380,5 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.formRegistro.reset();
   }
   // FIN Guardar Usuarios.
+
 }
