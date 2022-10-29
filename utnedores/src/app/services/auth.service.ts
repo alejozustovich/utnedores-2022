@@ -29,6 +29,7 @@ export interface Usuario{
 
 export interface Espera{
 	idField: string;
+	idEspera: string,
 	idUsuario: string;
 	nombre: string;
 	apellido: string;

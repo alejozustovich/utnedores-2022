@@ -43,6 +43,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   cantidadPersonas = 0;
   ingresarCantidad = false;
 
+  idEsperaMayor = 0;
   //0   => Escanear QR Local
   //1   => En lista de espera
   //2   => Mesa asignada
@@ -156,6 +157,12 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   TraerEsperas(){
     this.authService.listaEspera().subscribe(esperas => {
       this.listaEspera = esperas;
+      this.listaEspera.forEach(u => {
+        if(this.idEsperaMayor < (Number(u.idEspera))){
+          this.idEsperaMayor = (Number(u.idEspera));
+        }
+      });
+      this.idEsperaMayor = this.idEsperaMayor + 1;
       //ENTRA CAMBIO LISTAESPERA
     });
   }
@@ -168,7 +175,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       verificar = false;
     }
 
-    if(this.listaEspera.length == 0 || this.listaEspera == null){
+    if(this.idEsperaMayor == 0 || this.listaEspera == null){
       this.TraerEsperas();
       verificar = false;
     }
@@ -235,6 +242,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
     var unaEspera : Espera ={
       idField: "",
+      idEspera: (this.idEsperaMayor.toString()),
       idUsuario: this.usuarioLogueado.idUsuario,
       nombre: this.usuarioLogueado.nombre,
       apellido: this.usuarioLogueado.apellido,
@@ -320,7 +328,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   
-
   AnalizarResultado(){
 
     if(this.result.includes(this.qrLocal)){

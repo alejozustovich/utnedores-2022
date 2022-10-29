@@ -21,7 +21,7 @@
               <h2>{{c.nombre}} {{c.apellido}}</h2>
               <p>Ingreso: {{c.fecha}} {{c.hora}}</p>
               <p>Comensales: {{c.cantPersonas}}</p>
-              <ion-button style="--background: rgb(27, 27, 27);" (click)="setOpen(true)">Asignar Mesa</ion-button>
+              <ion-button style="--background: rgb(27, 27, 27);" (click)="setOpen(c.cantPersonas, c.idField)">Asignar Mesa</ion-button>
             </ion-label>
           </ion-item>
         </div>
@@ -43,6 +43,7 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
+        {{cantidadComensales}} {{cantidadSeleccionada}}
         <div class="contenido">
           <div *ngFor="let m of mesas">
             <ion-item>
