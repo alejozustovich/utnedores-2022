@@ -10,14 +10,9 @@
         placeholder="{{selectTitle}}"
         okText="Aceptar" cancelText="Cancelar"
         (ionChange)="llenarCampos($event)"
-        [interfaceOptions]="customAlertOptions"
-      >
-        <ion-select-option
-          *ngFor="let user of users; let i=index"
-          value="{{i}}"
-        >
-          {{user.tipo}}: {{user.correo}}</ion-select-option
-        >
+        [interfaceOptions]="customAlertOptions">
+
+        <ion-select-option *ngFor="let user of usersSelect; let i=index" value="{{i}}">{{user.tipo}}: {{user.correo}}</ion-select-option>
       </ion-select>
     </form>
 
@@ -28,12 +23,14 @@
           formControlName="email"
           type="text"
           placeholder="Correo"
+          maxlength="40"
           [ngClass]="{'error-borde': (email.dirty || email.touched) && email.errors}"
         ></ion-input>
         <ion-input
           formControlName="password"
           type="password"
           placeholder="Clave"
+          maxlength="10"
           [ngClass]="{'error-borde': (password.dirty || password.touched) && password.errors}"
         ></ion-input>
         <ion-button
@@ -44,9 +41,12 @@
           ><ion-icon name="checkmark-circle-outline"></ion-icon
           >Entrar</ion-button
         >
-        <ion-button (click)="Registrarse()">Registrarse</ion-button>
       </form>
     </div>
+    <form>
+      <ion-button (click)="Registrarse()">Registrarse</ion-button>
+      <ion-button (click)="Anonimo()">Ingresar como anónimo</ion-button>
+    </form>
   </div>
 </ion-content>
 

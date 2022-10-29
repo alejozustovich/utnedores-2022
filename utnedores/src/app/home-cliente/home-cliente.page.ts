@@ -18,8 +18,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   mesas: Mesa[];
   listaEspera: Espera[];
 
+  clienteAnonimo = true;
   volumenOn = true;
-  esRegistrado = true;
+  esRegistrado = false;
   spinner = true;
   qrLocal = "LOCALUTNEDORES";
   usuarioLogueado: Usuario = {
@@ -39,6 +40,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   mensajeEstado = ""; 
   estado = 0;
 
+  mesaAsignada = false;
   idFieldEspera = "";
   cantidadPersonas = 0;
   ingresarCantidad = false;
@@ -60,6 +62,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.ObtenerUsuario();
 
     this.DesactivarSpinner();
+    //DESCOMENTARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
   }
 
   DesactivarSpinner(){
@@ -68,6 +71,14 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     },8000);
   }
   ngOnInit() {}
+
+  IrEncuestas(){
+    
+  }
+
+  IrReservar(){
+
+  }
 
   async Alerta( mensaje : string , color : string ) {
     const toast = await this.toastController.create({
@@ -117,8 +128,17 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   CerrarSesion(){
     this.spinner = true;
-    this.SonidoEgreso();
     this.authService.logout();
+
+    if(!this.esRegistrado){
+      //CHECKEAR QUE NO TENGA MESA
+        //NO
+          //ELIMINAR REGISTRO Y DE LA LISTA
+        //SI
+          //TIENE UNA MESA ASIGNADA
+    }
+
+    this.SonidoEgreso();
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
@@ -134,6 +154,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(()=>{
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.usuarioLogueado = (user as Usuario);
+        if(this.usuarioLogueado.tipo.includes("Registrado")){
+          this.esRegistrado = true;
+        }
       });
     },2500);
   }

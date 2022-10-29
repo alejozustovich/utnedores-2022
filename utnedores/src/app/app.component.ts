@@ -25,8 +25,8 @@ export class AppComponent {
   {
     this.platform.ready().then(() => {
       setTimeout(() => {
-        SplashScreen.hide();
-        this.router.navigateByUrl('/splash');
+        //SplashScreen.hide();
+        this.router.navigateByUrl('/home-cliente');
       }, 1000);
     });
   }

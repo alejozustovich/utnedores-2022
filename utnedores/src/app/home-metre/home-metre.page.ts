@@ -43,6 +43,7 @@ export class HomeMetrePage implements OnInit {
 
   IrAltaCliente(){
     this.ActivarSpinner();
+    localStorage.setItem('Perfil', 'Empleado');
     this.router.navigateByUrl('/alta-cliente', { replaceUrl: true });
   }
 

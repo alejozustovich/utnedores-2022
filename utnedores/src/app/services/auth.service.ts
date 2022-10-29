@@ -236,6 +236,13 @@ export class AuthService {
 		return collectionData(productRef, {idField: 'idField'}) as Observable<Producto[]>;
 	}
 
+	async ingresoAnonimo({emailNuevo, passwordNuevo}) {
+		try {
+			const user = await createUserWithEmailAndPassword(this.auth, emailNuevo, passwordNuevo);
+		} catch (e) {
+			return null;
+		}
+	}
 
   	async register({emailNuevo, passwordNuevo}, {emailCurrent, passwordCurrent}) {
 		try {

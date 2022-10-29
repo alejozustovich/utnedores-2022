@@ -80,6 +80,10 @@ const routes: Routes = [
   {
     path: 'encuesta-supervisor',
     loadChildren: () => import('./encuesta-supervisor/encuesta-supervisor.module').then( m => m.EncuestaSupervisorPageModule)
+  },
+  {
+    path: 'alta-anonimo',
+    loadChildren: () => import('./alta-anonimo/alta-anonimo.module').then( m => m.AltaAnonimoPageModule)
   }
 
 ];
