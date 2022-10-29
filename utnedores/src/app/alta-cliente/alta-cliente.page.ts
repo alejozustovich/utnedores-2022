@@ -31,6 +31,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   base64Image = "";
   perfil = "Perfil";
   clienteAgregado = false;
+  currentEmail = "";
+  currentPassword = "";
 
   options: CameraOptions = {
     quality: 50,
@@ -66,6 +68,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       localStorage.setItem('Perfil', '');
     } else {
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
+        this.currentEmail = user.correo;
+        this.currentPassword = user.clave;
         this.perfil = user.perfil;
         this.spinner = false;
       });
@@ -339,12 +343,13 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
           this.Redirigir();
         }, 2500);
       }, 2000);
-    }, 2000);
+    }, 2500);
   }
 
   RegistrarUsuario() {
-    var registro = { email: this.correo, password: this.clave };
-    this.authService.register(registro);
+    var registro = { emailNuevo: this.correo, passwordNuevo: this.clave };
+    var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
+    this.authService.register(registro, currentUser);
   }
 
   DesactivarVentanas() {

@@ -7,7 +7,7 @@
     text-align: center !important;
   
     ion-toolbar {
-        --background: -moz-linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgb(0, 0, 0) 100%);
+        --background: linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgb(0, 0, 0) 100%);
         padding-top: 10px;
         padding-bottom: 10px;
   
@@ -19,7 +19,7 @@
   }
   
   ion-content {
-    --background: -moz-linear-gradient(45deg, rgba(123, 46, 17, 0.8) 0%, rgb(206, 170, 156) 100%);
+    --background: linear-gradient(45deg, rgba(123, 46, 17, 0.8) 0%, rgb(206, 170, 156) 100%);
     font-family: Font-Regular;
   
     ion-input {
