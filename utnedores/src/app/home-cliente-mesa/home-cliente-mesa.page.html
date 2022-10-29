@@ -1,0 +1,47 @@
+<ion-header [translucent]="true" [hidden]="scanActive">
+	<ion-toolbar>
+		<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
+		<ion-button id="btn_toolbar" (click)="CerrarSesion()">
+			<ion-icon name="log-out-outline" style="transform: scaleX(-1);"></ion-icon>
+		</ion-button>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" [hidden]="scanActive">
+	<ion-grid>
+		<div class="contenido">
+			<img src="../../assets/cliente.png" alt="" width="50" height="50">
+			<h2>Cliente</h2>
+      <button (click)="IrPedido()"><img src="../../assets/dessert.png" width="30" height="30"> Hacer Pedido</button>
+      <button (click)="EstadoPedido()"><img src="../../assets/home-cliente/cocinando.png" width="30" height="30"> Ver Estado del Pedido</button>
+      <button (click)="ConsultarMozo()"><img src="../../assets/home-cliente/chat.png" width="30" height="30"> Consultar al Mozo</button>
+      <button (click)="IrJuegos()"><img src="../../assets/home-cliente/game.png" width="30" height="30"> Jugar</button>
+			<button (click)="IrEncuestas()"><img src="../../assets/home-cliente/ver-encuestas.png" width="30" height="30"> Dejar opinión</button>
+		</div>
+		<div id="msjEstado">
+			{{mensajeEstado}}
+		</div>
+	</ion-grid>
+	<ion-fab horizontal="end" vertical="bottom" >
+		<ion-fab-button size="small" (click)="ActivarDesactivarSonido()">
+			<ion-icon *ngIf="volumenOn" name="volume-high-outline"></ion-icon>
+			<ion-icon *ngIf="!volumenOn" name="volume-mute-outline"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+</ion-content>
+
+<ion-row class="scanner-buttons" [hidden]="!scanActive">
+	<ion-col class="ion-no-padding">
+	  <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
+	</ion-col>
+</ion-row>
+
+<div class="scan-box" [hidden]="!scanActive">
+</div>
+
+<div class="custom-loading" *ngIf="spinner">
+	<div class="spinner">
+		<div class="double-bounce1"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+		<div class="double-bounce2"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+	</div>
+</div>

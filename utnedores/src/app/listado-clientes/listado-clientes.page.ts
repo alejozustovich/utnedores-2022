@@ -21,6 +21,7 @@ export class ListadoClientesPage implements OnInit {
   ingresar = true;
   currentEmail = "";
   currentPassword = "";
+  ingresarMotivoRechazo = false;
 
 
   constructor(
@@ -111,6 +112,7 @@ export class ListadoClientesPage implements OnInit {
   }
 
   RechazarCliente(idField, correo){
+    this.ingresarMotivoRechazo = true;
     //ABRIR VENTANA
       //PEDIR MOTIVO
         //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
@@ -119,5 +121,9 @@ export class ListadoClientesPage implements OnInit {
 
   Rechazar(idField){
     this.authService.rechazarUsuario(idField);
+  }
+
+  Cancelar() {
+    this.ingresarMotivoRechazo = false;
   }
 }
