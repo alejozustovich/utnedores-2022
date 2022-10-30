@@ -17,7 +17,7 @@ export class ListadoProductosPage implements OnInit {
   cantidad = 0;
   precioTotal = 0;
   tiempoTotal = 0;
-  categoria = "Entradas";
+  categoria = "";
 
 
   constructor(
