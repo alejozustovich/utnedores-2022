@@ -19,8 +19,9 @@
             </ion-avatar>
             <ion-label>
               <h2>{{c.nombre}} {{c.apellido}}</h2>
-              <p>Ingreso: {{c.fecha}} {{c.hora}}</p>
+              <p>{{c.fecha}} {{c.hora}}</p>
               <p>Comensales: {{c.cantPersonas}}</p>
+              <p>Preferencia: {{c.preferencia}}</p>
               <ion-button style="--background: rgb(27, 27, 27);" (click)="setOpen(c.cantPersonas, c.idField)">Asignar Mesa</ion-button>
             </ion-label>
           </ion-item>
@@ -39,7 +40,7 @@
       <ion-header [translucent]="true">
         <ion-toolbar>
           <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
-          <ion-button id="btn_toolbar" (click)="back()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
+          <ion-button id="btn_toolbar" (click)="Volver()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
@@ -52,7 +53,7 @@
               </ion-avatar>
               <ion-label>
                 <h2>Mesa {{m.numMesa}}</h2>
-                <p>Tipo: {{m.tipo}}</p>
+                <p>{{m.tipo}}</p>
                 <p>Capacidad: {{m.capacidad}}</p>
                 <ion-button style="--background: rgb(27, 27, 27);" (click)="SeleccionarMesa(m.numMesa, m.capacidad)">Marcar / Desmarcar</ion-button>
               </ion-label>
@@ -68,7 +69,7 @@
               </ion-avatar>
               <ion-label>
                 <h2>Mesa {{m.numMesa}}</h2>
-                <p>Tipo: {{m.tipo}}</p>
+                <p>{{m.tipo}}</p>
                 <p>Capacidad: {{m.capacidad}}</p>
                 <ion-button disabled style="--background: rgb(27, 27, 27);">Marcar / Desmarcar</ion-button>
               </ion-label>
@@ -85,6 +86,7 @@
             <img src="../../assets/silla.png" alt="" width="35" style="margin-bottom: 10px; filter: invert(100%); margin-right: 5px;">
             <label style="font-size:1.3em; margin-right: 5px;">{{cantidadSeleccionada}}</label>
             <ion-button (click)="AsignarMesas()" [disabled]="cantidadSeleccionada == 0">Asignar</ion-button>
+            <ion-button (click)="back()">Listado</ion-button>
           </div>
         </ion-toolbar>
       </ion-footer>

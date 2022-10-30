@@ -17,7 +17,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   users: Usuario[];
   mesas: Mesa[];
   listaEspera: Espera[];
-
+  
   clienteAnonimo = true;
   volumenOn = true;
   esRegistrado = false;
@@ -43,7 +43,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   mesaAsignada = false;
   idFieldEspera = "";
   cantidadPersonas = 0;
-  ingresarCantidad = false;
+  ingresarCantidad = true;
 
   idEsperaMayor = 0;
   //0   => Escanear QR Local
@@ -62,7 +62,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.ObtenerUsuario();
 
     this.DesactivarSpinner();
-    //DESCOMENTARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
   }
 
   DesactivarSpinner(){
@@ -263,7 +262,11 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   AgregarListaEspera(){
     var date = new Date();
-    
+
+    var preferenciaMesa = "";
+    //CONSULTAR RADIO BUTTON Y ASIGNARLO A preferenciaMesa
+
+
     var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
     var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
     var unaEspera : Espera ={
@@ -275,7 +278,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       foto: this.usuarioLogueado.foto,
       fecha: fechaActual,
       hora: horaActual,
-      cantPersonas: (this.cantidadPersonas).toString()
+      cantPersonas: (this.cantidadPersonas).toString(),
+      preferencia: preferenciaMesa
     }
 
     this.authService.agregarEspera(unaEspera).then((res) =>{

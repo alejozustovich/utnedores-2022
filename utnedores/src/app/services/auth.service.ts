@@ -39,6 +39,7 @@ export interface Espera {
 	fecha: string;
 	hora: string;
 	cantPersonas: string;
+	preferencia: string;
 }
 
 export interface Mesa {

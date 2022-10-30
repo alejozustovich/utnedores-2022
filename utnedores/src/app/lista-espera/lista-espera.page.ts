@@ -111,13 +111,16 @@ export class ListaEsperaPage implements OnInit {
   }
 
   Volver() {
-    this.router.navigateByUrl('home-metre');
+    this.spinner = true;
+    this.isModalOpen = false;
+    setTimeout(() => {
+      this.router.navigateByUrl('home-metre');
+    }, 1000);
   }
 
   setOpen(cantPersonas: string, idField: string) {
     this.cantidadComensales = Number(cantPersonas);
     this.idFieldEliminar = idField;
-    //MESAS DISPONIBLES BORDES EN BLANCO
     for(var i = 0 ; i < this.mesaSeleccionada.length; i++){
       this.mesaSeleccionada[i] = false;
     }
