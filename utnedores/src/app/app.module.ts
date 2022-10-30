@@ -18,10 +18,11 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 
 import { NativeAudio } from '@awesome-cordova-plugins/native-audio/ngx';
 import { Flashlight } from '@awesome-cordova-plugins/flashlight/ngx';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, provideFirebaseApp(() => initializeApp(environment.firebase)), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideStorage(() => getStorage())],
+  imports: [HttpClientModule, BrowserModule, IonicModule.forRoot(), AppRoutingModule, provideFirebaseApp(() => initializeApp(environment.firebase)), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideStorage(() => getStorage())],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy } ,
     NgChartsModule ,
