@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
 import { waitForAsync } from '@angular/core/testing';
-import { Auth,	signInWithEmailAndPassword,	createUserWithEmailAndPassword,	signOut } from '@angular/fire/auth';
-import { query, where, Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc, getDocs } from '@angular/fire/firestore';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { query, where, Firestore, collection, collectionData, addDoc, updateDoc, deleteDoc, doc, getDocs, orderBy, limit } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { deleteObject, listAll, getDownloadURL, uploadString } from '@angular/fire/storage';
+import { map } from 'rxjs/operators';
 
 
-export interface Local{
+export interface Local {
 	idLocal: string;
 	qr: string;
 }
 
-export interface Usuario{
+export interface Usuario {
 	idField: string;
 	idUsuario: string;
 	nombre: string;
@@ -27,7 +28,7 @@ export interface Usuario{
 	aprobado: string;
 }
 
-export interface Espera{
+export interface Espera {
 	idField: string;
 	idEspera: string,
 	idUsuario: string;
@@ -39,7 +40,7 @@ export interface Espera{
 	cantPersonas: string;
 }
 
-export interface Mesa{
+export interface Mesa {
 	idField: string;
 	numMesa: string;
 	qr: string;
@@ -52,7 +53,7 @@ export interface Mesa{
 	pedirCuenta: string;
 }
 
-export interface Producto{
+export interface Producto {
 	idField: string;
 	idProducto: string;
 	categoria: string;
@@ -67,7 +68,7 @@ export interface Producto{
 	qr: string;
 }
 
-export interface Pedido{
+export interface Pedido {
 	idField: string;
 	numMesa: string;
 	idProducto: string;
@@ -79,13 +80,13 @@ export interface Pedido{
 	estado: string;
 }
 
-export interface Propina{
+export interface Propina {
 	idField: string;
 	idUsuario: string;
 	valor: string;
 }
 
-export interface ReservaNoConfirmada{
+export interface ReservaNoConfirmada {
 	idField: string;
 	idUsuario: string;
 	cantPersonas: string;
@@ -93,7 +94,7 @@ export interface ReservaNoConfirmada{
 	fecha: string;
 }
 
-export interface ReservaAsignada{
+export interface ReservaAsignada {
 	idField: string;
 	numMesa: string;
 	idUsuario: string;
@@ -101,7 +102,7 @@ export interface ReservaAsignada{
 	hora: string;
 }
 
-export interface EncuestaCliente{
+export interface EncuestaCliente {
 	atencion: string;
 	ambiente: string;
 	rapidez: string;
@@ -112,7 +113,7 @@ export interface EncuestaCliente{
 	foto3: string;
 }
 
-export interface EncuestaEmpleado{
+export interface EncuestaEmpleado {
 	atencion: string;
 	orden: string;
 	limpieza: string;
@@ -121,7 +122,7 @@ export interface EncuestaEmpleado{
 	foto1: string;
 }
 
-export interface EncuestaSupervisor{
+export interface EncuestaSupervisor {
 	respetuoso: string;
 	amable: string;
 	simpatia: string;
@@ -129,16 +130,35 @@ export interface EncuestaSupervisor{
 	recomendacion: string;
 }
 
+export interface Mensaje {
+	usuario: any;
+	mensaje: string;
+	fecha: number;
+}
+
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class AuthService {
 
-	constructor(
-		private auth: Auth,
-		private firestore: Firestore
-	) {
+	constructor(private auth: Auth, private firestore: Firestore) {
+	}
 
+	cargarMensajes(ruta: string): Observable<Mensaje[]> {
+		const msjRef = collection(this.firestore, ruta);
+		const q = query(msjRef, orderBy("fecha", "desc"), limit(10));
+		return (collectionData(q) as Observable<Mensaje[]>).pipe(map((mensajes: Mensaje[]) => {
+			const chat = [];
+			for (let mensaje of mensajes) {
+				chat.unshift(mensaje);
+			}
+			return chat;
+		}));
+	}
+
+	agregarMensaje(mensaje: Mensaje, ruta: string) {
+		const msjRef = collection(this.firestore, ruta);
+		return addDoc(msjRef, mensaje);
 	}
 
 	async getUser(correo) {
@@ -147,63 +167,64 @@ export class AuthService {
 		return (await getDocs(q)).docs[0].data();
 	}
 
-	eliminarEspera(idField: string){
+	eliminarEspera(idField: string) {
 		const esperaDocRef = doc(this.firestore, `listaespera/${idField}`);
 		return deleteDoc(esperaDocRef);
 	}
 
-	modificarEspera(idField: string, num: string){
+	modificarEspera(idField: string, num: string) {
 		const espDoc = doc(this.firestore, `listaespera/${idField}`);
-		return updateDoc(espDoc, {cantPersonas: num});
+		return updateDoc(espDoc, { cantPersonas: num });
 	}
 
-	agregarEspera(espera: Espera){
+	agregarEspera(espera: Espera) {
 		const esperaRef = collection(this.firestore, 'listaespera');
 		return addDoc(esperaRef, espera);
 	}
 
-	listaEspera(): Observable<Espera[]>
-	{
+	listaEspera(): Observable<Espera[]> {
 		const listaRef = collection(this.firestore, 'listaespera');
-		return collectionData(listaRef, {idField: 'idField'}) as Observable<Espera[]>;
+		return collectionData(listaRef, { idField: 'idField' }) as Observable<Espera[]>;
 	}
 
-	aceptarUsuario(idField){
+	aceptarUsuario(idField) {
 		const userDoc = doc(this.firestore, `users/${idField}`);
-    	return updateDoc(userDoc, {aprobado: 'Si'});
+		return updateDoc(userDoc, { aprobado: 'Si' });
 	}
 
-	rechazarUsuario(idField){
+	rechazarUsuario(idField) {
 		const userDoc = doc(this.firestore, `users/${idField}`);
-    	return updateDoc(userDoc, {aprobado: '0'});
+		return updateDoc(userDoc, { aprobado: '0' });
 	}
 
-	usuarioActual(){
+	usuarioActual() {
 		return this.auth.currentUser.email;
 	}
 
-	addUser(user: Usuario)
-	{
+	obtenerAuth(){
+		return getAuth();
+	}
+
+	addUser(user: Usuario) {
 		const userRef = collection(this.firestore, 'users');
 		return addDoc(userRef, user);
 	}
 
-	getUsers(): Observable<Usuario[]>
-	{
+	getUsers(): Observable<Usuario[]> {
 		const userRef = collection(this.firestore, 'users');
-		return collectionData(userRef, {idField: 'idField'}) as Observable<Usuario[]>;
+		return collectionData(userRef, { idField: 'idField' }) as Observable<Usuario[]>;
 	}
 
 
-	subirImagenBase64(nombreImagen, base64Image){
+	subirImagenBase64(nombreImagen, base64Image) {
 		const storage = getStorage();
 		const storageRef = ref(storage, nombreImagen);
-		uploadString(storageRef, base64Image, 'data_url').then((snapshot) =>{
-		  
+		uploadString(storageRef, base64Image, 'data_url').then((snapshot) => {
+
 		});
 	}
 
-	subirImagenFile(nombreImagen, file){
+	subirImagenFile(nombreImagen, file) {
 		const storage = getStorage();
 		const storageRef = ref(storage, nombreImagen);
 		uploadBytes(storageRef, file).then((response) => {
@@ -211,32 +232,28 @@ export class AuthService {
 	}
 
 
-	addTable(mesa: Mesa)
-	{
+	addTable(mesa: Mesa) {
 		const tableRef = collection(this.firestore, 'mesas');
 		return addDoc(tableRef, mesa);
 	}
 
-	getTables(): Observable<Mesa[]>
-	{
+	getTables(): Observable<Mesa[]> {
 		const mesaRef = collection(this.firestore, 'mesas');
-		return collectionData(mesaRef, {idField: 'idField'}) as Observable<Mesa[]>;
+		return collectionData(mesaRef, { idField: 'idField' }) as Observable<Mesa[]>;
 	}
 
 
-	addProduct(producto: Producto)
-	{
+	addProduct(producto: Producto) {
 		const productRef = collection(this.firestore, 'productos');
 		return addDoc(productRef, producto);
 	}
 
-	getProducts(): Observable<Producto[]>
-	{
+	getProducts(): Observable<Producto[]> {
 		const productRef = collection(this.firestore, 'productos');
-		return collectionData(productRef, {idField: 'idField'}) as Observable<Producto[]>;
+		return collectionData(productRef, { idField: 'idField' }) as Observable<Producto[]>;
 	}
 
-	async ingresoAnonimo({emailNuevo, passwordNuevo}) {
+	async ingresoAnonimo({ emailNuevo, passwordNuevo }) {
 		try {
 			const user = await createUserWithEmailAndPassword(this.auth, emailNuevo, passwordNuevo);
 		} catch (e) {
@@ -244,17 +261,17 @@ export class AuthService {
 		}
 	}
 
-  	async register({emailNuevo, passwordNuevo}, {emailCurrent, passwordCurrent}) {
+	async register({ emailNuevo, passwordNuevo }, { emailCurrent, passwordCurrent }) {
 		try {
 			const user = await createUserWithEmailAndPassword(this.auth, emailNuevo, passwordNuevo);
-			setTimeout(()=>{
+			setTimeout(() => {
 				this.logout();
-				setTimeout(()=>{
-					if(emailCurrent != ""){
-						this.login({email: emailCurrent, password: passwordCurrent});
+				setTimeout(() => {
+					if (emailCurrent != "") {
+						this.login({ email: emailCurrent, password: passwordCurrent });
 					}
-				},2500);
-			},3000);
+				}, 2500);
+			}, 3000);
 		} catch (e) {
 			return null;
 		}
@@ -272,5 +289,5 @@ export class AuthService {
 	logout() {
 		return signOut(this.auth);
 	}
-  
+
 }

@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <img id="img_toolbar" src="../../assets/Tenedores.png" width="13%" />
+    <ion-button id="btn_toolbar"
+      ><ion-icon name="arrow-undo"></ion-icon
+    ></ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div
+    class="caja-msjs scroll"
+    #scrollMe
+    [scrollTop]="chat?.length === 0 ? 0 : scrollMe.scrollHeight"
+  >
+    <div *ngFor="let msj of chat; let i = index">
+      <div
+        #cajaMsj
+        id="{{msj.usuario.id}}"
+        class="caja-msj"
+        [class.mb-0]="i+1 == chat.length"
+        [class.caja-msj-propio]="usuarioActual.idUsuario == msj.usuario.id"
+        [ngClass]="bgMsjOpuesto(msj)"
+      >
+        <span class="nombre" *ngIf="usuarioActual.idUsuario != msj.usuario.id">
+          <span class="nombre" *ngIf="msj.usuario.tipo == 'Mozo'"
+            >{{msj.usuario.tipo}}:
+          </span>
+          <span class="nombre" *ngIf="msj.usuario.tipo != 'Mozo'"
+            >Cliente:
+          </span>
+          {{ msj.usuario.apellido }}
+        </span>
+        <div class="msj">{{ msj.mensaje }}</div>
+        <span class="hora text-end">{{ msj.fecha | date:'short' }}</span>
+      </div>
+    </div>
+  </div>
+  <form [formGroup]="formMsj" class="form-enviar" (ngSubmit)="enviarMensaje()">
+    <ion-grid class="grilla">
+      <ion-row class="fila">
+        <ion-col>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="mensaje"
+            placeholder="Ingrese un mensaje"
+            [class.error-borde]="mensaje.errors"
+          />
+        </ion-col>
+        <ion-col size="2" class="col-btn">
+          <button type="submit" class="btn-enviar" [disabled]="!formMsj.valid || mensaje.value == ''">
+            <ion-icon name="send"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

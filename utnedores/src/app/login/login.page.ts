@@ -4,6 +4,7 @@ import { AuthService, Usuario } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { DataUsuarioService } from '../services/data-usuario.service';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,8 @@ export class LoginPage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private toastController: ToastController,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private dataUsuarioService: DataUsuarioService
   ) {
     this.TraerUsuarios();
   }
@@ -141,6 +143,9 @@ export class LoginPage implements OnInit {
           }
         }
       }
+      this.authService.getUser(this.email.value).then((user: Usuario) => {
+        this.dataUsuarioService.setUsuario = user;
+      });
     }
     else {
       this.spinner = false;

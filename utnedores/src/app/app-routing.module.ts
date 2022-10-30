@@ -88,6 +88,10 @@ const routes: Routes = [
   {
     path: 'listado-productos',
     loadChildren: () => import('./listado-productos/listado-productos.module').then( m => m.ListadoProductosPageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
   }
 
 ];
