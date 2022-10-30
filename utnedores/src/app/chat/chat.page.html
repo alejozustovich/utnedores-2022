@@ -13,6 +13,7 @@
     #scrollMe
     [scrollTop]="chat?.length === 0 ? 0 : scrollMe.scrollHeight"
   >
+    <ion-spinner *ngIf="!chat" name="lines" color="light" class="spin"></ion-spinner>
     <div *ngFor="let msj of chat; let i = index">
       <div
         #cajaMsj
@@ -49,7 +50,11 @@
           />
         </ion-col>
         <ion-col size="2" class="col-btn">
-          <button type="submit" class="btn-enviar" [disabled]="!formMsj.valid || mensaje.value == ''">
+          <button
+            type="submit"
+            class="btn-enviar"
+            [disabled]="!formMsj.valid || mensaje.value == ''"
+          >
             <ion-icon name="send"></ion-icon>
           </button>
         </ion-col>

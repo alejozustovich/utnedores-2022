@@ -18,7 +18,7 @@ export class ListaEsperaPage implements OnInit {
   hayEnEspera = true;
   spinner = false;
   isModalOpen = false;
-
+  mesaSeleccionada = [];
   idFieldEliminar = "0";
   cantidadComensales = 0;
   cantidadSeleccionada = 0;
@@ -117,12 +117,14 @@ export class ListaEsperaPage implements OnInit {
     this.cantidadComensales = Number(cantPersonas);
     this.idFieldEliminar = idField;
     this.isModalOpen = true;
-
-
   }
 
-  SeleccionarMesa() { 
+  back(){
+    this.isModalOpen = false;
+  }
 
+  SeleccionarMesa(mesa: number) { 
+    this.mesaSeleccionada[mesa] = true;
   }
 
 }

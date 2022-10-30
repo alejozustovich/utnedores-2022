@@ -67,6 +67,11 @@
     }
   }
 
+  .borde-verde{
+    border: 2px solid green !important;
+    box-shadow: 0 0 2px 2px green;
+  }
+
   .contenido{
     padding: 10px;
     text-align: center;

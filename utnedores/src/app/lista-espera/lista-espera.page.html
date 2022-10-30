@@ -39,7 +39,7 @@
       <ion-header [translucent]="true">
         <ion-toolbar>
           <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
-          <ion-button id="btn_toolbar" (click)="setOpen(false)"><ion-icon name="arrow-undo"></ion-icon></ion-button>
+          <ion-button id="btn_toolbar" (click)="back()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
@@ -52,15 +52,15 @@
             <ion-button style="--background: rgb(82, 27, 145); height: 30px;">Aceptar</ion-button>
             <ion-button style="--background: rgb(82, 27, 145); height: 30px;">Cancelar</ion-button>
           </div>
-          <div *ngFor="let m of mesas">
-            <ion-item>
+          <div *ngFor="let m of mesas; let i=index">
+            <ion-item [class.borde-verde]="mesaSeleccionada[i]">
               <ion-avatar slot="start">
                 <ion-img [src]="m.foto" style="border: 1px solid white; --border-radius: 4px; width: 60px !important; height: 60px !important;"></ion-img>
               </ion-avatar>
               <ion-label>
                 <h2>Mesa {{m.numMesa}}</h2>
                 <p>Capacidad: {{m.capacidad}}</p>
-                <ion-button style="--background: rgb(27, 27, 27);" (click)="SeleccionarMesa()">Seleccionar Mesa</ion-button>
+                <ion-button style="--background: rgb(27, 27, 27);" (click)="SeleccionarMesa(i)">Seleccionar Mesa</ion-button>
               </ion-label>
             </ion-item>
           </div>
