@@ -1,7 +1,10 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>home-mozo</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="true">
+	<ion-toolbar>
+		<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
+		<ion-button id="btn_toolbar" (click)="CerrarSesion()">
+			<ion-icon name="log-out-outline" style="transform: scaleX(-1);"></ion-icon>
+		</ion-button>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
