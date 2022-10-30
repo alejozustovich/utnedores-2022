@@ -43,8 +43,15 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        {{cantidadComensales}} {{cantidadSeleccionada}}
         <div class="contenido">
+          <div class="encabezado">
+            <img src="../../assets/comensales.png" alt="" width="20" style="margin-bottom: 7px;">
+            {{cantidadComensales}} 
+            <img src="../../assets/silla.png" alt="" width="20" style="margin-bottom: 10px;">
+            {{cantidadSeleccionada}}
+            <ion-button style="--background: rgb(82, 27, 145); height: 30px;">Aceptar</ion-button>
+            <ion-button style="--background: rgb(82, 27, 145); height: 30px;">Cancelar</ion-button>
+          </div>
           <div *ngFor="let m of mesas">
             <ion-item>
               <ion-avatar slot="start">
