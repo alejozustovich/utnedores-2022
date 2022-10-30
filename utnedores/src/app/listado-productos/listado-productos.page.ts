@@ -11,9 +11,12 @@ export class ListadoProductosPage implements OnInit {
   productos: Producto[];
   cargando = true;
   spinner = true;
-  esBebida = false;
+  esBebida = true;
+  esComida = true;
   cantidad = 0;
   confirmarPedido = false;
+  precioTotal = 0;
+  tiempoTotal = 0;
 
   constructor(
     private authService: AuthService
@@ -37,12 +40,24 @@ export class ListadoProductosPage implements OnInit {
     }, 3000);
   }
 
-  SumarProducto() {
+  SumarProducto(precio) {
     this.cantidad++;
+    let precioInt : number = +precio;
+    this.precioTotal += precioInt;
   }
 
-  RestarProducto() {
+  RestarProducto(precio) {
     this.cantidad--;
+    let precioInt : number = +precio;
+    this.precioTotal -= precioInt;
+  }
+
+  ConfirmarPedido() {
+    this.confirmarPedido = true;
+  }
+
+  Cancelar() {
+    this.confirmarPedido = false;
   }
 
 }
