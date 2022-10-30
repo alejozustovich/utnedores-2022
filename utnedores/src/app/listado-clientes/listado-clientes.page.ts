@@ -3,6 +3,7 @@ import { getStorage, ref } from "firebase/storage";
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-listado-clientes',
@@ -26,8 +27,17 @@ export class ListadoClientesPage implements OnInit {
 
   idFieldRechazar = "";
   correoRechazar = "";
+  
+  correoAprobado1 = "¡Hola, ";
+  correoAprobado2 = "! \n\nQue alegría tenerte en Utnedores. Su presencia significa mucho para nosotros! \nAhora que eres parte ya puedes ingresar a nuestra app! \n\nAtte. Utnedores";
+  
+  correoRechazadoCM1 = "Estimado cliente, lamentamos comunicarle que su solicitud fue rechazada por el siguiente motivo:\n";
+  correoRechazadoCM2 = "\n\nAtte. Utnedores";
+
+  correoRechazadoSM = "Estimado cliente, lamentamos comunicarle que su solicitud fue rechazada. \n\nAtte. Utnedores";
 
   constructor(
+    private toastController: ToastController,
     private router: Router,
     private authService: AuthService,
   ) {
@@ -36,6 +46,24 @@ export class ListadoClientesPage implements OnInit {
     setTimeout(() => {
       this.ObtenerPerfil();
     }, 2500);
+  }
+
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present();
+  }
+  
+  EnviarCorreo(correo: string, texto: string){
+    var dataToSend = {email: correo, text: texto};
+    this.authService.enviarCorreo(dataToSend).subscribe((dataReturn)=>{
+      //this.dataRecibida.JSON.stringify(dataReturn);
+    });
   }
 
   DesactivarSpinner() {
@@ -101,18 +129,22 @@ export class ListadoClientesPage implements OnInit {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
-  AprobarCliente(idField: string, correo: string, clave: string){
+  AprobarCliente(idField: string, correo: string, clave: string, nombre: string){
     this.spinner = true;
+    setTimeout(() => {
+      this.spinner = false;
+      this.Alerta("Usuario aprobado!",'info');
+    }, 9000);
     this.authService.aceptarUsuario(idField);
 
     setTimeout(() => {
-      var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
-      this.authService.register({emailNuevo: correo, passwordNuevo: clave}, currentUser);
-      this.DesactivarSpinner();
-      //ENVIAR CORREO AUTOMATICO ACEPTANDO AL USUARIO
-    }, 3000);
-    
-    
+      var texto = this.correoAprobado1 + nombre + this.correoAprobado2;
+      this.EnviarCorreo(correo, texto);
+      setTimeout(() => {
+        var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
+        this.authService.register({emailNuevo: correo, passwordNuevo: clave}, currentUser);
+      }, 2000);
+    }, 2000);
   }
 
   RechazarCliente(idField: string, correo: string){
@@ -122,35 +154,32 @@ export class ListadoClientesPage implements OnInit {
   }
 
   AceptarRechazo(){
-
     var motivoRechazo = (<HTMLInputElement>document.getElementById('motivoRechazo')).value;
 
     setTimeout(() => {
       this.ingresarMotivoRechazo = false;
       this.spinner = true;
-      this.DesactivarSpinner();
+      setTimeout(() => {
+        this.Alerta("Usuario rechazado",'info');
+      }, 3500);
     }, 500);
 
     this.authService.rechazarUsuario(this.idFieldRechazar);
     
     setTimeout(() => {
       if(motivoRechazo.length == 0){
-        //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
-          //this.correoRechazar
-          //NO SE INGRESO EL MOTIVO
+        this.EnviarCorreo(this.correoRechazar, this.correoRechazadoSM);
       }else{
-        //ENVIAR CORREO AUTOMATICO RECHAZANDO AL USUARIO
-          //this.correoRechazar
-          //this.motivoRechazo
+        var texto = this.correoRechazadoCM1 + motivoRechazo + this.correoRechazadoCM2;
+        this.EnviarCorreo(this.correoRechazar, texto); 
       }
 
       setTimeout(() => {
         this.idFieldRechazar = "";
         this.correoRechazar = "";
-        this.spinner = false;
-      }, 2000);
+      }, 1000);
 
-    }, 3000);
+    }, 2500);
   }
 
   CancelarRechazo() {

@@ -23,7 +23,7 @@
                 <h2>{{u.nombre}} {{u.apellido}}</h2>
                 <p>{{u.correo}}</p>
                 <p>DNI: {{u.dni}}</p>
-                <ion-button style="--background: rgb(8, 153, 8);" (click)="AprobarCliente(u.idField, u.correo, u.clave)"><ion-icon name="checkmark-circle-outline"></ion-icon></ion-button>
+                <ion-button style="--background: rgb(8, 153, 8);" (click)="AprobarCliente(u.idField, u.correo, u.clave, u.nombre)"><ion-icon name="checkmark-circle-outline"></ion-icon></ion-button>
                 <ion-button style="--background: rgb(134, 7, 7);" (click)="RechazarCliente(u.idField, u.correo)"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
               </ion-label>
             </ion-item>
