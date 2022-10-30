@@ -10,7 +10,6 @@ import { getStorage, ref } from "firebase/storage";
   styleUrls: ['./lista-espera.page.scss'],
 })
 
-
 export class ListaEsperaPage implements OnInit {
 
   listado: Espera[];
@@ -22,11 +21,16 @@ export class ListaEsperaPage implements OnInit {
   idFieldEliminar = "0";
   cantidadComensales = 0;
   cantidadSeleccionada = 0;
-  
+  asignar = false;
+  mensajeLugares = "";
+
   constructor(
     public router: Router ,
     private authService: AuthService
   ) { 
+    for(var i = 0 ; i < 20; i++){
+      this.mesaSeleccionada.push(false);
+    }
     this.TraerListaEspera();
     this.TraerMesas();
     this.ValidarEnEspera();
@@ -58,7 +62,6 @@ export class ListaEsperaPage implements OnInit {
 
     });
     setTimeout(() => {
-      console.log(this.listado);
     }, 4000);
   }
 
@@ -87,7 +90,6 @@ export class ListaEsperaPage implements OnInit {
 
     });
     setTimeout(() => {
-      console.log(this.mesas);
     }, 4000);
   }
 
@@ -105,7 +107,6 @@ export class ListaEsperaPage implements OnInit {
   ValidarEnEspera() {
     setTimeout(() => {
       this.listado.length > 0 ? this.hayEnEspera = true : this.hayEnEspera = false;
-      console.log(this.hayEnEspera);
     }, 4500);
   }
 
@@ -116,6 +117,11 @@ export class ListaEsperaPage implements OnInit {
   setOpen(cantPersonas: string, idField: string) {
     this.cantidadComensales = Number(cantPersonas);
     this.idFieldEliminar = idField;
+    //MESAS DISPONIBLES BORDES EN BLANCO
+    for(var i = 0 ; i < this.mesaSeleccionada.length; i++){
+      this.mesaSeleccionada[i] = false;
+    }
+    this.cantidadSeleccionada = 0;
     this.isModalOpen = true;
   }
 
@@ -123,8 +129,47 @@ export class ListaEsperaPage implements OnInit {
     this.isModalOpen = false;
   }
 
-  SeleccionarMesa(mesa: number) { 
-    this.mesaSeleccionada[mesa] = true;
+  SeleccionarMesa(mesa: number, cant:string) { 
+    if(this.mesaSeleccionada[mesa]){
+      this.mesaSeleccionada[mesa] = false;
+      this.cantidadSeleccionada = this.cantidadSeleccionada - Number(cant);
+    }else{
+      this.mesaSeleccionada[mesa] = true;
+      this.cantidadSeleccionada = this.cantidadSeleccionada + Number(cant);
+    }
+  }
+
+  AsignarMesas(){
+    if(this.cantidadComensales == this.cantidadSeleccionada){
+      this.mensajeLugares = "Todo listo!";
+    }
+    if(this.cantidadComensales < this.cantidadSeleccionada){
+      var resta = this.cantidadSeleccionada - this.cantidadComensales;
+      if(resta == 1){
+        this.mensajeLugares = "Sobra 1 lugar!";
+      }else{
+        this.mensajeLugares = "Sobran " + resta.toString() + " lugares!";
+      }
+    }
+
+    if(this.cantidadComensales > this.cantidadSeleccionada){
+      var resta = this.cantidadComensales - this.cantidadSeleccionada;
+      if(resta == 1){
+        this.mensajeLugares = "Falta 1 lugar!";
+      }else{
+        this.mensajeLugares = "Faltan " + resta.toString() + " lugares!";
+      }
+    }
+
+    this.asignar = true;
+  }
+
+  AceptarAsignar(){
+
+  }
+  
+  CancelarAsignar(){
+    this.asignar = false;
   }
 
 }

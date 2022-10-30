@@ -45,27 +45,57 @@
       <ion-content class="ion-padding">
         <div class="contenido">
           <div class="encabezado">
-            <img src="../../assets/comensales.png" alt="" width="20" style="margin-bottom: 7px;">
-            {{cantidadComensales}} 
-            <img src="../../assets/silla.png" alt="" width="20" style="margin-bottom: 10px;">
-            {{cantidadSeleccionada}}
-            <ion-button style="--background: rgb(82, 27, 145); height: 30px;">Aceptar</ion-button>
-            <ion-button style="--background: rgb(82, 27, 145); height: 30px;">Cancelar</ion-button>
+            <img src="../../assets/comensales.png" alt="" width="35" style="margin-bottom: 7px;">
+            <label style="font-size:1.3em;">{{cantidadComensales}}</label>
+            
+            <img src="../../assets/silla.png" alt="" width="35" style="margin-bottom: 10px;">
+            <label style="font-size:1.3em;">{{cantidadSeleccionada}}</label>
+            <ion-button (click)="AsignarMesas()" style="--background: rgb(82, 27, 145); height: 30px;" [disabled]="cantidadSeleccionada == 0">Asignar</ion-button>
+            <ion-button (click)="back()" style="--background: rgb(82, 27, 145); height: 30px;">Volver</ion-button>
           </div>
-          <div *ngFor="let m of mesas; let i=index">
-            <ion-item [class.borde-verde]="mesaSeleccionada[i]">
+          <h2>Mesas disponibles</h2>
+          <div *ngFor="let m of mesas">
+            <ion-item *ngIf="m.idUsuario == '0'" style="margin-top: 10px;" [class.borde-verde]="mesaSeleccionada[m.numMesa]">
               <ion-avatar slot="start">
                 <ion-img [src]="m.foto" style="border: 1px solid white; --border-radius: 4px; width: 60px !important; height: 60px !important;"></ion-img>
               </ion-avatar>
               <ion-label>
                 <h2>Mesa {{m.numMesa}}</h2>
                 <p>Capacidad: {{m.capacidad}}</p>
-                <ion-button style="--background: rgb(27, 27, 27);" (click)="SeleccionarMesa(i)">Seleccionar Mesa</ion-button>
+                <ion-button style="--background: rgb(27, 27, 27);" (click)="SeleccionarMesa(m.numMesa, m.capacidad)">Marcar / Desmarcar</ion-button>
+              </ion-label>
+            </ion-item>
+          </div>
+
+          <h2>Mesas no disponibles</h2>
+
+          <div *ngFor="let m of mesas;">
+            <ion-item *ngIf="m.idUsuario != '0'" style="margin-top: 10px;" class="borde-gris">
+              <ion-avatar slot="start">
+                <ion-img [src]="m.foto" style="border: 1px solid white; --border-radius: 4px; width: 60px !important; height: 60px !important;"></ion-img>
+              </ion-avatar>
+              <ion-label>
+                <h2>Mesa {{m.numMesa}}</h2>
+                <p>Capacidad: {{m.capacidad}}</p>
+                <ion-button disabled style="--background: rgb(27, 27, 27);">Marcar / Desmarcar</ion-button>
               </ion-label>
             </ion-item>
           </div>
         </div>
       </ion-content>
+
+      <div class="custom-loading2" *ngIf="asignar">
+        <div class="divInterno2">
+          <form class="form">
+            <h2>Comensales: {{cantidadComensales}}</h2>
+            <h2>Lugares: {{cantidadSeleccionada}}</h2>
+            <h2>{{mensajeLugares}}</h2>
+            <ion-button (click)="AceptarAsignar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Asignar</ion-button>
+            <ion-button (click)="CancelarAsignar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
+          </form>
+        </div>
+      </div>
+
     </ng-template>
   </ion-modal>
 
@@ -77,3 +107,5 @@
 		<div class="double-bounce2"><img src="../../assets/Logo.png" style="width: 200px;"></div>
 	</div>
 </div>
+
+
