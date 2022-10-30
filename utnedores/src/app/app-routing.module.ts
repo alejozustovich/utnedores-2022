@@ -84,6 +84,10 @@ const routes: Routes = [
   {
     path: 'alta-anonimo',
     loadChildren: () => import('./alta-anonimo/alta-anonimo.module').then( m => m.AltaAnonimoPageModule)
+  },
+  {
+    path: 'listado-productos',
+    loadChildren: () => import('./listado-productos/listado-productos.module').then( m => m.ListadoProductosPageModule)
   }
 
 ];

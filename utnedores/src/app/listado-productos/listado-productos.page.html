@@ -1,0 +1,62 @@
+<ion-header [translucent]="true">
+	<ion-toolbar>
+		<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
+		<ion-button id="btn_toolbar" (click)="Volver()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+	<ion-grid>
+		<div class="contenido">
+			<img src="../../assets/dessert.png" alt="" width="50" height="50">
+			<h2>Lista de Productos</h2>
+
+      <div *ngIf="!cargando">
+        <button class="btnCategorias">Entradas</button>
+        <button class="btnCategorias">Postres y Café-Te</button>
+        <button class="btnCategorias">Platos Fríos</button>
+        <button class="btnCategorias">Platos Calientes</button>
+        <button class="btnCategorias">Bebidas s/ Alcohol</button>
+        <button class="btnCategorias">Bebidas c/ Alcohol</button>
+        <div>
+          <div *ngFor="let p of productos">
+            <ion-item>
+              <ion-img [src]="p.foto1" style="border: 1px solid white; --border-radius: 4px; width: 40px !important; height: 40px !important; float: left;"></ion-img>
+              <ion-img [src]="p.foto2" style="border: 1px solid white; --border-radius: 4px; width: 40px !important; height: 40px !important; float: center;"></ion-img>
+              <ion-img [src]="p.foto3" style="border: 1px solid white; --border-radius: 4px; width: 40px !important; height: 40px !important; float: right;"></ion-img>
+              <ion-label>
+                <h2>{{p.producto}} {{p.descripcion}}</h2>
+                <p *ngIf="esBebida">{{p.tamanio}}</p>
+                <p>${{p.precio}}</p>
+                <p>Cantidad: {{cantidad}}</p>
+                <ion-button (click)="SumarProducto()"><ion-icon name="add-outline"></ion-icon></ion-button>
+                <ion-button (click)="RestarProducto()"><ion-icon name="remove-outline"></ion-icon></ion-button>
+              </ion-label>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="cargando">
+        <h2 style="margin-top: 50px; font-size: 40px;">Cargando lista</h2>
+      </div>
+
+    </div>
+	</ion-grid>
+</ion-content>
+
+<div class="custom-loading" *ngIf="spinner">
+	<div class="spinner">
+		<div class="double-bounce1"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+		<div class="double-bounce2"><img src="../../assets/Logo.png" style="width: 200px;"></div>
+	</div>
+</div>
+
+<div class="custom-loading2" *ngIf="confirmarPedido">
+	<div class="divInterno2">
+		<form class="form">
+			<ion-button (click)="Aceptar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Aceptar</ion-button>
+			<ion-button (click)="Cancelar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
+		</form>
+	</div>
+</div>
