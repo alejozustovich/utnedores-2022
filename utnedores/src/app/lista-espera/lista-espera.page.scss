@@ -3,7 +3,7 @@
     src: url('../../assets/font/Mithella-Regular.otf');
   }
   
-  ion-header {
+  ion-header , ion-footer {
     text-align: center !important;
   
     ion-toolbar {
@@ -14,6 +14,10 @@
         ion-title {
             font-family: Font-Regular;
             color: white;
+        }
+
+        label {
+          color: white;
         }
     }
   }
@@ -86,6 +90,13 @@
     }
   }
 
+  .encabezado {
+    ion-button {
+      --background: rgb(82, 27, 145); 
+      height: 30px; 
+    }
+  }
+
   #img_toolbar {
     float: right;
     margin-right: 10px;
@@ -95,6 +106,21 @@
     width: 15%;
     float: left;
     margin-left: 10px;
+    --background: rgb(82, 27, 145);
+  }
+
+  #p_footer {
+    float: left;
+    font-size: 15px;
+    margin-left: 10px;
+    margin-top: 10px;
+    color: white;
+  }
+
+  #btn_footer {
+    float: right;
+    margin-right: 10px;
+    height: 30px;
     --background: rgb(82, 27, 145);
   }
 
