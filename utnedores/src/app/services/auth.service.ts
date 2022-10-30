@@ -5,7 +5,8 @@ import { query, where, Firestore, collection, collectionData, addDoc, updateDoc,
 import { Observable } from 'rxjs';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { deleteObject, listAll, getDownloadURL, uploadString } from '@angular/fire/storage';
-
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface Local{
 	idLocal: string;
@@ -136,9 +137,16 @@ export class AuthService {
 
 	constructor(
 		private auth: Auth,
-		private firestore: Firestore
+		private firestore: Firestore,
+		private http: HttpClient
 	) {
 
+	}
+
+	enviarCorreo(dataToSend){
+		return this.http.post(environment.url, dataToSend,
+		{headers:new HttpHeaders(
+		{"content-Type":"application/json"})});
 	}
 
 	async getUser(correo) {
