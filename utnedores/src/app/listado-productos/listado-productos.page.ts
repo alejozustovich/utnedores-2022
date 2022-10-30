@@ -9,14 +9,16 @@ import { AuthService, Producto } from '../services/auth.service';
 export class ListadoProductosPage implements OnInit {
 
   productos: Producto[];
+  productosSeleccionados: Producto[];
   cargando = true;
   spinner = true;
   esBebida = true;
-  esComida = true;
-  cantidad = 0;
   confirmarPedido = false;
+  cantidad = 0;
   precioTotal = 0;
   tiempoTotal = 0;
+  categoria = "Entradas";
+
 
   constructor(
     private authService: AuthService
@@ -40,16 +42,27 @@ export class ListadoProductosPage implements OnInit {
     }, 3000);
   }
 
-  SumarProducto(precio) {
-    this.cantidad++;
-    let precioInt : number = +precio;
-    this.precioTotal += precioInt;
+  FiltrarCategoria(categoria) {
+    this.categoria = categoria;
+    console.log(this.categoria);
+    this.categoria == 'Bebidas sin alcohol' || this.categoria == 'Bebidas con alcohol'? this.esBebida = true : this.esBebida = false;
   }
 
-  RestarProducto(precio) {
+  SumarProducto(precio, tiempo) {
+    //this.productosSeleccionados.push(producto);
+    this.cantidad++;
+    let precioInt : number = +precio;
+    let tiempoInt : number = +tiempo;
+    this.precioTotal += precioInt;
+    this.tiempoTotal += tiempoInt;
+  }
+
+  RestarProducto(precio, tiempo) {
     this.cantidad--;
     let precioInt : number = +precio;
+    let tiempoInt : number = +tiempo;
     this.precioTotal -= precioInt;
+    this.tiempoTotal -= tiempoInt;
   }
 
   ConfirmarPedido() {

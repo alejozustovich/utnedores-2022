@@ -12,15 +12,16 @@
 			<h2>Lista de Productos</h2>
 
       <div *ngIf="!cargando">
-        <button class="btnCategorias">Entradas</button>
-        <button class="btnCategorias">Postres y Café-Te</button>
-        <button class="btnCategorias">Platos Fríos</button>
-        <button class="btnCategorias">Platos Calientes</button>
-        <button class="btnCategorias">Bebidas s/ Alcohol</button>
-        <button class="btnCategorias">Bebidas c/ Alcohol</button>
+        <button class="btnCategorias" (click)="FiltrarCategoria('Entradas')">Entradas</button>
+        <button class="btnCategorias" (click)="FiltrarCategoria('Postres y Café-Te')">Postres y Café-Te</button>
+        <button class="btnCategorias" (click)="FiltrarCategoria('Platos fríos')">Platos fríos</button>
+        <button class="btnCategorias" (click)="FiltrarCategoria('Platos calientes')">Platos calientes</button>
+        <button class="btnCategorias" (click)="FiltrarCategoria('Bebidas sin alcohol')">Bebidas sin alcohol</button>
+        <button class="btnCategorias" (click)="FiltrarCategoria('Bebidas con alcohol')">Bebidas con alcohol</button>
+        <h3>{{categoria}}</h3>
         <div>
           <div *ngFor="let p of productos">
-            <ion-item>
+            <ion-item *ngIf="p.categoria == categoria">
               <ion-img [src]="p.foto1" style="margin-right: 2px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: left;"></ion-img>
               <ion-img [src]="p.foto2" style="margin-right: 2px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
               <ion-img [src]="p.foto3" style="margin-right: 2px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: right;"></ion-img>
@@ -28,11 +29,11 @@
                 <h2>{{p.producto}}</h2>
                 <h3>{{p.descripcion}}</h3>
                 <p *ngIf="esBebida">{{p.tamanio}}</p>
-                <p *ngIf="esComida">Elaboración: {{p.tiempoElaboracion}} mins</p>
+                <p *ngIf="!esBebida">Elaboración: {{p.tiempoElaboracion}} mins</p>
                 <p>Precio: ${{p.precio}}</p>
                 <p>Cantidad: {{cantidad}}</p>
-                <ion-button (click)="SumarProducto(p.precio)"><ion-icon name="add-outline"></ion-icon></ion-button>
-                <ion-button (click)="RestarProducto(p.precio)"><ion-icon name="remove-outline"></ion-icon></ion-button>
+                <ion-button (click)="SumarProducto(p.precio, p.tiempoElaboracion)"><ion-icon name="add-outline"></ion-icon></ion-button>
+                <ion-button (click)="RestarProducto(p.precio,p.tiempoElaboracion)"><ion-icon name="remove-outline"></ion-icon></ion-button>
               </ion-label>
             </ion-item>
           </div>
@@ -53,7 +54,8 @@
       Total = ${{precioTotal}}
       Tiempo: {{tiempoTotal}} mins
     </p>
-    <ion-button id="btn_footer" (click)="ConfirmarPedido()">Realizar Pedido</ion-button>
+    <ion-button id="btn_footer" (click)="ConfirmarPedido()">Realizar</ion-button>
+    <ion-button id="btn_footer">Ver Pedido</ion-button>
   </ion-toolbar>
 </ion-footer>
 
