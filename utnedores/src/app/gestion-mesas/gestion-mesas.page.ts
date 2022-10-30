@@ -6,12 +6,11 @@ import { getStorage, ref } from "firebase/storage";
 import { IonContent } from '@ionic/angular';
 
 @Component({
-  selector: 'app-lista-espera',
-  templateUrl: './lista-espera.page.html',
-  styleUrls: ['./lista-espera.page.scss'],
+  selector: 'app-gestion-mesas',
+  templateUrl: './gestion-mesas.page.html',
+  styleUrls: ['./gestion-mesas.page.scss'],
 })
-
-export class ListaEsperaPage implements OnInit {
+export class GestionMesasPage implements OnInit {
 
   listado: Espera[];
   mesas: Mesa [];

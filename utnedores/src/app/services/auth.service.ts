@@ -242,6 +242,10 @@ export class AuthService {
 		});
 	}
 
+	asignarMesa(idField: string, idUsuario: string){
+		const espDoc = doc(this.firestore, `mesas/${idField}`);
+		return updateDoc(espDoc, {idUsuario: idUsuario,cuenta: "0", pedirCuenta: "No" });
+	}
 
 	addTable(mesa: Mesa) {
 		const tableRef = collection(this.firestore, 'mesas');

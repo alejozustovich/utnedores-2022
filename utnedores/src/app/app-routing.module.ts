@@ -92,6 +92,10 @@ const routes: Routes = [
   {
     path: 'chat',
     loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
+  },
+  {
+    path: 'gestion-mesas',
+    loadChildren: () => import('./gestion-mesas/gestion-mesas.module').then( m => m.GestionMesasPageModule)
   }
 
 ];
