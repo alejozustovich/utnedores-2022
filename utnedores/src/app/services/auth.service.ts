@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { deleteObject, listAll, getDownloadURL, uploadString } from '@angular/fire/storage';
 import { map } from 'rxjs/operators';
-
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface Local {
 	idLocal: string;
@@ -141,8 +142,11 @@ export interface Mensaje {
 })
 export class AuthService {
 
-	constructor(private auth: Auth, private firestore: Firestore) {
-	}
+	constructor(
+		private auth: Auth,
+		private firestore: Firestore,
+		private http: HttpClient
+	) {}
 
 	cargarMensajes(ruta: string): Observable<Mensaje[]> {
 		const msjRef = collection(this.firestore, ruta);
@@ -159,6 +163,12 @@ export class AuthService {
 	agregarMensaje(mensaje: Mensaje, ruta: string) {
 		const msjRef = collection(this.firestore, ruta);
 		return addDoc(msjRef, mensaje);
+	}
+
+	enviarCorreo(dataToSend){
+		return this.http.post(environment.url, dataToSend,
+		{headers:new HttpHeaders(
+		{"content-Type":"application/json"})});
 	}
 
 	async getUser(correo) {
