@@ -41,6 +41,11 @@ export class HomeMetrePage implements OnInit {
     this.spinner = true;
   }
 
+  GestionarMesas(){
+    this.ActivarSpinner();
+    this.router.navigateByUrl('/gestion-mesas', { replaceUrl: true });
+  }
+
   IrAltaCliente(){
     this.ActivarSpinner();
     localStorage.setItem('Perfil', 'Empleado');
