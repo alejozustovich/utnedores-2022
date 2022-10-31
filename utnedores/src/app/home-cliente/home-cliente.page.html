@@ -57,11 +57,21 @@
 		<form class="form">
 			<h2>Cantidad de personas</h2>
 			<p>
-				<ion-button style="margin-top: -20px;" (click)="Restar()" fill="clear">-</ion-button>
+				<ion-button (click)="Restar()" fill="clear">-</ion-button>
 					{{cantidadPersonas}}
-				<ion-button style="margin-top: -20px;" (click)="Sumar()" fill="clear">+</ion-button>
+				<ion-button (click)="Sumar()" fill="clear">+</ion-button>
 			</p>
-			<!--VIP Estándar Discapacitados-->
+			<ion-segment value="Estándar" (ionChange)="SetTipoMesa($event.detail.value)">
+				<ion-segment-button value="Estándar">
+				  <ion-label>Estándar</ion-label>
+				</ion-segment-button>
+				<ion-segment-button value="VIP">
+				  <ion-label>VIP</ion-label>
+				</ion-segment-button>
+				<ion-segment-button value="Discapacitados">
+				  <ion-label>Discapacitados</ion-label>
+				</ion-segment-button>
+			</ion-segment>
 			<ion-button (click)="Aceptar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Aceptar</ion-button>
 			<ion-button (click)="Cancelar()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
 		</form>
