@@ -45,7 +45,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   mesaAsignada = false;
   idFieldEspera = "";
   cantidadPersonas = 0;
-  ingresarCantidad = true;
+  ingresarCantidad = false;
 
   idEsperaMayor = 0;
   //0   => Escanear QR Local
