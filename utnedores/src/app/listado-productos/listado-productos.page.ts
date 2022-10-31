@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, Producto } from '../services/auth.service';
+import { getStorage, ref } from "firebase/storage";
+import { getDownloadURL } from '@angular/fire/storage';
+
 
 @Component({
   selector: 'app-listado-productos',
@@ -18,7 +21,8 @@ export class ListadoProductosPage implements OnInit {
   precioTotal = 0;
   tiempoTotal = 0;
   categoria = "";
-
+  isModalOpen = false;
+  isModalOpen2 = false;
 
   constructor(
     private authService: AuthService
@@ -29,9 +33,36 @@ export class ListadoProductosPage implements OnInit {
 
   ngOnInit() { }
 
+  VerMenu(){
+    this.isModalOpen = false;
+    this.isModalOpen2 = false;
+  }
+
   TraerProductos() {
     this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
+      this.productos.forEach(u => {
+          
+          var foto1Buscar = "productos/" + u.foto1;
+          var foto2Buscar = "productos/" + u.foto2;
+          var foto3Buscar = "productos/" + u.foto3;
+          const storage = getStorage();
+
+          const storageRef1 = ref(storage, foto1Buscar);
+          getDownloadURL(storageRef1).then((response) => {
+            u.foto1 = response;
+          });
+
+          const storageRef2 = ref(storage, foto2Buscar);
+          getDownloadURL(storageRef2).then((response) => {
+            u.foto2 = response;
+          });
+
+          const storageRef3 = ref(storage, foto3Buscar);
+          getDownloadURL(storageRef3).then((response) => {
+            u.foto3 = response;
+          });
+      });
     });
   }
 
@@ -43,8 +74,8 @@ export class ListadoProductosPage implements OnInit {
   }
 
   FiltrarCategoria(categoria) {
+    this.isModalOpen = true;
     this.categoria = categoria;
-    console.log(this.categoria);
     this.categoria == 'Bebidas sin alcohol' || this.categoria == 'Bebidas con alcohol'? this.esBebida = true : this.esBebida = false;
   }
 
@@ -65,12 +96,12 @@ export class ListadoProductosPage implements OnInit {
     this.tiempoTotal -= tiempoInt;
   }
 
-  ConfirmarPedido() {
-    this.confirmarPedido = true;
+  RealizarPedido() {
+    this.isModalOpen2 = true;
   }
 
   Cancelar() {
-    this.confirmarPedido = false;
+    
   }
 
 }
