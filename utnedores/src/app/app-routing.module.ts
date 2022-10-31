@@ -96,6 +96,10 @@ const routes: Routes = [
   {
     path: 'gestion-mesas',
     loadChildren: () => import('./gestion-mesas/gestion-mesas.module').then( m => m.GestionMesasPageModule)
+  },
+  {
+    path: 'mozo-ver-pedido',
+    loadChildren: () => import('./mozo-ver-pedido/mozo-ver-pedido.module').then( m => m.MozoVerPedidoPageModule)
   }
 
 ];

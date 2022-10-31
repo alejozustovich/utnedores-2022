@@ -73,10 +73,7 @@ export interface Producto {
 export interface Pedido {
 	idField: string;
 	numMesa: string;
-	idProducto: string;
-	cantidad: string;
-	demora: string;
-	precio: string;
+	productos: string;
 	fecha: string;
 	hora: string;
 	estado: string;
@@ -148,6 +145,11 @@ export class AuthService {
 		private firestore: Firestore,
 		private http: HttpClient
 	) {}
+
+	agregarPedido(pedido: Pedido) {
+		const pedidoRef = collection(this.firestore, 'pedidos');
+		return addDoc(pedidoRef, pedido);
+	}
 
 	cargarMensajes(ruta: string): Observable<Mensaje[]> {
 		const msjRef = collection(this.firestore, ruta);

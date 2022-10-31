@@ -361,7 +361,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   
   AnalizarResultado(){
-
+    var numeroMesa = "";
     if(this.result.includes(this.qrLocal)){
       
       this.VerEstado(true);
@@ -381,6 +381,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
           estadoMesa = 1;
           if(this.usuarioLogueado.idUsuario == u.idUsuario){
             estadoMesa = 2;
+            numeroMesa = u.numMesa;
           }
         }
       });
@@ -392,6 +393,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
           this.Alerta("MESA NO ASIGNADA", 'danger');
         }else{
           if(estadoMesa == 2){
+            localStorage.setItem('numeroMesa', numeroMesa);
             this.DirigirMenu();
           }
         }
