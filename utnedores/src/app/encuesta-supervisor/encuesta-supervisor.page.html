@@ -9,7 +9,7 @@
 
 <ion-content class="ion-padding" [fullscreen]="true">
   <div class="contenedor">
-    <ion-grid>
+    <ion-grid style="margin-top: 80px;">
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
         <h2>Encuesta supervisor</h2>
@@ -106,7 +106,6 @@
           style="--background: rgb(15, 145, 58); height: 50px"
           [disabled]="!formEncuesta.valid || !fotoCargada"
           ><ion-icon name="checkmark-circle-outline"></ion-icon>Enviar encuesta</ion-button>
-          <ion-button (click)="SaltarEncuesta()">Saltar encuesta</ion-button>
       </form>
     </ion-grid>
   </div>

@@ -1,5 +1,5 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService } from '../services/auth.service';
+import { AuthService, Pedido } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
@@ -10,8 +10,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeMozoPage implements OnInit {
 
+  pedidos: Pedido[];
   volumenOn = true;
-  spinner = false;
+  spinner = true;
   hayPedidos = false;
   
   constructor(
@@ -19,10 +20,28 @@ export class HomeMozoPage implements OnInit {
     private authService: AuthService,
     private utilidades: UtilidadesService
   ) { 
+    this.DesactivarSpinner();
     this.Sonido();
+    this.TraerPedidos();
   }
 
   ngOnInit() { }
+
+  TraerPedidos(){
+    this.authService.traerPedidos().subscribe(pedidos => {
+      this.pedidos = pedidos;
+      if(this.pedidos.length > 0){
+        this.hayPedidos = true;
+      }
+      this.spinner = false;
+    });
+  }
+
+  DesactivarSpinner(){
+    setTimeout(() => {
+      this.spinner = false;
+    }, 7000);
+  }
 
   Sonido(){
     try {
