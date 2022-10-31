@@ -40,6 +40,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   mensajeEstado = ""; 
   estado = 0;
 
+  preferenciaMesa = "";
+
   mesaAsignada = false;
   idFieldEspera = "";
   cantidadPersonas = 0;
@@ -260,13 +262,13 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.ingresarCantidad = false;
   }
 
+  SetTipoMesa(valor) {
+    this.preferenciaMesa = valor;
+    console.log(this.preferenciaMesa);
+  }
+
   AgregarListaEspera(){
     var date = new Date();
-
-    var preferenciaMesa = "";
-    //CONSULTAR RADIO BUTTON Y ASIGNARLO A preferenciaMesa
-
-
     var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
     var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
     var unaEspera : Espera ={
@@ -279,7 +281,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       fecha: fechaActual,
       hora: horaActual,
       cantPersonas: (this.cantidadPersonas).toString(),
-      preferencia: preferenciaMesa
+      preferencia: this.preferenciaMesa
     }
 
     this.authService.agregarEspera(unaEspera).then((res) =>{
