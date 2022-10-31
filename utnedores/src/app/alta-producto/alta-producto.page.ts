@@ -132,25 +132,25 @@ export class AltaProductoPage implements OnInit {
 
   AsignarNombreFotos() {
     var date = new Date();
-    this.nombreFotos[0] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    this.nombreFotos[0] =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
     setTimeout(() => {
       date = new Date();
-      this.nombreFotos[1] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+      this.nombreFotos[1] = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
     }, 2000);
     setTimeout(() => {
       date = new Date();
-      this.nombreFotos[2] = "productos/" + date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+      this.nombreFotos[2] = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
     }, 4000);
   }
 
   SubirImagenes() {
     setTimeout(() => {
-      this.authService.subirImagenFile(this.nombreFotos[0], this.files[0]);
+      this.authService.subirImagenFile(("productos/" + this.nombreFotos[0]), this.files[0]);
       setTimeout(() => {
-        this.authService.subirImagenFile(this.nombreFotos[1], this.files[1]);
+        this.authService.subirImagenFile(("productos/" + this.nombreFotos[1]), this.files[1]);
       }, 3000);
       setTimeout(() => {
-        this.authService.subirImagenFile(this.nombreFotos[2], this.files[2]);
+        this.authService.subirImagenFile(("productos/" + this.nombreFotos[2]), this.files[2]);
       }, 6000);
     }, 2000);
     

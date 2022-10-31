@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { Console } from 'console';
+
 
 @Component({
   selector: 'app-home-cliente-mesa',
@@ -30,12 +30,6 @@ export class HomeClienteMesaPage implements OnInit {
     this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
   }
 
-  SonidoEgreso(){
-    if(this.volumenOn) {
-      this.utilidades.PlayLogout();
-    }
-    localStorage.clear();
-  }
 
   ActivarDesactivarSonido() {
     if(this.volumenOn) {
@@ -48,7 +42,8 @@ export class HomeClienteMesaPage implements OnInit {
   }
 
   IrPedido(){
-
+    this.spinner = true;
+    this.router.navigateByUrl('/listado-productos', { replaceUrl: true });
   }
 
   EstadoPedido(){
