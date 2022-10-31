@@ -40,7 +40,7 @@ export class ListadoProductosPage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-  ) { 
+  ) {
     for(var i = 0 ; i < 50; i++){
       this.productosAgregados.push({tiempo: 0, cantidad: 0, precio: 0, categoria: ""});
     }
@@ -222,13 +222,13 @@ export class ListadoProductosPage implements OnInit {
     this.spinner = false;
     this.pedidoEnviado = true;
     setTimeout(() => {
-      this.router.navigateByUrl('/home', { replaceUrl: true });
+      this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
     }, 3000);
     //PUSH NOTIFICATION MOZO*/
   }
 
   Volver(){
     this.spinner = true;
-    this.router.navigateByUrl('/home', { replaceUrl: true });
+    this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
   }
 }
