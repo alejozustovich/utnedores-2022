@@ -4,6 +4,7 @@ import { AuthService, Espera, Usuario, Mesa } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
 import { IonContent } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-lista-espera',
@@ -29,6 +30,7 @@ export class ListaEsperaPage implements OnInit {
   @ViewChild(IonContent) content: IonContent;
 
   constructor(
+    private toastController: ToastController,
     public router: Router ,
     private authService: AuthService
   ) { 
@@ -179,6 +181,17 @@ export class ListaEsperaPage implements OnInit {
     }, 11000);
   }
 
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present();
+  }
+
   async AceptarAsignar(){
     this.asignar = false;
     this.isModalOpen = false;
@@ -205,8 +218,8 @@ export class ListaEsperaPage implements OnInit {
     }
     this.isModalOpen = false;
     this.spinner = false;
-    //SCROLL ARRIBA DE TODO
-    //MENSAJE EXITOSO
+
+    this.Alerta("Asignación exitosa!", 'success');
   }
 
   async AsignarMesa(idField: string, idUsuario: string){

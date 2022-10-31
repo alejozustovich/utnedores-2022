@@ -17,7 +17,6 @@
     </form>
 
     <div class="card">
-      <h1 class="text-center formato mb-3">Inicio de sesión</h1>
       <form [formGroup]="formLogin" (ngSubmit)="iniciarSesion()">
         <ion-input
           formControlName="email"
@@ -39,7 +38,7 @@
           [disabled]="!formLogin.valid"
           style="--background: rgb(15, 145, 58); height: 50px"
           ><ion-icon name="checkmark-circle-outline"></ion-icon
-          >Entrar</ion-button
+          >Iniciar Sesión</ion-button
         >
       </form>
     </div>
