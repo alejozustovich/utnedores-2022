@@ -189,7 +189,7 @@
     
     .divInterno2{
       width: 80%;
-      height: 220px;
+      height: 290px;
       border-style: solid;
       border-color: rgb(206, 170, 156);
       background-color: rgb(11, 6, 3);
@@ -213,4 +213,24 @@
           font-size: 25px;
         }
       }
+    }
+
+    ion-segment {
+      padding: 10px;
+    }
+
+    ion-segment-button::part(indicator-background) {
+      background: rgb(206, 170, 156);
+    }
+
+    ion-segment-button.md::part(native) {
+      color: rgb(255, 255, 255);
+    }
+    
+    .segment-button-checked.md::part(native) {
+      color: rgb(206, 170, 156);
+    }
+    
+    ion-segment-button.md::part(indicator-background) {
+      height: 4px;
     }
