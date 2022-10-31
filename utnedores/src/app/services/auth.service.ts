@@ -102,31 +102,35 @@ export interface ReservaAsignada {
 }
 
 export interface EncuestaCliente {
+	idEncuesta: string;
 	atencion: string;
-	ambiente: string;
-	rapidez: string;
 	precioCalidad: string;
+	ambiente: string;
 	limpieza: string;
+	rapidez: string;
 	foto1: string;
 	foto2: string;
 	foto3: string;
 }
 
 export interface EncuestaEmpleado {
-	atencion: string;
+	idEncuesta: string;
+	ambiente: string;
 	orden: string;
 	limpieza: string;
-	comodidad: string;
-	climaLaboral: string;
+	estadoCocina: string;
+	estadoHigiene: string;
 	foto1: string;
 }
 
 export interface EncuestaSupervisor {
-	respetuoso: string;
+	idEncuesta: string;
 	amable: string;
+	respeto: string;
+	paciencia: string;
 	simpatia: string;
-	limpieza: string;
-	recomendacion: string;
+	higiene: string;
+	idUsuario: string;
 }
 
 export interface Mensaje {
@@ -145,6 +149,41 @@ export class AuthService {
 		private firestore: Firestore,
 		private http: HttpClient
 	) {}
+
+	agregarEncuestaCliente(encuesta: EncuestaCliente) {
+		const encuestaRef = collection(this.firestore, 'encuestascliente');
+		return addDoc(encuestaRef, encuesta);
+	}
+
+	traerEncuestaCliente(): Observable<EncuestaCliente[]> {
+		const encuestaRef = collection(this.firestore, 'encuestascliente');
+		return collectionData(encuestaRef) as Observable<EncuestaCliente[]>;
+	}
+
+	agregarEncuestaEmpleado(encuesta: EncuestaEmpleado) {
+		const encuestaRef = collection(this.firestore, 'encuestasempleado');
+		return addDoc(encuestaRef, encuesta);
+	}
+
+	traerEncuestaEmpleado(): Observable<EncuestaEmpleado[]> {
+		const encuestaRef = collection(this.firestore, 'encuestasempleado');
+		return collectionData(encuestaRef) as Observable<EncuestaEmpleado[]>;
+	}
+
+	agregarEncuestaSupervisor(encuesta: EncuestaSupervisor) {
+		const encuestaRef = collection(this.firestore, 'encuestassupervisor');
+		return addDoc(encuestaRef, encuesta);
+	}
+
+	traerEncuestaSupervisor(): Observable<EncuestaSupervisor[]> {
+		const encuestaRef = collection(this.firestore, 'encuestassupervisor');
+		return collectionData(encuestaRef) as Observable<EncuestaSupervisor[]>;
+	}
+
+	traerPedidos(): Observable<Pedido[]> {
+		const pedidoRef = collection(this.firestore, 'pedidos');
+		return collectionData(pedidoRef, { idField: 'idField' }) as Observable<Pedido[]>;
+	}
 
 	agregarPedido(pedido: Pedido) {
 		const pedidoRef = collection(this.firestore, 'pedidos');
