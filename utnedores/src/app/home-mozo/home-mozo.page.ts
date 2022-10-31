@@ -13,7 +13,7 @@ export class HomeMozoPage implements OnInit {
   volumenOn = true;
   spinner = false;
   hayPedidos = false;
-
+  
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -66,6 +66,7 @@ export class HomeMozoPage implements OnInit {
   }
 
   VerPedidos() {
+    
   }
 
 }
