@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="contenedor" style="margin-top: 100px;">
+  <div class="contenedor">
     <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
@@ -37,7 +37,7 @@
                 <ion-item lines="none">
                   <ion-label>{{valor}}</ion-label>
                   <ion-checkbox
-                    (ionChange)="cambios($event, valor)"
+                    (click)="cambios($event, valor)"
                     id="check-{{valor}}"
                   ></ion-checkbox
                 ></ion-item>

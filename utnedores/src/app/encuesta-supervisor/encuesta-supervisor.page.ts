@@ -16,8 +16,6 @@ export class EncuestaSupervisorPage implements OnInit {
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
-  srcUserPhoto = "../../assets/user-photo.png";
-  fotoCargada = false;
 
   constructor(
     private toastController : ToastController,
@@ -81,27 +79,21 @@ export class EncuestaSupervisorPage implements OnInit {
   }
 
   cambios(event, numero) {
-    let resultado;
     for (let i = 1; i <= 5; i++) {
-      if (event.target.checked) {
-        resultado = numero;
+      if (!event.target.checked) {
         if (i < numero) {
           const input = document.getElementById(`check-${i}`);
           (input as HTMLInputElement).checked = true;
         }
       } else {
-        resultado = numero - 1;
         if (i > numero) {
           const input = document.getElementById(`check-${i}`);
           (input as HTMLInputElement).checked = false;
         }
       }
     }
-    if (numero == 1 && !event.target.checked) {
-      this.preguntaDos.reset();
-    } else {
-      this.preguntaDos.setValue(resultado);
-    }
+    (event.target as HTMLInputElement).checked = false;
+    this.preguntaDos.setValue(numero);
   }
 
   GuardarPerfil() {
