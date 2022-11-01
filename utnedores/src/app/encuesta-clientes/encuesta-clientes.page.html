@@ -9,7 +9,7 @@
 
 <ion-content class="ion-padding" [fullscreen]="true">
   <div class="contenedor">
-    <ion-grid style="margin-top: 130px;">
+    <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
         <h2>Encuesta cliente</h2>
@@ -40,7 +40,7 @@
                 <ion-item lines="none">
                   <ion-label>{{valor}}</ion-label>
                   <ion-checkbox
-                    (ionChange)="cambios($event, valor)"
+                    (click)="cambios($event, valor)"
                     id="check-{{valor}}"
                   ></ion-checkbox
                 ></ion-item>
@@ -48,7 +48,7 @@
             </ion-row>
           </div>
           <hr />
-          <div class="pe-2 py-2">
+          <div class="pe-3 py-2">
             <ion-row>
               <ion-col>
                 <ion-label>Ambiente:</ion-label>
@@ -74,7 +74,7 @@
             <ion-radio-group
               formControlName="preguntaCuatro"
             >
-              <ion-row class="mt-2">
+              <ion-row class="mb-1 mt-2">
                 <ion-col *ngFor="let valor of valores">
                   <ion-label>{{valor}}</ion-label>
                   <ion-radio value="{{valor}}"></ion-radio>
