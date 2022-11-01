@@ -36,14 +36,17 @@
     }
   
     button {
-        width: 45%;
-        height: 100px;
-        font-family: Font-Regular;
-        margin-bottom: 5px;
-        white-space: normal;
-        border: none;
-        color: white;
-        background: linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgb(0, 0, 0) 100%);
+      width: 45%;
+      height: 100px;
+      font-size: 15px;
+      font-family: Font-Regular;
+      margin-bottom: 5px;
+      margin-left: 5px;
+      padding: 5px;
+      white-space: normal;
+      border: none;
+      color: white;
+      background: linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgb(0, 0, 0) 100%);
     }
   
     ion-row {

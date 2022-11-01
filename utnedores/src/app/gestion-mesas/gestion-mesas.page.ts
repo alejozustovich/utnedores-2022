@@ -14,7 +14,7 @@ export class GestionMesasPage implements OnInit {
 
   cargando = true;
   mesas: Mesa [];
-  mesasOcupadas = false;
+  hayMesas = false;
   spinner = false;
 
   constructor(
@@ -48,8 +48,8 @@ export class GestionMesasPage implements OnInit {
         getDownloadURL(storageRef).then((response) => {
           u.foto = response;
         });
-        if(u.idUsuario != "0"){
-          this.mesasOcupadas = true;
+        if(this.mesas.length > 0){
+          this.hayMesas = true;
         }
       });
 
@@ -101,5 +101,12 @@ export class GestionMesasPage implements OnInit {
     }, 5500);
   }
 
+  Modificar(idField: string){
 
+  }
+
+  Eliminar(idField: string){
+
+  }
+  
 }
