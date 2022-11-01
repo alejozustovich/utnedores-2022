@@ -13,8 +13,11 @@ export class HomeMozoPage implements OnInit {
   pedidos: Pedido[];
   volumenOn = true;
   spinner = true;
-  hayPedidos = false;
-  
+  cantPedidos = 0;
+  cantCierreMesas= 0;
+  cantPedidosListos= 0;
+  cantChat = 0;
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -29,9 +32,12 @@ export class HomeMozoPage implements OnInit {
 
   TraerPedidos(){
     this.authService.traerPedidos().subscribe(pedidos => {
+      this.cantPedidos = 0;
       this.pedidos = pedidos;
-      if(this.pedidos.length > 0){
-        this.hayPedidos = true;
+      for(var i = 0 ; i < this.pedidos.length ; i++){
+        if(this.pedidos[i].estado.includes("Enviado")){
+          this.cantPedidos = this.cantPedidos + 1;
+        }
       }
       this.spinner = false;
     });

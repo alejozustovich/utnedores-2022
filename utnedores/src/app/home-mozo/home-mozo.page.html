@@ -12,17 +12,15 @@
 		<div class="contenido">
 			<img src="../../assets/mozo.png" alt="" width="50" height="50">
 			<h2>Mozo</h2>
+
+
 			<div style="margin-top: 15px;">
-				<button (click)="VerPedidos()"><img src="../../assets/home-cliente/cocinando.png" width="30" height="30"><br><br>Ver Pedidos</button>
+				<button (click)="IrPedido()"><img src="../../assets/dessert.png" width="30" height="30"><br>Ordenar<br>Un Pedido</button>
+				<button (click)="VerPedidos()"><img src="../../assets/verPedidos.png" width="30" height="30"><br>Ver<br>Pedidos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidos != 0">x{{cantPedidos}}</label></button>
+				<button (click)="CierreMesa()"><img src="../../assets/cierreMesa.png" width="30" height="30"><br>Cierre<br>De Mesa <label style="color:rgb(196, 145, 255);" *ngIf="cantCierreMesas != 0">x{{cantCierreMesas}}</label></button>
+				<button (click)="CierreMesa()"><img src="../../assets/pedidosListos.png" width="30" height="30"><br>Pedidos<br>Listos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidosListos != 0">x{{cantPedidosListos}}</label></button>
+				<button (click)="PedidosListos()"><img src="../../assets/home-cliente/chat.png" width="30" height="30"><br>Chat<br>Clientes <label style="color:rgb(196, 145, 255);" *ngIf="cantChat != 0">x{{cantChat}}</label></button>
 			</div>
-
-      <div *ngIf="hayPedidos">
-        <h2 style="margin-top: 50px; font-size: 40px;">Mostrar pedidos</h2>
-      </div>
-
-      <div *ngIf="!hayPedidos">
-        <h2 style="margin-top: 50px; font-size: 40px;">No hay pedidos en proceso</h2>
-      </div>
 
 		</div>
 	</ion-grid>
