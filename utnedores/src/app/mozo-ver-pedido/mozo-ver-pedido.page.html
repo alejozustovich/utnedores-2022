@@ -13,11 +13,11 @@
 
       <div *ngIf="!cargando">
 
-        Pedido (i + 1)   hora     Mesa: numMesa     Ver Pedido (onClick)="VerPedido(i)"
+        Pedido (i + 1)   hora     Mesa: numMesa     Ver Pedido (onClick)="VerPedido(i, numMesa)"
 
-        Pedido (i + 1)   hora     Mesa: numMesa     Ver Pedido (onClick)="VerPedido(i)"
+        Pedido (i + 1)   hora     Mesa: numMesa     Ver Pedido (onClick)="VerPedido(i, numMesa)"
 
-        Pedido (i + 1)   hora     Mesa: numMesa     Ver Pedido (onClick)="VerPedido(i)"
+        Pedido (i + 1)   hora     Mesa: numMesa     Ver Pedido (onClick)="VerPedido(i, numMesa)"
 
      </div>
 
@@ -39,11 +39,37 @@
       </ion-header>
 
       <ion-content class="ion-padding">
+        <div class="contenido">
+          <h2>Pedido Mesa {{pedidoNum}}</h2>
+
+          <div *ngFor="let c of categorias; let i = index" style="margin-top: -30px">
+            <div class="contenido" *ngIf="aprobarCategoria[i] > 0">
+              <h3>{{c}}</h3>
+
+                <!--div *ngFor="let p of productos">
+                  <ion-item *ngIf="p.categoria == c && productosAgregados[p.idProducto].cantidad > 0">
+                    <ion-avatar slot="start" style="margin-top: -95px;">
+                      <ion-img [src]="p.foto1" style="margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
+                      <ion-img [src]="p.foto2" style="margin-top: 5px; margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
+                      <ion-img [src]="p.foto3" style="margin-top: 5px; margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
+                    </ion-avatar>
+                    <ion-label>
+                      <h2>{{p.producto}}</h2>
+                      <h3>{{p.descripcion}}</h3>
+                      <p *ngIf="p.tamanio != '0'">{{p.tamanio}}</p>
+                      <p *ngIf="p.tamanio == '0'">Demora: {{p.tiempoElaboracion}} mins</p>
+                      <p>Precio: ${{p.precio}}</p>
+                      <p>Cantidad: {{productosAgregados[p.idProducto].cantidad}}</p>
+                      <ion-button (click)="RestarProducto(p.idProducto)"><ion-icon name="remove-outline"></ion-icon></ion-button>
+                      <ion-button (click)="SumarProducto(p.idProducto)"><ion-icon name="add-outline"></ion-icon></ion-button>
+                    </ion-label>
+                  </ion-item>
+                </div-->
+              
+            </div>
+          </div>
 
 
-        Pedido
-        Modificar
-        Rechazar  Confirmar
 
 
 
@@ -51,14 +77,17 @@
 
 
 
-
-
-
-
-
-
-
+        </div>
       </ion-content>
+
+
+      <ion-footer collapse="fade">
+        <ion-toolbar>
+          <ion-button (click)="RechazarPedido()" id="btn_footer">Rechazar</ion-button>
+          <ion-button (click)="ConfirmarPedido()" id="btn_footer2">Confirmar</ion-button>
+        </ion-toolbar>
+      </ion-footer>
+
 
     </ng-template>
   </ion-modal>

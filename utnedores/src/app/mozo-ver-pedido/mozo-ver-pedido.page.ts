@@ -14,11 +14,15 @@ import { ToastController } from '@ionic/angular';
 export class MozoVerPedidoPage implements OnInit {
 
   productos: Producto[];
+  productosAgregados = [];
   pedidos: Pedido[];
   volumenOn = true;
   spinner = true;
-  isModalOpen = false;
+  isModalOpen = true;
   pedidoConfirmado = false;
+  pedidoNum = "0";
+  numeroMesa = "0";
+
   categorias: string[] = [
     "Entradas",
     "Promociones",
@@ -27,7 +31,7 @@ export class MozoVerPedidoPage implements OnInit {
     "Bebidas sin alcohol",
     "Bebidas con alcohol",
     "Postres y Café-Te"];
-  cantidadPorCategoria = [0, 0, 0, 0, 0, 0, 0];
+  aprobarCategoria = [0, 0, 0, 0, 0, 0, 0];
 
   constructor(
     private router: Router,
@@ -35,24 +39,51 @@ export class MozoVerPedidoPage implements OnInit {
     private authService: AuthService,
     private utilidades: UtilidadesService
   ) { 
+
+    for(var i = 0 ; i < 50; i++){
+      this.productosAgregados.push(0);
+    }
     this.DesactivarSpinner();
     this.Sonido();
     this.TraerPedidos();
     this.TraerProductos();
   }
 
-  VerPedido(index: number){
-    this.isModalOpen = true;
-    this.CantidadPorCategoria(this.pedidos[index].idPedido);
-  }
+  VerPedido(index: number, numMesa: string){
+    this.pedidoNum = (index + 1).toString();
+    this.numeroMesa = numMesa;
 
-  CantidadPorCategoria(idPedido){
-    for(var i = 0 ; i < this.categorias.length ; i++){
-      this.cantidadPorCategoria[i] = 0;
+    for(var i = 0 ; i < 50; i++){
+      this.productosAgregados[i] = 0;
     }
 
+    for(var i = 0 ; i < this.categorias.length ; i++){
+      this.aprobarCategoria[i] = 0;
+    }
 
+    var objProductos = JSON.parse(this.pedidos[index].productos);
 
+    for(var i = 0 ; i< objProductos.length; i++){
+
+      var categoriaProducto = "";
+      for(var k = 0 ; k < this.productos.length ; k++){
+
+        if((Number(this.productos[k].idProducto)) == (Number(objProductos[i].idProducto))){
+          categoriaProducto = this.productos[k].categoria;
+          k = this.productos.length;
+        }
+
+      }
+      this.productosAgregados[(Number(objProductos[i].idProducto))] = Number(objProductos[i].cantidad);
+
+      for(var k = 0 ; k < this.categorias.length ; k++){
+        if(this.categorias[k].includes(categoriaProducto)){
+          this.aprobarCategoria[k] = 1;
+        }
+      }
+    }
+    console.log(this.productosAgregados);
+    this.isModalOpen = true;
   }
 
   async Alerta(mensaje: string, color: string) {
@@ -144,9 +175,19 @@ export class MozoVerPedidoPage implements OnInit {
     }
   }
 
+  VerMenu(){
+    //VERIFICAR SI HAY CAMBIOS
+      //VENTANA CANCELAR CAMBIOS E IR AL MENU
+        //CANCELAR    //ACEPTAR
+  }
+
   Volver(){
     this.spinner = true;
     this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
+  }
+
+  RechazarPedido(){
+    this.VerPedido(0, "3");
   }
 
 }
