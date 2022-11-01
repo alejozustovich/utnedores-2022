@@ -29,13 +29,16 @@ export class HomeMozoPage implements OnInit {
   }
 
   ngOnInit() { }
-
+  //Enviado Confirmado Listo Terminado Entregado
   TraerPedidos(){
     this.authService.traerPedidos().subscribe(pedidos => {
       this.cantPedidos = 0;
       this.pedidos = pedidos;
       for(var i = 0 ; i < this.pedidos.length ; i++){
         if(this.pedidos[i].estado.includes("Enviado")){
+          this.cantPedidos = this.cantPedidos + 1;
+        }
+        if(this.pedidos[i].estado.includes("Listo")){
           this.cantPedidos = this.cantPedidos + 1;
         }
       }
@@ -91,7 +94,8 @@ export class HomeMozoPage implements OnInit {
   }
 
   VerPedidos() {
-    
+    this.spinner = true;
+    this.router.navigateByUrl('/mozo-ver-pedido', { replaceUrl: true });
   }
 
 }

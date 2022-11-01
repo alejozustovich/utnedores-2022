@@ -71,6 +71,7 @@ export interface Producto {
 }
 
 export interface Pedido {
+	idPedido: string;
 	idField: string;
 	numMesa: string;
 	productos: string;

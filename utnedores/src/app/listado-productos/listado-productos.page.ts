@@ -3,6 +3,7 @@ import { AuthService, Producto, Pedido } from '../services/auth.service';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-listado-productos',
@@ -11,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class ListadoProductosPage implements OnInit {
 
+  pedidos: Pedido[];
+  idRegistroPedido = 0;
   productos: Producto[];
   productosSeleccionados: Producto[];
   cargando = true;
@@ -38,8 +41,9 @@ export class ListadoProductosPage implements OnInit {
   pedidoEnviado = false;
 
   constructor(
+    private toastController: ToastController,
     private authService: AuthService,
-    private router: Router,
+    private router: Router
   ) {
     for(var i = 0 ; i < 50; i++){
       this.productosAgregados.push({tiempo: 0, cantidad: 0, precio: 0, categoria: ""});
@@ -47,9 +51,30 @@ export class ListadoProductosPage implements OnInit {
     this.numMesa = localStorage.getItem('numeroMesa');
     this.DesactivarSpinner();
     this.TraerProductos();
+    this.TraerPedidos();
   }
 
   ngOnInit() { }
+
+  TraerPedidos(){
+    this.authService.traerPedidos().subscribe(pedidos => {
+      this.pedidos = pedidos;
+
+      var mayorId = 0;
+
+      if(this.pedidos.length == 0){
+        this.idRegistroPedido = 1;
+      }else{
+        for(var i = 0 ; i < this.pedidos.length ; i++){
+          if((Number(this.pedidos[i].idPedido)) > mayorId){
+            mayorId = (Number(this.pedidos[i].idPedido));
+          }
+        }
+        mayorId = mayorId + 1;
+        this.idRegistroPedido = mayorId;
+      }
+    });
+  }
 
   VerMenu(){
     this.isModalOpen = false;
@@ -186,45 +211,65 @@ export class ListadoProductosPage implements OnInit {
 
   Confirmar(){
     this.spinner = true;
-    this.isModalOpen2 = false;
-    this.DesactivarSpinner();
 
-    var date = new Date();
-    var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
-    var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
-    var flag = true;
-    
-    var productosPedido = "[";
-
-    for(var i = 0 ; i < this.productos.length; i++){
-      var index = Number(this.productos[i].idProducto);
-      if(this.productosAgregados[index].cantidad > 0){
-
-        if(flag){
-          flag = false;
-          productosPedido = productosPedido + '{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
-        }else{
-          productosPedido = productosPedido + ',{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
+    if(this.idRegistroPedido != 0){
+      this.isModalOpen2 = false;
+      this.DesactivarSpinner();
+  
+      var date = new Date();
+      var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
+      var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
+      var flag = true;
+      
+      var productosPedido = "[";
+  
+      for(var i = 0 ; i < this.productos.length; i++){
+        var index = Number(this.productos[i].idProducto);
+        if(this.productosAgregados[index].cantidad > 0){
+  
+          if(flag){
+            flag = false;
+            productosPedido = productosPedido + '{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
+          }else{
+            productosPedido = productosPedido + ',{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
+          }
         }
       }
+  
+      productosPedido = productosPedido + "]";
+      
+      var unPedido: Pedido = {idField: "",
+      idPedido: (this.idRegistroPedido.toString()),
+      numMesa: this.numMesa,
+      productos: productosPedido,
+      fecha: fechaActual,
+      hora: horaActual,
+      estado: "Enviado"};
+  
+      this.authService.agregarPedido(unPedido);
+      this.spinner = false;
+      this.pedidoEnviado = true;
+      setTimeout(() => {
+        this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+      }, 3000);
+      //PUSH NOTIFICATION MOZO*/
+    }else{
+      //CHECKEAR QUE SE VEA EL AVISO POR MODAL
+      this.Alerta("Código no válido", 'danger');
+      this.spinner = false;
+      this.TraerPedidos();
     }
+  }
 
-    productosPedido = productosPedido + "]";
-    
-    var unPedido: Pedido = {idField: "",
-    numMesa: this.numMesa,
-    productos: productosPedido,
-    fecha: fechaActual,
-    hora: horaActual,
-    estado: "Enviado"};
-
-    this.authService.agregarPedido(unPedido);
-    this.spinner = false;
-    this.pedidoEnviado = true;
-    setTimeout(() => {
-      this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
-    }, 3000);
-    //PUSH NOTIFICATION MOZO*/
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present();
   }
 
   Volver(){
