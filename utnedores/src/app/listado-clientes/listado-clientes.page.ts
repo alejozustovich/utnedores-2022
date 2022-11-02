@@ -133,7 +133,7 @@ export class ListadoClientesPage implements OnInit {
     this.spinner = true;
     setTimeout(() => {
       this.spinner = false;
-      this.Alerta("Usuario aprobado!",'info');
+      this.Alerta("Usuario aprobado!",'success');
     }, 9000);
     this.authService.aceptarUsuario(idField);
 
@@ -160,7 +160,7 @@ export class ListadoClientesPage implements OnInit {
       this.ingresarMotivoRechazo = false;
       this.spinner = true;
       setTimeout(() => {
-        this.Alerta("Usuario rechazado",'info');
+        this.Alerta("Usuario rechazado",'warning');
       }, 3500);
     }, 500);
 

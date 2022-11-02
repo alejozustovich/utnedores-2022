@@ -217,9 +217,9 @@ export class AltaProductoPage implements OnInit {
     }
     else {
       if (cant == 1) {
-        this.Alerta("Seleccionar 1 imagen", 'info');
+        this.Alerta("Seleccionar 1 imagen", 'warning');
       } else {
-        this.Alerta(("Seleccionar " + cant.toString() + " imágenes"), 'info');
+        this.Alerta(("Seleccionar " + cant.toString() + " imágenes"), 'warning');
       }
     }
   }

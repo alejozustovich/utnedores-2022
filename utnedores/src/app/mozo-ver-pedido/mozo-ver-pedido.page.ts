@@ -14,15 +14,32 @@ import { ToastController } from '@ionic/angular';
 export class MozoVerPedidoPage implements OnInit {
 
   productos: Producto[];
-  productosAgregados = [];
+
+  precioTotal = 0;
+  tiempoTotal = 0;
+
+  rechazarPedido = false;
+  confirmarPedido = false;
+
+  pedidoValido = true;
+  hayPedido = false;
   pedidos: Pedido[];
   volumenOn = true;
   spinner = true;
   isModalOpen = true;
+  isModalOpen2 = false;
+  isModalOpen3 = false;
   pedidoConfirmado = false;
   pedidoNum = "0";
+  idFieldPedidoActual = "";
   numeroMesa = "0";
-
+  pedido: any;
+  pedidoAux: any;
+  categoria = "";
+  esBebida = true;
+  buttonsArray = [];
+  cantProductosAgregados = [];
+  cantidadPorCategoria = [];
   categorias: string[] = [
     "Entradas",
     "Promociones",
@@ -31,7 +48,6 @@ export class MozoVerPedidoPage implements OnInit {
     "Bebidas sin alcohol",
     "Bebidas con alcohol",
     "Postres y Café-Te"];
-  aprobarCategoria = [0, 0, 0, 0, 0, 0, 0];
 
   constructor(
     private router: Router,
@@ -39,9 +55,12 @@ export class MozoVerPedidoPage implements OnInit {
     private authService: AuthService,
     private utilidades: UtilidadesService
   ) { 
-
     for(var i = 0 ; i < 50; i++){
-      this.productosAgregados.push(0);
+      this.cantProductosAgregados.push(0);
+      if(i < 7){
+        this.cantidadPorCategoria.push(0);
+        this.buttonsArray.push(true);
+      }
     }
     this.DesactivarSpinner();
     this.Sonido();
@@ -49,47 +68,116 @@ export class MozoVerPedidoPage implements OnInit {
     this.TraerProductos();
   }
 
-  VerPedido(index: number, numMesa: string){
+  FiltrarCategoria(categoria) {
+    this.isModalOpen3 = true;
+    this.isModalOpen2 = false;
+    this.categoria = categoria;
+    this.categoria == 'Bebidas sin alcohol' || this.categoria == 'Bebidas con alcohol'? this.esBebida = true : this.esBebida = false;
+  }
+
+  AbrirPedidos(){
+    this.isModalOpen = false;
+  }
+
+  VerPedido(index: number, numMesa: string, idField: string){
+    this.idFieldPedidoActual = idField;
     this.pedidoNum = (index + 1).toString();
     this.numeroMesa = numMesa;
 
     for(var i = 0 ; i < 50; i++){
-      this.productosAgregados[i] = 0;
+      this.cantProductosAgregados[i] = 0;
     }
 
-    for(var i = 0 ; i < this.categorias.length ; i++){
-      this.aprobarCategoria[i] = 0;
-    }
+    var pedidoAux = JSON.parse(this.pedidos[index].productos);
 
-    var objProductos = JSON.parse(this.pedidos[index].productos);
-
-    for(var i = 0 ; i< objProductos.length; i++){
-
-      var categoriaProducto = "";
+    for(var i = 0 ; i< pedidoAux.length; i++){
+      
       for(var k = 0 ; k < this.productos.length ; k++){
-
-        if((Number(this.productos[k].idProducto)) == (Number(objProductos[i].idProducto))){
-          categoriaProducto = this.productos[k].categoria;
+        if((Number(this.productos[k].idProducto)) == (Number(pedidoAux[i].idProducto))){
+          this.cantProductosAgregados[k] = (Number(pedidoAux[i].cantidad))
           k = this.productos.length;
         }
-
       }
-      this.productosAgregados[(Number(objProductos[i].idProducto))] = Number(objProductos[i].cantidad);
+    }
+    this.CantidadPorCategoria();
+    this.CalcularPrecio();
+    this.CalcularTiempo();
+    this.isModalOpen = true;
+  }
 
-      for(var k = 0 ; k < this.categorias.length ; k++){
-        if(this.categorias[k].includes(categoriaProducto)){
-          this.aprobarCategoria[k] = 1;
+  CalcularPrecio(){
+    var precio = 0;
+    this.pedidoValido = false;
+
+    for(var i = 0 ; i < this.cantProductosAgregados.length; i++){
+      if(this.cantProductosAgregados[i] > 0){
+        this.pedidoValido = true;
+        precio = precio + (this.cantProductosAgregados[i] * (Number(this.productos[i].precio)));
+      }
+    }
+    this.precioTotal = precio;
+  }
+
+  CalcularTiempo(){
+    var tiempoMayor = 0;
+
+    for(var i = 0 ; i < this.cantProductosAgregados.length; i++){
+      if(this.cantProductosAgregados[i] > 0){
+        if((Number(this.productos[i].tiempoElaboracion)) > tiempoMayor){
+          tiempoMayor = (Number(this.productos[i].tiempoElaboracion));
         }
       }
     }
-    console.log(this.productosAgregados);
-    this.isModalOpen = true;
+    this.tiempoTotal = tiempoMayor;
+  }
+  
+  SumarProducto(idProducto: string){
+    for(var i = 0 ; i < this.productos.length ; i++){
+      if((Number(this.productos[i].idProducto)) == (Number(idProducto))){
+        this.cantProductosAgregados[i] = this.cantProductosAgregados[i] + 1;
+        i = this.productos.length;
+      }
+    }
+    this.CantidadPorCategoria();
+    this.CalcularPrecio();
+    this.CalcularTiempo();
+  }
+
+  RestarProducto(idProducto: string){
+    for(var i = 0 ; i < this.productos.length ; i++){
+      if((Number(this.productos[i].idProducto)) == (Number(idProducto))){
+        if(this.cantProductosAgregados[i] > 0){
+          this.cantProductosAgregados[i] = this.cantProductosAgregados[i] - 1;
+        }
+        i = this.productos.length;
+      }
+    }
+    this.CantidadPorCategoria();
+    this.CalcularPrecio();
+    this.CalcularTiempo();
+  }
+
+  CantidadPorCategoria(){
+    
+    for(var i = 0 ; i < this.categorias.length ; i++){
+      this.cantidadPorCategoria[i] = 0;
+    }
+
+    for(var i = 0 ; i < this.cantProductosAgregados.length ; i++){
+      if(this.cantProductosAgregados[i] > 0){
+        for(var k = 0 ; k < this.categorias.length ; k++){
+          if(this.categorias[k].includes(this.productos[i].categoria)){
+            this.cantidadPorCategoria[k] = this.cantidadPorCategoria[k] + this.cantProductosAgregados[i];
+          }
+        }
+      }
+    }
   }
 
   async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
-      position: 'top',
+      position: 'bottom',
       duration: 2500,
       color: color,
       cssClass: 'custom-toast'
@@ -141,6 +229,15 @@ export class MozoVerPedidoPage implements OnInit {
           }
         }
       }
+
+      for(var i = 0 ; i < this.productos.length - 1; i++){
+        for(var k = 0; k < this.categorias.length ; k++){
+          if(this.productos[i].categoria.includes(this.categorias[k])){
+            this.buttonsArray[k] = false;
+            k = this.categorias.length;
+          }
+        }
+      }
     });
   }
 
@@ -157,8 +254,13 @@ export class MozoVerPedidoPage implements OnInit {
           }
         }
       }
-
-
+      for(var i = 0 ; i < this.pedidos.length; i++){
+        this.pedidos[i].hora = ((this.pedidos[i].hora).substring(0,((this.pedidos[i].hora).length - 3)));
+      }
+      if(this.pedidos.length > 0){
+        this.hayPedido = true;
+      }
+      this.idFieldPedidoActual = this.pedidos[0].idField;
     });
   }
 
@@ -175,19 +277,80 @@ export class MozoVerPedidoPage implements OnInit {
     }
   }
 
-  VerMenu(){
-    //VERIFICAR SI HAY CAMBIOS
-      //VENTANA CANCELAR CAMBIOS E IR AL MENU
-        //CANCELAR    //ACEPTAR
-  }
-
   Volver(){
     this.spinner = true;
     this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
   }
 
   RechazarPedido(){
-    this.VerPedido(0, "3");
+    this.VerPedido(0, "3", this.idFieldPedidoActual);
+    this.rechazarPedido = true;
   }
 
+  AceptarRechazarPedido(){
+    this.spinner = true;
+    this.DesactivarSpinner();
+    this.isModalOpen = false;
+    this.authService.rechazarPedido(this.idFieldPedidoActual);
+    setTimeout(() => {
+      this.spinner = false;
+      this.Alerta("Pedido Rechazado", 'warning');
+    }, 3000);
+  }
+
+  CancelarRechazarPedido(){
+    this.rechazarPedido = false;
+  }
+
+  ConfirmarPedido(){
+    this.confirmarPedido = true;
+  }
+
+  AceptarConfirmarPedido(){
+    this.spinner = true;
+    this.DesactivarSpinner();
+    this.isModalOpen = false;
+
+    var flag = true;
+    var productosPedido = "[";
+  
+    for(var i = 0 ; i < this.productos.length; i++){
+      if(this.cantProductosAgregados[i] > 0){
+
+        if(flag){
+          flag = false;
+          productosPedido = productosPedido + '{"idProducto":"' + (this.productos[i].idProducto.toString()) + '", "cantidad":"' + (this.cantProductosAgregados[i].toString()) + '"}';
+        }else{
+          productosPedido = productosPedido + ',{"idProducto":"' + (this.productos[i].idProducto.toString()) + '", "cantidad":"' + (this.cantProductosAgregados[i].toString()) + '"}';
+        }
+      }
+    }
+
+    productosPedido = productosPedido + "]";
+
+    this.authService.confirmarPedido(this.idFieldPedidoActual, "");
+    setTimeout(() => {
+      this.spinner = false;
+      this.Alerta("Pedido Confirmado", 'success');
+    }, 3000);
+  }
+
+  CancelarConfirmarPedido(){
+    this.confirmarPedido = false;
+  }
+
+  ModificarPedido(){
+    this.isModalOpen2 = true;
+    this.isModalOpen = false;
+  }
+
+  ModificarListo(){
+    this.isModalOpen = true;
+    this.isModalOpen2 = false;
+  }
+
+  VerMenu(){
+    this.isModalOpen2 = true;
+    this.isModalOpen3 = false;
+  }
 }

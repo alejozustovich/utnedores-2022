@@ -107,6 +107,11 @@
     height: 30px;
     --background: rgb(0, 164, 22);
   }
+  #btn_footer2 {
+    margin-right: 10px;
+    height: 30px;
+    --background: rgb(0, 164, 22);
+  }
 
   #btn_footer3 {
     width: 50%;
@@ -118,6 +123,12 @@
     color: white;
     --background: rgb(82, 27, 145);
     margin-left: 50px;
+  }
+  
+  #btn_footer4 {
+    margin-right: 10px;
+    height: 30px;
+    --background: rgb(82, 27, 145);
   }
 
   .spinner {
