@@ -181,6 +181,7 @@ export class AuthService {
 		return collectionData(encuestaRef) as Observable<EncuestaSupervisor[]>;
 	}
 
+
 	traerPedidos(): Observable<Pedido[]> {
 		const pedidoRef = collection(this.firestore, 'pedidos');
 		return collectionData(pedidoRef, { idField: 'idField' }) as Observable<Pedido[]>;
@@ -189,6 +190,16 @@ export class AuthService {
 	agregarPedido(pedido: Pedido) {
 		const pedidoRef = collection(this.firestore, 'pedidos');
 		return addDoc(pedidoRef, pedido);
+	}
+
+	rechazarPedido(idField: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { estado: 'Rechazado' });
+	}
+
+	confirmarPedido(idField: string, productosActualizados: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { estado: 'Confirmado', productos: productosActualizados });
 	}
 
 	cargarMensajes(ruta: string): Observable<Mensaje[]> {
