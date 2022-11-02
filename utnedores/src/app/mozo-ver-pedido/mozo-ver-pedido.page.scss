@@ -54,16 +54,26 @@
     }
 
     ion-label {
-      text-align: right;
+      text-align: left;
     }
 
     p {
-        color: white;
+      color: rgb(193, 193, 193);
     }
 
     h2 {
         font-size: 20px;
         color: white;
+    }
+
+    h3 {
+      font-size: 18px;
+      color: white;
+    }
+
+    h4 {
+      font-size: 16px;
+      color: rgb(222, 222, 222);
     }
   }
 
@@ -129,6 +139,12 @@
     margin-right: 10px;
     height: 30px;
     --background: rgb(82, 27, 145);
+  }
+
+  #btnVerPedidos {
+    height: 50px;
+    margin-left: -60px;
+    margin-top: -5px;
   }
 
   .spinner {

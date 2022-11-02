@@ -14,16 +14,19 @@
       <div *ngIf="!cargando">
         <div *ngIf="hayPedido">
           <div *ngFor="let pd of pedidos; let t = index">
+
             <!-- PENDIENTES   CONFIRMADOS   RECHAZADOS  PREPARADOS-->
-            <p>Pedido 1   Mesa 1     Hora: 19:27     Ver</p>
-            <p>Pedido 2   Mesa 6     Hora: 19:31     Ver</p>
-  <!--
-            Pedido {{(t + 1)}}   Mesa: {{pd.numMesa}}    {{pd.hora}}     Ver Pedido (onClick)="VerPedido(t, pd.numMesa, pd.idField)"
+            <ion-item>
+              <ion-label>
+                <h3>Pedido {{(t + 1)}}</h3>
+                <h4>Mesa: {{pd.numMesa}}</h4>
+                <p>Solicitado a las: {{pd.hora}} hs</p>
+              </ion-label>
+              <ion-avatar slot="end">
+                <ion-button id="btnVerPedidos" (onClick)="VerPedido(t, pd.numMesa, pd.idField)">Ver Pedido</ion-button>
+              </ion-avatar>
+            </ion-item>
 
-            Pedido {{(t + 1)}}   Mesa: {{pd.numMesa}}    {{pd.hora}}     Ver Pedido (onClick)="VerPedido(t, pd.numMesa, pd.idField)"
-
-            Pedido {{(t + 1)}}   Mesa: {{pd.numMesa}}    {{pd.hora}}     Ver Pedido (onClick)="VerPedido(t, pd.numMesa, pd.idField)"
-  -->
           </div>
         </div>
 

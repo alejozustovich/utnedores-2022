@@ -26,6 +26,7 @@ export class MozoVerPedidoPage implements OnInit {
   pedidos: Pedido[];
   volumenOn = true;
   spinner = true;
+  cargando = false;
   isModalOpen = true;
   isModalOpen2 = false;
   isModalOpen3 = false;
