@@ -281,6 +281,6 @@ export class AltaProductoPage implements OnInit {
   }
 
   Redirigir(){
-    this.router.navigateByUrl('home-cocina');
+    this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
   }
 }
