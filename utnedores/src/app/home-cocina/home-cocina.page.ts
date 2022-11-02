@@ -26,6 +26,15 @@ export class HomeCocinaPage implements OnInit {
 
   ngOnInit() { }
 
+  IrAltaMesa(){
+    this.spinner = true;
+    this.router.navigateByUrl('/alta-producto', { replaceUrl: true });
+  }
+
+  VerPedidos(){
+
+  }
+
   DesactivarSpinner(){
     setTimeout(()=>{
       this.spinner = false;

@@ -120,7 +120,7 @@ export class ListaEsperaPage implements OnInit {
     this.spinner = true;
     this.isModalOpen = false;
     setTimeout(() => {
-      this.router.navigateByUrl('home-metre');
+      this.router.navigateByUrl('/home-metre', { replaceUrl: true });
     }, 1000);
   }
 
