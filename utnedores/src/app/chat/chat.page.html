@@ -8,18 +8,26 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <div class="titulo">
+    <h1>Chat mesa 1</h1>
+  </div>
   <div
     class="caja-msjs scroll"
     #scrollMe
-    [scrollTop]="chat?.length === 0 ? 0 : scrollMe.scrollHeight"
+    [scrollTop]="chat.mensajes?.length === 0 ? 0 : scrollMe.scrollHeight"
   >
-    <ion-spinner *ngIf="!chat" name="lines" color="light" class="spin"></ion-spinner>
-    <div *ngFor="let msj of chat; let i = index">
+    <ion-spinner
+      *ngIf="spinner"
+      name="lines"
+      color="light"
+      class="spin"
+    ></ion-spinner>
+    <div *ngFor="let msj of chat.mensajes; let i = index">
       <div
         #cajaMsj
         id="{{msj.usuario.id}}"
         class="caja-msj"
-        [class.mb-0]="i+1 == chat.length"
+        [class.mb-0]="i+1 == chat.mensajes.length"
         [class.caja-msj-propio]="usuarioActual.idUsuario == msj.usuario.id"
         [ngClass]="bgMsjOpuesto(msj)"
       >
