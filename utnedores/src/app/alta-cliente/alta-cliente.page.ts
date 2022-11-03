@@ -5,6 +5,7 @@ import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-alta-cliente',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
+  volumenOn = true;
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
@@ -50,12 +52,27 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private camera: Camera,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private utilidades: UtilidadesService
   ) {
+    this.Sonido();
+    this.DesactivarSpinner();
     this.GuardarId();
     this.AsignarNombreFoto();
     this.ObtenerPerfil();
-    this.DesactivarSpinner();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   ObtenerPerfil() {
@@ -197,6 +214,10 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       } else {
         this.Alerta("Código no válido", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
       }
     }
   }
@@ -287,6 +308,9 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       this.spinner = false;
       this.clienteAgregado = true;
+      if(this.volumenOn){
+        this.utilidades.SonidoAlta();
+      }
       setTimeout(() => {
         this.Redirigir();
       }, 2500);
@@ -330,6 +354,9 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
           this.spinner = false;
           this.clienteAgregado = true;
+          if(this.volumenOn){
+            this.utilidades.SonidoAlta();
+          }
           setTimeout(() => {
             this.Redirigir();
           }, 3000);
@@ -365,6 +392,10 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       this.spinner = false;
       this.GuardarId();
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
     }
   }
 

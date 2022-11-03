@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-encuesta-clientes',
@@ -9,6 +10,8 @@ import { AuthService, Usuario } from '../services/auth.service';
   styleUrls: ['./encuesta-clientes.page.scss'],
 })
 export class EncuestaClientesPage implements OnInit {
+  
+  volumenOn = true;
   formEncuesta: FormGroup;
   spinner: boolean = false;
   users: Usuario[];
@@ -21,14 +24,28 @@ export class EncuestaClientesPage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private utilidades: UtilidadesService
   ) {
     //COMIENZO SPINNER
+    this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 1500);
   }
 
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
   ngOnInit() {
     this.formEncuesta = this.fb.group(
       {

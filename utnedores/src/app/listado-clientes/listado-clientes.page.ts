@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-listado-clientes',
@@ -13,7 +14,6 @@ import { ToastController } from '@ionic/angular';
 export class ListadoClientesPage implements OnInit {
 
   volumenOn = true;
-  volumenOff = false;
   spinner = true;
   users: Usuario[];
   pathFoto = "../../assets/user-photo.png";
@@ -40,12 +40,27 @@ export class ListadoClientesPage implements OnInit {
     private toastController: ToastController,
     private router: Router,
     private authService: AuthService,
+    private utilidades: UtilidadesService
   ) {
+    this.Sonido();
     this.DesactivarSpinner();
     this.ValidarUsuarios();
     setTimeout(() => {
       this.ObtenerPerfil();
     }, 2500);
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   async Alerta(mensaje: string, color: string) {
@@ -134,6 +149,9 @@ export class ListadoClientesPage implements OnInit {
     setTimeout(() => {
       this.spinner = false;
       this.Alerta("Usuario aprobado!",'success');
+      if(this.volumenOn){
+        this.utilidades.SonidoConfirmar();
+      }
     }, 9000);
     this.authService.aceptarUsuario(idField);
 
@@ -161,6 +179,10 @@ export class ListadoClientesPage implements OnInit {
       this.spinner = true;
       setTimeout(() => {
         this.Alerta("Usuario rechazado",'warning');
+        if(this.volumenOn){
+          this.utilidades.SonidoRechazar();
+        }
+        this.utilidades.VibrarRechazar();
       }, 3500);
     }, 500);
 

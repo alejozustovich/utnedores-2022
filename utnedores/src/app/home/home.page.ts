@@ -24,6 +24,19 @@ export class HomePage implements OnInit {
       this.ObtenerPerfil();
     }
 
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
   DesactivarSpinner(){
     setTimeout(()=>{
       this.spinner = false;
@@ -38,20 +51,6 @@ export class HomePage implements OnInit {
       });
     },2500);
   }
-
-  Sonido(){
-    try {
-      var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
-          this.volumenOn = false;
-        }
-      }
-    } catch (error) {
-      
-    }
-  }
-
 
   ngOnInit() {}
 

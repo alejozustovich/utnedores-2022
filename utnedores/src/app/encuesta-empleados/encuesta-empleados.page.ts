@@ -3,6 +3,7 @@ import { AuthService, Usuario } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-encuesta-empleados',
@@ -11,6 +12,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class EncuestaEmpleadosPage implements OnInit {
   
+  volumenOn = true;
   formEncuesta: FormGroup;
   spinner: boolean = true;
   users: Usuario[];
@@ -23,12 +25,27 @@ export class EncuestaEmpleadosPage implements OnInit {
     private toastController : ToastController,
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private utilidades: UtilidadesService
   ) {
+    this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 2000);
     this.DesactivarSpinner();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   DesactivarSpinner(){

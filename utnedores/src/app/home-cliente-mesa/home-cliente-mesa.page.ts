@@ -21,24 +21,28 @@ export class HomeClienteMesaPage implements OnInit {
     private router: Router,
     private authService: AuthService,
     private utilidades: UtilidadesService
-  ) { }
+  ) { 
+    this.Sonido();
+  }
 
   ngOnInit() { }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
 
   Volver(){
     this.spinner = true;
     this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
-  }
-
-
-  ActivarDesactivarSonido() {
-    if(this.volumenOn) {
-      this.volumenOn = false;
-      localStorage.setItem('sonido', "No");
-    } else {
-      this.volumenOn = true;
-      localStorage.setItem('sonido', "Si");
-    }
   }
 
   IrPedido(){

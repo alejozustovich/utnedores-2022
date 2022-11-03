@@ -14,6 +14,7 @@ import { UtilidadesService } from '../services/utilidades.service';
 })
 export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
 
+  volumenOn = true;
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
@@ -53,9 +54,23 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private utilidades: UtilidadesService
   ) {
+    this.Sonido();
+    this.DesactivarSpinner();
     this.GuardarId();
     this.AsignarNombreFoto();
-    this.DesactivarSpinner();
+  }
+  
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   SonidoIngreso(){
@@ -190,6 +205,10 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
         this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
       } else {
         this.Alerta("Código no válido", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
       }
     }
   }
@@ -280,6 +299,9 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
 
       this.spinner = false;
       this.clienteAgregado = true;
+      if(this.volumenOn){
+        this.utilidades.SonidoAlta();
+      }
       setTimeout(() => {
         this.Redirigir();
       }, 2500);
@@ -341,6 +363,9 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
           setTimeout(() => {
             this.spinner = false;
             this.clienteAgregado = true;
+            if(this.volumenOn){
+              this.utilidades.SonidoAlta();
+            }
             setTimeout(() => {
               this.Redirigir();
             }, 2000);
@@ -373,6 +398,10 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
       this.spinner = false;
       this.GuardarId();
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
     }
   }
 

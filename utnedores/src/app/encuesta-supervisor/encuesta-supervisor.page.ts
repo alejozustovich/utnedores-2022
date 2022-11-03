@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService, Usuario } from '../services/auth.service';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-encuesta-supervisor',
@@ -11,6 +12,7 @@ import { AuthService, Usuario } from '../services/auth.service';
 })
 export class EncuestaSupervisorPage implements OnInit {
   
+  volumenOn = true;
   formEncuesta: FormGroup;
   spinner: boolean = false;
   users: Usuario[];
@@ -21,12 +23,27 @@ export class EncuestaSupervisorPage implements OnInit {
     private toastController : ToastController,
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private utilidades: UtilidadesService
   ) {
+    this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 2000);
     this.DesactivarSpinner();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   DesactivarSpinner(){

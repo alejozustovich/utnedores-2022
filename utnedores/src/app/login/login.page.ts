@@ -106,6 +106,7 @@ export class LoginPage implements OnInit {
   Registrarse(){
     this.spinner = true;
     localStorage.setItem('Perfil', 'Cliente');
+    localStorage.setItem('sonido', "Si");
     this.router.navigateByUrl('/alta-cliente', { replaceUrl: true });
   }
 
@@ -150,6 +151,9 @@ export class LoginPage implements OnInit {
     else {
       this.spinner = false;
       this.Alerta('Correo o clave incorrecto/a!', 'danger');
+      this.utilidades.SonidoError();
+      this.utilidades.VibrarError();
+
     }
   }
 

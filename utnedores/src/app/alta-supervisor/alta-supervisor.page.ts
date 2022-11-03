@@ -5,6 +5,7 @@ import { AuthService, Usuario } from '../services/auth.service';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Router } from '@angular/router';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-alta-supervisor',
@@ -12,6 +13,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./alta-supervisor.page.scss'],
 })
 export class AltaSupervisorPage implements OnInit {
+  
+  volumenOn = true;
   users: Usuario[];
   formRegistro: FormGroup;
   perfil: string = 'Dueño';
@@ -48,14 +51,29 @@ export class AltaSupervisorPage implements OnInit {
     private fb: FormBuilder,
     private toastController: ToastController,
     private camera: Camera,
-    private router: Router
+    private router: Router,
+    private utilidades: UtilidadesService
   ) {
     this.spinner = true;
+    this.Sonido();
     this.DesactivarSpinner();
     this.AsignarNombreFoto();
     setTimeout(() => {
       this.ObtenerPerfil();
     }, 2500);
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   DesactivarSpinner() {
@@ -201,6 +219,10 @@ export class AltaSupervisorPage implements OnInit {
         (<HTMLInputElement>document.getElementById('cuilHtml')).value = ("-" + cadena[4] + "-");
       }else{
         this.Alerta("Código no válido", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
       }
     }
   }
@@ -344,6 +366,9 @@ export class AltaSupervisorPage implements OnInit {
               setTimeout(() => {
                 this.spinner = false;
                 this.usuarioAgregado = true;
+                if(this.volumenOn){
+                  this.utilidades.SonidoAlta();
+                }
                 setTimeout(() => {
                   this.Redirigir();
                 }, 3000);
@@ -353,15 +378,27 @@ export class AltaSupervisorPage implements OnInit {
         } catch (e) {
           this.spinner = false;
           this.Alerta('Error al crear usuario!', 'danger');
+          if(this.volumenOn){
+            this.utilidades.SonidoError();
+          }
+          this.utilidades.VibrarError();
         }
       } else {
         this.spinner = false;
         this.Alerta('Ya existe un usuario con esos datos!', 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
       }
 
     }else{
       this.spinner = false;
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
       this.traerUsuarios();
     }
   }

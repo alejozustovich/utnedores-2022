@@ -4,6 +4,7 @@ import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-listado-productos',
@@ -12,6 +13,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class ListadoProductosPage implements OnInit {
 
+  volumenOn = true;
   pedidos: Pedido[];
   idRegistroPedido = 0;
   productos: Producto[];
@@ -43,15 +45,30 @@ export class ListadoProductosPage implements OnInit {
   constructor(
     private toastController: ToastController,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private utilidades: UtilidadesService
   ) {
     for(var i = 0 ; i < 50; i++){
       this.productosAgregados.push({tiempo: 0, cantidad: 0, precio: 0, categoria: ""});
     }
     this.numMesa = localStorage.getItem('numeroMesa');
+    this.Sonido();
     this.DesactivarSpinner();
     this.TraerProductos();
     this.TraerPedidos();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   ngOnInit() { }
@@ -252,6 +269,9 @@ export class ListadoProductosPage implements OnInit {
       this.authService.agregarPedido(unPedido);
       this.spinner = false;
       this.pedidoEnviado = true;
+      if(this.volumenOn){
+        this.utilidades.SonidoConfirmar();
+      }
       setTimeout(() => {
         this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
       }, 3000);
@@ -259,6 +279,10 @@ export class ListadoProductosPage implements OnInit {
     }else{
       //CHECKEAR QUE SE VEA EL AVISO POR MODAL
       this.Alerta("Código no válido", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
       this.spinner = false;
       this.TraerPedidos();
     }
