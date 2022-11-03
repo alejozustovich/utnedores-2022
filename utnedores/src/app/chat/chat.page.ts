@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService, Mensaje, Usuario } from '../services/auth.service';
 import { DataUsuarioService } from '../services/data-usuario.service';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-chat',
@@ -10,6 +11,8 @@ import { DataUsuarioService } from '../services/data-usuario.service';
   styleUrls: ['./chat.page.scss'],
 })
 export class ChatPage implements OnInit {
+  
+  volumenOn = true;
   chat: Mensaje[];
   formMsj: FormGroup;
   subChat: Subscription;
@@ -17,7 +20,29 @@ export class ChatPage implements OnInit {
   usuarioActual: Usuario;
   @ViewChildren('cajaMsj') cajaMsj: QueryList<ElementRef>;
 
-  constructor(private authService: AuthService, private fb: FormBuilder, private dataUsuarioService: DataUsuarioService, private cdref: ChangeDetectorRef) { }
+  constructor(
+    private authService: AuthService, 
+    private fb: FormBuilder, 
+    private dataUsuarioService: DataUsuarioService, 
+    private cdref: ChangeDetectorRef,
+    private utilidades: UtilidadesService
+    )
+    { 
+      this.Sonido();
+    }
+
+    Sonido(){
+      try {
+        var sonido = localStorage.getItem('sonido');
+        if(sonido != null){
+          if(sonido.includes("No")){
+            this.volumenOn = false;
+          }
+        }
+      } catch (error) {
+        
+      }
+    }
 
   ngOnInit(): void {
     this.formMsj = this.fb.group(

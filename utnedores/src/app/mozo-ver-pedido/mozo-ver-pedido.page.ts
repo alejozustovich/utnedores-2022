@@ -86,6 +86,19 @@ export class MozoVerPedidoPage implements OnInit {
     this.TraerProductos();
   }
 
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
   FiltrarCategoria(categoria) {
     this.isModalOpen3 = true;
     this.isModalOpen2 = false;
@@ -293,19 +306,6 @@ export class MozoVerPedidoPage implements OnInit {
     });
   }
 
-  Sonido(){
-    try {
-      var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
-          this.volumenOn = false;
-        }
-      }
-    } catch (error) {
-      
-    }
-  }
-
   Volver(){
     this.spinner = true;
     this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
@@ -323,6 +323,10 @@ export class MozoVerPedidoPage implements OnInit {
     setTimeout(() => {
       this.spinner = false;
       this.Alerta("Pedido Rechazado", 'warning');
+      if(this.volumenOn){
+        this.utilidades.SonidoRechazar();
+      }
+      this.utilidades.VibrarRechazar();
     }, 3000);
   }
 
@@ -375,6 +379,9 @@ export class MozoVerPedidoPage implements OnInit {
     setTimeout(() => {
       this.spinner = false;
       this.Alerta("Pedido Confirmado", 'success');
+      if(this.volumenOn){
+        this.utilidades.SonidoConfirmar();
+      }
     }, 3000);
   }
 

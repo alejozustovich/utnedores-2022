@@ -59,13 +59,26 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private utilidades: UtilidadesService
   ) { 
+    this.Sonido();
+    this.DesactivarSpinner();
     this.TraerMesas();
     this.TraerEsperas();
     this.ObtenerUsuario();
-
-    this.DesactivarSpinner();
   }
 
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+  
   DesactivarSpinner(){
     setTimeout(()=>{
       this.spinner = false;

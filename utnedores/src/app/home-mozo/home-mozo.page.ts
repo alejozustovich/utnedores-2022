@@ -28,6 +28,19 @@ export class HomeMozoPage implements OnInit {
     this.TraerPedidos();
   }
 
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
   ngOnInit() { }
   //Enviado Confirmado Listo Terminado Entregado
   TraerPedidos(){
@@ -50,19 +63,6 @@ export class HomeMozoPage implements OnInit {
     setTimeout(() => {
       this.spinner = false;
     }, 7000);
-  }
-
-  Sonido(){
-    try {
-      var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
-          this.volumenOn = false;
-        }
-      }
-    } catch (error) {
-      
-    }
   }
 
   ActivarDesactivarSonido() {

@@ -64,6 +64,19 @@ export class HomeCocinaPage implements OnInit {
 
   ngOnInit() { }
 
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
   TraerPedidos(){
     this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
@@ -238,6 +251,9 @@ export class HomeCocinaPage implements OnInit {
   //SI   listoCocinero == "1"   =>   listoBartender = 1   &&    estado = "Preparado"
   
 
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
     this.isModalOpen2 = false;
     this.confirmarPedido = false;
   }
@@ -271,19 +287,6 @@ export class HomeCocinaPage implements OnInit {
         this.tipo = user.tipo;
       });
     },2500);
-  }
-
-  Sonido(){
-    try {
-      var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
-          this.volumenOn = false;
-        }
-      }
-    } catch (error) {
-      
-    }
   }
 
   ActivarDesactivarSonido() {

@@ -4,6 +4,7 @@ import { AuthService, Espera, Usuario, Mesa } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-gestion-mesas',
@@ -12,6 +13,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class GestionMesasPage implements OnInit {
 
+  volumenOn = true;
   cargando = true;
   mesas: Mesa [];
   hayMesas = false;
@@ -20,10 +22,25 @@ export class GestionMesasPage implements OnInit {
   constructor(
     private toastController: ToastController,
     public router: Router ,
-    private authService: AuthService
+    private authService: AuthService,
+    private utilidades: UtilidadesService
   ) { 
+    this.Sonido();
     this.ActivarSpinner();
     this.TraerMesas();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   async Alerta(mensaje: string, color: string) {

@@ -5,6 +5,7 @@ import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -13,6 +14,7 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn,
 })
 export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   
+  volumenOn = true;
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
@@ -50,10 +52,12 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private camera: Camera,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private utilidades: UtilidadesService
   ) {
     this.spinner = true;
     this.DesactivarSpinner();
+    this.Sonido();
     this.GuardarId();
     this.AsignarNombreFoto();
     setTimeout(() => {
@@ -61,6 +65,19 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
     }, 2500);
   }
   
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
   DesactivarSpinner() {
     setTimeout(() => {
       this.spinner = false;

@@ -5,6 +5,7 @@ import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
 import { IonContent } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-lista-espera',
@@ -14,6 +15,7 @@ import { ToastController } from '@ionic/angular';
 
 export class ListaEsperaPage implements OnInit {
 
+  volumenOn = true;
   listado: Espera[];
   mesas: Mesa [];
   hayEnEspera = true;
@@ -32,15 +34,30 @@ export class ListaEsperaPage implements OnInit {
   constructor(
     private toastController: ToastController,
     public router: Router ,
-    private authService: AuthService
+    private authService: AuthService,
+    private utilidades: UtilidadesService
   ) { 
     for(var i = 0 ; i < 20; i++){
       this.mesaSeleccionada.push(false);
     }
+    this.ActivarSpinner();
+    this.Sonido();
     this.TraerListaEspera();
     this.TraerMesas();
     this.ValidarEnEspera();
-    this.ActivarSpinner();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   TraerListaEspera(){
@@ -219,6 +236,9 @@ export class ListaEsperaPage implements OnInit {
     this.isModalOpen = false;
     this.spinner = false;
 
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
     this.Alerta("Asignación exitosa!", 'success');
   }
 

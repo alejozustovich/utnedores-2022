@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browse
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-alta-mesa',
@@ -11,6 +12,8 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./alta-mesa.page.scss'],
 })
 export class AltaMesaPage implements OnInit {
+
+  volumenOn = true;
   formMesa: FormGroup;
   mesas: Mesa[];
   numMesa = "0";
@@ -33,10 +36,25 @@ export class AltaMesaPage implements OnInit {
     private toastController: ToastController,
     private authService: AuthService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private utilidades: UtilidadesService
   ) {
+    this.Sonido();
     this.AsignarNombreFotos();
     this.TraerMesas();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   Volver(){
@@ -148,6 +166,10 @@ export class AltaMesaPage implements OnInit {
     if (this.numMesa == "0") {
       this.spinner = false;
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
       this.TraerMesas();
     }
     else {
@@ -169,6 +191,9 @@ export class AltaMesaPage implements OnInit {
         this.authService.subirImagenFile(imagenStorage, this.file);
         this.spinner = false;
         this.mesaAgregado = true;
+        if(this.volumenOn){
+          this.utilidades.SonidoAlta();
+        }
         setTimeout(() => {
           this.Redirigir();
         }, 2500);

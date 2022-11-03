@@ -4,6 +4,7 @@ import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
+import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
   selector: 'app-alta-producto',
@@ -11,6 +12,8 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./alta-producto.page.scss'],
 })
 export class AltaProductoPage implements OnInit {
+  
+  volumenOn = true;
   formProducto: FormGroup;
   bebida = false;
   elab = false;
@@ -40,10 +43,25 @@ export class AltaProductoPage implements OnInit {
     private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private utilidades: UtilidadesService
   ) {
+    this.Sonido();
     this.TraerProductos();
     this.AsignarNombreFotos();
+  }
+
+  Sonido(){
+    try {
+      var sonido = localStorage.getItem('sonido');
+      if(sonido != null){
+        if(sonido.includes("No")){
+          this.volumenOn = false;
+        }
+      }
+    } catch (error) {
+      
+    }
   }
 
   ngOnInit(): void {
@@ -156,6 +174,9 @@ export class AltaProductoPage implements OnInit {
     
     this.spinner = false;
     this.productoAgregado = true;
+    if(this.volumenOn){
+      this.utilidades.SonidoAlta();
+    }
     setTimeout(() => {
       this.Redirigir();
     }, 2500);
@@ -218,8 +239,16 @@ export class AltaProductoPage implements OnInit {
     else {
       if (cant == 1) {
         this.Alerta("Seleccionar 1 imagen", 'warning');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
       } else {
         this.Alerta(("Seleccionar " + cant.toString() + " imágenes"), 'warning');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
       }
     }
   }
@@ -249,6 +278,10 @@ export class AltaProductoPage implements OnInit {
       //ERROR
       this.spinner = false
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
       this.TraerProductos();
     }
     else {
