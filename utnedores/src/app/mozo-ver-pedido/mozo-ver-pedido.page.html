@@ -9,54 +9,41 @@
 
 	<ion-grid style="margin-top: -30px">
 		<div class="contenido">
-			<h2>Pedidos</h2>
 
       <div *ngIf="!cargando">
         <div *ngIf="hayPedido">
-          <div *ngFor="let pd of pedidos; let t = index">
 
-            <!-- PENDIENTES   CONFIRMADOS   RECHAZADOS  PREPARADOS-->
-            <ion-item>
-              <ion-label>
-                <h3>Pedido {{(t + 1)}}</h3>
-                <h4>Mesa: {{pd.numMesa}}</h4>
-                <p>Solicitado a las: {{pd.hora}} hs</p>
-              </ion-label>
-              <ion-avatar slot="end">
-                <ion-button id="btnVerPedidos" (onClick)="VerPedido(t, pd.numMesa, pd.idField)">Ver Pedido</ion-button>
-              </ion-avatar>
-            </ion-item>
-
+          <div *ngFor="let g of estadoPedido; let r = index">
+            <div *ngIf="cantTipoPedido[r] > 0">
+              <h2>Pedidos {{estadoPedido[r]}}</h2>
+              <div *ngFor="let pd of pedidos; let t = index">
+                <ion-item>
+                  <ion-label>
+                    <h3>Pedido {{(t + 1)}}</h3>
+                    <h4>Mesa: {{pd.numMesa}}</h4>
+                    <p>Solicitado a las: {{pd.hora}} hs</p>
+                  </ion-label>
+                  <ion-avatar slot="end">
+                    <ion-button id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Ver Pedido</ion-button>
+                  </ion-avatar>
+                </ion-item>
+              </div>
+            </div>
           </div>
         </div>
 
         <div *ngIf="!hayPedido">
-          <h2 style="margin-top: 50px; font-size: 40px;">No se encuentra pedidos pendientes</h2>
+          <h2 style="margin-top: 50px; font-size: 40px;">No se encontró ningún pedido</h2>
         </div>
+      </div>
 
-     </div>
       <div *ngIf="cargando">
         <h2 style="margin-top: 50px; font-size: 40px;">Cargando lista</h2>
       </div>
 
     </div>
+
 	</ion-grid>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   
   <ion-modal [isOpen]="isModalOpen">
@@ -72,7 +59,7 @@
 
       <ion-content class="ion-padding">
         <div class="contenido">
-          <h2>Pedido Mesa {{pedidoNum}}</h2>
+          <h2>Pedido Mesa {{numeroMesa}}</h2>
 
           <div *ngFor="let c of categorias; let i = index" style="margin-top: -30px">
             <div class="contenido" *ngIf="cantidadPorCategoria[i] > 0">
@@ -156,11 +143,7 @@
 
 
 
-
-
-
-
-
+  
 
   <ion-modal [isOpen]="isModalOpen2">
     <ng-template>
@@ -174,7 +157,7 @@
       <ion-content class="ion-padding">
         <ion-grid style="margin-top: -30px">
           <div class="contenido">
-            <h2>Pedido Mesa {{pedidoNum}}</h2>
+            <h2>Pedido Mesa {{numeroMesa}}</h2>
       
             <div>
               <button [disabled]="buttonsArray[0]" class="btnCategorias" (click)="FiltrarCategoria('Entradas')" [class.texto-gris]="buttonsArray[0]">Entradas <label style="color:rgb(196, 145, 255);" *ngIf="cantidadPorCategoria[0] != 0">x{{cantidadPorCategoria[0]}}</label></button>

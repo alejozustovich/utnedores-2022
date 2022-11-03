@@ -26,8 +26,8 @@ export class MozoVerPedidoPage implements OnInit {
   pedidos: Pedido[];
   volumenOn = true;
   spinner = true;
-  cargando = false;
-  isModalOpen = true;
+  cargando = true;
+  isModalOpen = false;
   isModalOpen2 = false;
   isModalOpen3 = false;
   pedidoConfirmado = false;
@@ -49,6 +49,20 @@ export class MozoVerPedidoPage implements OnInit {
     "Bebidas sin alcohol",
     "Bebidas con alcohol",
     "Postres y Café-Te"];
+  estadoPedido: string[] = [
+    "Pendientes",
+    "Confirmados",
+    "Preparados",
+    "Entregados",
+    "Rechazados"];
+  tipoPedido: string[] = [
+    "Enviado",
+    "Confirmado",
+    "Preparado",
+    "Entregado",
+    "Rechazado"];
+  cantTipoPedido = [];
+
 
   constructor(
     private router: Router,
@@ -61,6 +75,9 @@ export class MozoVerPedidoPage implements OnInit {
       if(i < 7){
         this.cantidadPorCategoria.push(0);
         this.buttonsArray.push(true);
+      }
+      if(i < 5){
+        this.cantTipoPedido.push(0);
       }
     }
     this.DesactivarSpinner();
@@ -231,7 +248,7 @@ export class MozoVerPedidoPage implements OnInit {
         }
       }
 
-      for(var i = 0 ; i < this.productos.length - 1; i++){
+      for(var i = 0 ; i < this.productos.length; i++){
         for(var k = 0; k < this.categorias.length ; k++){
           if(this.productos[i].categoria.includes(this.categorias[k])){
             this.buttonsArray[k] = false;
@@ -239,6 +256,10 @@ export class MozoVerPedidoPage implements OnInit {
           }
         }
       }
+      setTimeout(() => {
+        this.cargando = false;
+        this.spinner = false;
+      }, 1500);
     });
   }
 
@@ -255,13 +276,20 @@ export class MozoVerPedidoPage implements OnInit {
           }
         }
       }
+      for(var u = 0 ; u < this.tipoPedido.length ; u++){
+        this.cantTipoPedido[u] = 0;
+      }
       for(var i = 0 ; i < this.pedidos.length; i++){
         this.pedidos[i].hora = ((this.pedidos[i].hora).substring(0,((this.pedidos[i].hora).length - 3)));
+        for(var u = 0 ; u < this.tipoPedido.length ; u++){
+          if(this.tipoPedido[u].includes(this.pedidos[i].estado)){
+            this.cantTipoPedido[u] = 1;
+          }
+        }
       }
       if(this.pedidos.length > 0){
         this.hayPedido = true;
       }
-      this.idFieldPedidoActual = this.pedidos[0].idField;
     });
   }
 
@@ -284,7 +312,6 @@ export class MozoVerPedidoPage implements OnInit {
   }
 
   RechazarPedido(){
-    this.VerPedido(0, "3", this.idFieldPedidoActual);
     this.rechazarPedido = true;
   }
 
@@ -329,7 +356,22 @@ export class MozoVerPedidoPage implements OnInit {
 
     productosPedido = productosPedido + "]";
 
-    this.authService.confirmarPedido(this.idFieldPedidoActual, "");
+    var lCocinero = "0";
+    var lBartender = "0";
+
+    for(var i = 0 ; i < this.cantidadPorCategoria.length ; i++){
+      if(i < 4){
+        if(this.cantidadPorCategoria[i] > 0){
+          lCocinero = "1";
+        }
+      }else{
+        if(this.cantidadPorCategoria[i] > 0){
+          lBartender = "1";
+        }
+      }
+    }
+
+    this.authService.confirmarPedido(this.idFieldPedidoActual, productosPedido, lCocinero, lBartender);
     setTimeout(() => {
       this.spinner = false;
       this.Alerta("Pedido Confirmado", 'success');

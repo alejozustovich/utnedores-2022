@@ -244,7 +244,10 @@ export class ListadoProductosPage implements OnInit {
       productos: productosPedido,
       fecha: fechaActual,
       hora: horaActual,
-      estado: "Enviado"};
+      estado: "Enviado",
+      listoCocinero: "0",
+      listoBartender: "0"
+      };
   
       this.authService.agregarPedido(unPedido);
       this.spinner = false;
