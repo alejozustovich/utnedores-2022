@@ -78,6 +78,8 @@ export interface Pedido {
 	fecha: string;
 	hora: string;
 	estado: string;
+	listoCocinero: string;
+	listoBartender: string;
 }
 
 export interface Propina {
@@ -143,6 +145,7 @@ export interface Mensaje {
 @Injectable({
 	providedIn: 'root'
 })
+
 export class AuthService {
 
 	constructor(
@@ -197,9 +200,9 @@ export class AuthService {
 		return updateDoc(pedidoRef, { estado: 'Rechazado' });
 	}
 
-	confirmarPedido(idField: string, productosActualizados: string) {
+	confirmarPedido(idField: string, productosActualizados: string, lCocinero: string, lBartender: string) {
 		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
-		return updateDoc(pedidoRef, { estado: 'Confirmado', productos: productosActualizados });
+		return updateDoc(pedidoRef, { estado: 'Confirmado', productos: productosActualizados, listoCocinero: lCocinero, listoBartender: lBartender});
 	}
 
 	cargarMensajes(ruta: string): Observable<Mensaje[]> {
