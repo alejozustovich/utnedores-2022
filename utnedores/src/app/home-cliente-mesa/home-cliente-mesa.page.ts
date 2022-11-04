@@ -47,15 +47,22 @@ export class HomeClienteMesaPage implements OnInit {
 
   IrPedido(){
     this.spinner = true;
+    localStorage.setItem('back', '1');
     this.router.navigateByUrl('/listado-productos', { replaceUrl: true });
   }
 
   EstadoPedido(){
+    localStorage.setItem('pedircuenta', '0');
+    this.router.navigateByUrl('/estado-pedido', { replaceUrl: true });
+  }
 
+  PedirCuenta(){
+    localStorage.setItem('pedircuenta', '1');
+    this.router.navigateByUrl('/estado-pedido', { replaceUrl: true });
   }
 
   ConsultarMozo(){
-    
+    this.router.navigateByUrl('/chat', { replaceUrl: true });
   }
 
   IrJuegos(){

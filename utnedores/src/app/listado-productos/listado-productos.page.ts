@@ -1,19 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService, Producto, Pedido } from '../services/auth.service';
+
+import { AuthService, Producto, Pedido, Usuario, Mesa } from '../services/auth.service';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-listado-productos',
   templateUrl: './listado-productos.page.html',
   styleUrls: ['./listado-productos.page.scss'],
 })
-export class ListadoProductosPage implements OnInit {
+export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
 
+  result = null;
+  scanActive = false;
   volumenOn = true;
+  mesas: Mesa[];
   pedidos: Pedido[];
   idRegistroPedido = 0;
   productos: Producto[];
@@ -27,6 +32,7 @@ export class ListadoProductosPage implements OnInit {
   categoria = "";
   isModalOpen = false;
   isModalOpen2 = false;
+  isModalOpen3 = false;
   buttonsArray = [true, true, true, true, true, true, true];
   categorias: string[] = [
     "Entradas",
@@ -41,6 +47,12 @@ export class ListadoProductosPage implements OnInit {
   pedidoValido = false;
   numMesa = "";
   pedidoEnviado = false;
+  idUsuarioMesa = "0";
+  aptcRegistrar = "0";
+  aptbRegistrar = "0";
+  back = 0;
+  categoriaUnProducto = "";
+  unSoloProducto: Producto;
 
   constructor(
     private toastController: ToastController,
@@ -52,10 +64,12 @@ export class ListadoProductosPage implements OnInit {
       this.productosAgregados.push({tiempo: 0, cantidad: 0, precio: 0, categoria: ""});
     }
     this.numMesa = localStorage.getItem('numeroMesa');
+    this.back = (Number(localStorage.getItem('back')));
     this.Sonido();
     this.DesactivarSpinner();
     this.TraerProductos();
     this.TraerPedidos();
+    this.TraerMesas();
   }
 
   Sonido(){
@@ -71,7 +85,66 @@ export class ListadoProductosPage implements OnInit {
     }
   }
 
-  ngOnInit() { }
+  ngAfterViewInit() {
+    BarcodeScanner.prepare();
+  }
+
+  ngOnDestroy() {
+    this.stopScan();
+  }
+
+  async startScanner(){
+    this.scanActive = true;
+    const result = await BarcodeScanner.startScan();
+    if(result.hasContent){
+      this.scanActive = false;
+      this.result = result.content;
+      this.AnalizarResultado();
+    }
+  }
+
+  AnalizarResultado(){
+    var flag = false;
+
+    this.productos.forEach(producto => {
+      if(producto.qr === this.result){
+        flag = true;
+        this.categoriaUnProducto = producto.categoria;
+        this.unSoloProducto = producto;
+      }
+    });
+
+    if(flag){
+      this.isModalOpen3 = true;
+    }else{
+      this.Alerta("Código no válido", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
+    }
+  }
+
+  stopScan()
+  {
+    BarcodeScanner.stopScan();
+    this.scanActive = false;
+  }
+
+  ngOnInit() {
+    
+  }
+
+  TraerMesas() {
+    this.authService.getTables().subscribe(allTables => {
+      this.mesas = allTables;
+      this.mesas.forEach(m => {
+        if(m.numMesa.includes(this.numMesa)){
+          this.idUsuarioMesa = m.idUsuario;
+        }
+      });
+    });
+  }
 
   TraerPedidos(){
     this.authService.traerPedidos().subscribe(pedidos => {
@@ -96,6 +169,7 @@ export class ListadoProductosPage implements OnInit {
   VerMenu(){
     this.isModalOpen = false;
     this.isModalOpen2 = false;
+    this.isModalOpen3 = false;
   }
 
   TraerProductos() {
@@ -200,6 +274,8 @@ export class ListadoProductosPage implements OnInit {
   }
 
   CantidadPorCategoria(){
+    this.aptcRegistrar = "0"
+    this.aptbRegistrar = "0"
     for(var i = 0 ; i < this.categorias.length ; i++){
       this.cantidadPorCategoria[i] = 0;
     }
@@ -208,6 +284,12 @@ export class ListadoProductosPage implements OnInit {
         for(var i = 0 ; i < this.categorias.length ; i++){
           if(this.categorias[i].includes(element.categoria)){
             this.cantidadPorCategoria[i] = this.cantidadPorCategoria[i] + element.cantidad;
+            if(i < 4){
+              this.aptcRegistrar = "1";
+            }
+            if(i > 3){
+              this.aptbRegistrar = "1";
+            }
           }
         }
       }
@@ -256,14 +338,17 @@ export class ListadoProductosPage implements OnInit {
       productosPedido = productosPedido + "]";
       
       var unPedido: Pedido = {idField: "",
-      idPedido: (this.idRegistroPedido.toString()),
-      numMesa: this.numMesa,
-      productos: productosPedido,
-      fecha: fechaActual,
-      hora: horaActual,
-      estado: "Enviado",
-      listoCocinero: "0",
-      listoBartender: "0"
+        idPedido: (this.idRegistroPedido.toString()),
+        numMesa: this.numMesa,
+        productos: productosPedido,
+        fecha: fechaActual,
+        hora: horaActual,
+        estado: "Enviado",
+        listoCocinero: "0",
+        listoBartender: "0",
+        idUsuario: this.idUsuarioMesa,
+        aptc: this.aptcRegistrar,
+        aptb: this.aptbRegistrar
       };
   
       this.authService.agregarPedido(unPedido);
@@ -273,7 +358,7 @@ export class ListadoProductosPage implements OnInit {
         this.utilidades.SonidoConfirmar();
       }
       setTimeout(() => {
-        this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+        this.Redirigir();
       }, 3000);
       //PUSH NOTIFICATION MOZO*/
     }else{
@@ -301,6 +386,15 @@ export class ListadoProductosPage implements OnInit {
 
   Volver(){
     this.spinner = true;
-    this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+    this.Redirigir();
+  }
+
+  Redirigir(){
+    if(this.back == 0){
+      this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
+    }
+    if(this.back == 1){
+      this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+    }
   }
 }

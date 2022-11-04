@@ -317,7 +317,7 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
       if(((user.correo).toLocaleLowerCase()).includes(((this.correo.value).toLocaleLowerCase())) == true && ((user.nombre).toLocaleLowerCase()).includes(((this.nombre.value).toLocaleLowerCase())) == true) {
         encontrado = true;
       }
-    })
+    });
 
     if(encontrado){
       this.authService.login({email: this.correo.value, password: this.claveRegistro});

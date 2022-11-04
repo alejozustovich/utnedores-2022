@@ -47,7 +47,7 @@ export class LoginPage implements OnInit {
         }
       }
       this.usersSelect = new Array();
-      for(var i = 0 ; i < this.users.length - 1; i++){
+      for(var i = 0 ; i < this.users.length; i++){
         if(this.users[i].clave != "111111111111"){
           this.usersSelect.push(this.users[i]);
         }

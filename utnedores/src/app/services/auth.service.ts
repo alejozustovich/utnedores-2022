@@ -71,6 +71,8 @@ export interface Producto {
 }
 
 export interface Pedido {
+	aptc: string;
+	aptb: string;
 	idPedido: string;
 	idField: string;
 	numMesa: string;
@@ -80,6 +82,7 @@ export interface Pedido {
 	estado: string;
 	listoCocinero: string;
 	listoBartender: string;
+	idUsuario: string;
 }
 
 export interface Propina {
@@ -184,7 +187,6 @@ export class AuthService {
 		return collectionData(encuestaRef) as Observable<EncuestaSupervisor[]>;
 	}
 
-
 	traerPedidos(): Observable<Pedido[]> {
 		const pedidoRef = collection(this.firestore, 'pedidos');
 		return collectionData(pedidoRef, { idField: 'idField' }) as Observable<Pedido[]>;
@@ -203,6 +205,26 @@ export class AuthService {
 	confirmarPedido(idField: string, productosActualizados: string, lCocinero: string, lBartender: string) {
 		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
 		return updateDoc(pedidoRef, { estado: 'Confirmado', productos: productosActualizados, listoCocinero: lCocinero, listoBartender: lBartender});
+	}
+
+	pedidoRecibido(idField: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { estado: 'Recibido'});
+	}
+
+	listoCocinero(idField: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { listoCocinero: "1"});
+	}
+
+	listoBartender(idField: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { listoBartender: "1"});
+	}
+
+	pedidoPreparado(idField: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { estado: 'Preparado', listoCocinero: "1", listoBartender: "1"});
 	}
 
 	cargarMensajes(ruta: string): Observable<Mensaje[]> {

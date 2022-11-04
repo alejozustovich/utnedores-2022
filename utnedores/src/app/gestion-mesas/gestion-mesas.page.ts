@@ -112,6 +112,7 @@ export class GestionMesasPage implements OnInit {
     //idUsuario
     //LIBERAR PEDIDO
     //LIBERAR CIERRE CUENTA
+    //LIBERAR CHAT
 
     setTimeout(() => {
       this.Alerta("Mesa liberada", 'success');

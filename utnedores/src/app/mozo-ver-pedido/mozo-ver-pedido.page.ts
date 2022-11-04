@@ -59,10 +59,9 @@ export class MozoVerPedidoPage implements OnInit {
     "Enviado",
     "Confirmado",
     "Preparado",
-    "Entregado",
+    "Recibido",
     "Rechazado"];
   cantTipoPedido = [];
-
 
   constructor(
     private router: Router,
@@ -121,11 +120,11 @@ export class MozoVerPedidoPage implements OnInit {
 
     var pedidoAux = JSON.parse(this.pedidos[index].productos);
 
-    for(var i = 0 ; i< pedidoAux.length; i++){
+    for(var i = 0 ; i < pedidoAux.length; i++){
       
       for(var k = 0 ; k < this.productos.length ; k++){
         if((Number(this.productos[k].idProducto)) == (Number(pedidoAux[i].idProducto))){
-          this.cantProductosAgregados[k] = (Number(pedidoAux[i].cantidad))
+          this.cantProductosAgregados[k] = (Number(pedidoAux[i].cantidad));
           k = this.productos.length;
         }
       }
@@ -360,17 +359,17 @@ export class MozoVerPedidoPage implements OnInit {
 
     productosPedido = productosPedido + "]";
 
-    var lCocinero = "0";
-    var lBartender = "0";
+    var lCocinero = "1";
+    var lBartender = "1";
 
     for(var i = 0 ; i < this.cantidadPorCategoria.length ; i++){
       if(i < 4){
         if(this.cantidadPorCategoria[i] > 0){
-          lCocinero = "1";
+          lCocinero = "0";
         }
       }else{
         if(this.cantidadPorCategoria[i] > 0){
-          lBartender = "1";
+          lBartender = "0";
         }
       }
     }
@@ -378,6 +377,7 @@ export class MozoVerPedidoPage implements OnInit {
     this.authService.confirmarPedido(this.idFieldPedidoActual, productosPedido, lCocinero, lBartender);
     setTimeout(() => {
       this.spinner = false;
+      this.confirmarPedido = false;
       this.Alerta("Pedido Confirmado", 'success');
       if(this.volumenOn){
         this.utilidades.SonidoConfirmar();

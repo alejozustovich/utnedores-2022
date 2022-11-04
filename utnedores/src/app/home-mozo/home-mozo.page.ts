@@ -1,15 +1,21 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Pedido } from '../services/auth.service';
+import { AuthService, Pedido, Mesa } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home-mozo',
   templateUrl: './home-mozo.page.html',
   styleUrls: ['./home-mozo.page.scss'],
 })
-export class HomeMozoPage implements OnInit {
+export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
+  mesas: Mesa[];
+  result = null;
+  numMesa = "0";
+  scanActive = false;
   pedidos: Pedido[];
   volumenOn = true;
   spinner = true;
@@ -19,6 +25,7 @@ export class HomeMozoPage implements OnInit {
   cantChat = 0;
 
   constructor(
+    private toastController: ToastController,
     private router: Router,
     private authService: AuthService,
     private utilidades: UtilidadesService
@@ -26,6 +33,7 @@ export class HomeMozoPage implements OnInit {
     this.DesactivarSpinner();
     this.Sonido();
     this.TraerPedidos();
+    this.TraerMesas();
   }
 
   Sonido(){
@@ -41,17 +49,78 @@ export class HomeMozoPage implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    BarcodeScanner.prepare();
+  }
+
+  ngOnDestroy() {
+    this.stopScan();
+  }
+
+  async startScanner(){
+    this.scanActive = true;
+    const result = await BarcodeScanner.startScan();
+    if(result.hasContent){
+      this.scanActive = false;
+      this.result = result.content;
+      this.AnalizarResultado();
+    }
+  }
+
+  TraerMesas() {
+    this.authService.getTables().subscribe(allTables => {
+      this.mesas = allTables;
+    });
+  }
+
+  AnalizarResultado(){
+    var flag = false;
+    this.mesas.forEach(mesa => {
+      if(mesa.qr === this.result){
+        flag = true;
+        this.numMesa = mesa.numMesa;
+        localStorage.setItem('numeroMesa', this.numMesa);
+      }
+    });
+
+    if(flag){
+      this.spinner = true;
+      localStorage.setItem('back', '0');
+      this.router.navigateByUrl('/listado-productos', { replaceUrl: true });
+    }else{
+      this.Alerta("Código no válido", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
+    }
+  }
+
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present();
+  }
+
+  stopScan()
+  {
+    BarcodeScanner.stopScan();
+    this.scanActive = false;
+  }
+  
   ngOnInit() { }
-  //Enviado Confirmado Listo Terminado Entregado
+
   TraerPedidos(){
     this.authService.traerPedidos().subscribe(pedidos => {
       this.cantPedidos = 0;
       this.pedidos = pedidos;
       for(var i = 0 ; i < this.pedidos.length ; i++){
         if(this.pedidos[i].estado.includes("Enviado")){
-          this.cantPedidos = this.cantPedidos + 1;
-        }
-        if(this.pedidos[i].estado.includes("Listo")){
           this.cantPedidos = this.cantPedidos + 1;
         }
       }

@@ -321,7 +321,7 @@ export class AltaSupervisorPage implements OnInit {
       if (user.correo == usuario.correo || user.dni == usuario.dni || user.cuil == usuario.cuil) {
         retorno = false;
       }
-    })
+    });
     return retorno;
   }
 
