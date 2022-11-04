@@ -167,6 +167,10 @@ export class AuthService {
 		private http: HttpClient
 	) {}
 
+	cerrarCuenta(idField: string) {
+		const cuentaRef = doc(this.firestore, `cuentas/${idField}`);
+		return updateDoc(cuentaRef, { idUsuario: "-1"});
+	}
 
 	traerCuentas(): Observable<Cuenta[]> {
 		const cuentaRef = collection(this.firestore, 'cuentas');
@@ -211,6 +215,11 @@ export class AuthService {
 	traerPedidos(): Observable<Pedido[]> {
 		const pedidoRef = collection(this.firestore, 'pedidos');
 		return collectionData(pedidoRef, { idField: 'idField' }) as Observable<Pedido[]>;
+	}
+
+	eliminarPedido(idField: string) {
+		const pedidoDocRef = doc(this.firestore, `pedidos/${idField}`);
+		return deleteDoc(pedidoDocRef);
 	}
 
 	agregarPedido(pedido: Pedido) {
@@ -339,6 +348,11 @@ export class AuthService {
 		const storageRef = ref(storage, nombreImagen);
 		uploadBytes(storageRef, file).then((response) => {
 		});
+	}
+
+	liberarMesa(idField: string){
+		const espDoc = doc(this.firestore, `mesas/${idField}`);
+		return updateDoc(espDoc, {idUsuario: "0"});
 	}
 
 	asignarMesa(idField: string, idUsuario: string){

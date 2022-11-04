@@ -53,6 +53,10 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigateByUrl('/cierre-mesa', { replaceUrl: true });
   }
 
+  ChatClientes(){
+    this.router.navigateByUrl('/chat', { replaceUrl: true });
+  }
+
   ngAfterViewInit() {
     BarcodeScanner.prepare();
   }
