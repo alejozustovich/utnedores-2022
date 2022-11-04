@@ -18,7 +18,7 @@ export class EncuestaEmpleadosPage implements OnInit {
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
-  srcUserPhoto = "../../assets/user-photo.png";
+  srcUserPhoto = "../../assets/galeria.png";
   fotoCargada = false;
 
   constructor(
