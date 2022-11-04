@@ -15,9 +15,9 @@
 
 			<div style="margin-top: 15px;">
 				<button (click)="startScanner()"><img src="../../assets/dessert.png" width="30" height="30"><br>Ordenar<br>Pedido</button>
-				<button (click)="VerPedidos()"><img src="../../assets/ver-pedidos-mozo.png" width="30" height="30"><br>Ver<br>Pedidos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidos != 0">x{{cantPedidos}}</label></button>
+				<button (click)="VerPedidos()"><img src="../../assets/pedidos-listos.png" width="30" height="30"><br>Ver<br>Pedidos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidos != 0">x{{cantPedidos}}</label></button>
 				<button (click)="CierreMesa()"><img src="../../assets/cierre-mesa.png" width="30" height="30"><br>Cierre<br>Mesa <label style="color:rgb(196, 145, 255);" *ngIf="cantCierreMesas != 0">x{{cantCierreMesas}}</label></button>
-				<button (click)="PedidosListos()"><img src="../../assets/pedidos-listos.png" width="30" height="30"><br>Pedidos<br>Listos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidosListos != 0">x{{cantPedidosListos}}</label></button>
+				<!--button (click)="PedidosListos()"><img src="../../assets/ver-pedidos-mozo.png" width="30" height="30"><br>Pedidos<br>Listos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidosListos != 0">x{{cantPedidosListos}}</label></button-->
 				<button (click)="ChatClientes()"><img src="../../assets/home-cliente/chat.png" width="30" height="30"><br>Chat<br>Clientes <label style="color:rgb(196, 145, 255);" *ngIf="cantChat != 0">x{{cantChat}}</label></button>
 			</div>
 
