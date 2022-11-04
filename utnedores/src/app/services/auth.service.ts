@@ -108,6 +108,8 @@ export interface ReservaAsignada {
 }
 
 export interface EncuestaCliente {
+	fecha: string;
+	idUsuario: string;
 	idEncuesta: string;
 	atencion: string;
 	precioCalidad: string;

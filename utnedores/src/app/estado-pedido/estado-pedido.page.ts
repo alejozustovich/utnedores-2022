@@ -16,8 +16,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   
+  precioFinal = 0;
+  propinaSolicitada = false;
   result = null;
   scanActive = false;
+  aceptarRadioButton = false;
   solicitarCuenta = false;
   codigoEscaneado = false;
   codigoInvalido = false;
@@ -31,6 +34,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   productos: Producto[];
   pedidosVisibles = [];
   valores = ["Excelente", "Muy bueno", "Bueno", "Regular", "Malo"];
+  porcentaje = [20, 15, 10, 5, 0]
   formOpinion: FormGroup;
   estadoPedido: string[] = [
     "Enviado",
@@ -345,6 +349,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
 
   AnalizarResultado(){
     if(this.result === "PROPINA"){
+      this.aceptarRadioButton = false;
       this.codigoEscaneado = true;
     }else{
       this.codigoInvalido = true;
@@ -355,15 +360,24 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     this.confirmarPedido = true;
   }
 
+  ValidarAceptar(){
+    this.aceptarRadioButton = true;
+  }
+
   AceptarSolicitud(){
-    /*
-      Excelente 20%
-      Muy bueno 15%
-      Bueno     10%
-      Regular    5%
-      Malo       0%
-    */
-   console.log(this.opinion.value);
+    for(var i = 0 ; i < this.valores.length ; i++){
+      if(this.valores[i].includes(this.opinion.value)){
+
+        this.precioFinal = this.precioPagar + ((this.porcentaje[i] * this.precioPagar) / 100);
+      }
+    }
+
+   this.propinaSolicitada = true;
+   this.codigoEscaneado = false;
+  }
+
+  CierreCuenta(){
+    
   }
 
   CancelarSolicitud(){
