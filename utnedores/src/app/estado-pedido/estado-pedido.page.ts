@@ -1,5 +1,5 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Pedido, Producto, Usuario, Mesa } from '../services/auth.service';
+import { AuthService, Pedido, Producto, Usuario, Mesa, Cuenta } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
@@ -16,7 +16,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   
+  cuentas: Cuenta[];
   precioFinal = 0;
+  propina = 0;
   propinaSolicitada = false;
   result = null;
   scanActive = false;
@@ -48,6 +50,9 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   mesas: Mesa[];
 
   precioPagar = 0;
+  solicitudEnviada = false;
+  confirmarSolicitud = false;
+  permisoPedirCuenta = true;
 
   pedidoRecibido = false;
   idFieldPedidoActual = "";
@@ -90,8 +95,6 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     if(this.pedirCuenta == 1){
       this.TraerMesas();
     }
-    this.result = "PROPINA";
-    this.AnalizarResultado();
   }
 
   TraerMesas() {
@@ -100,11 +103,28 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  TraerCuentas() {
+    this.authService.traerCuentas().subscribe(listaCuentas => {
+      this.cuentas = listaCuentas;
+      this.cuentas.forEach(cuenta => {
+        if(cuenta.idUsuario === this.usuarioActual.idUsuario){
+          this.permisoPedirCuenta = false;
+          this.precioPagar = (Number(cuenta.total));
+          this.propina = (Number(cuenta.propina));
+          this.precioFinal = this.precioPagar + this.propina;
+        }
+      });
+    });
+  }
+
   ngOnInit(): void {
     this.authService.obtenerAuth().onAuthStateChanged(user => {
       this.authService.getUser(user.email).then((user: Usuario) => {
         this.usuarioActual = user;
         this.TraerPedidos();
+        if(this.pedirCuenta == 1){
+          this.TraerCuentas();
+        }
       });
     })
     this.formOpinion = this.fb.group(
@@ -253,7 +273,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.spinner = false;
       this.cargando = false;
-    }, 7000);
+    }, 10000);
   }
 
   Sonido(){
@@ -367,8 +387,8 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   AceptarSolicitud(){
     for(var i = 0 ; i < this.valores.length ; i++){
       if(this.valores[i].includes(this.opinion.value)){
-
-        this.precioFinal = this.precioPagar + ((this.porcentaje[i] * this.precioPagar) / 100);
+        this.propina = ((this.porcentaje[i] * this.precioPagar) / 100);
+        this.precioFinal = this.propina + this.precioPagar;
       }
     }
 
@@ -377,7 +397,42 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   CierreCuenta(){
-    
+    this.confirmarSolicitud = true;
+  }
+
+  AceptarSolicitarCuenta(){
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
+    this.confirmarSolicitud = false;
+    var flag = true;
+    var listaMesas = "";
+
+    this.mesas.forEach(mesa => {
+      if(mesa.idUsuario === this.usuarioActual.idUsuario){
+        if(flag){
+          listaMesas = mesa.numMesa;
+          flag = false;
+        }else{
+          listaMesas = listaMesas + "," + mesa.numMesa;
+        }
+      }
+    });
+
+    var unaCuenta: Cuenta = {
+      idField: "",
+      idUsuario: this.usuarioActual.idUsuario,
+      total: this.precioPagar.toString(),
+      propina: this.propina.toString(),
+      mesas: listaMesas
+    }
+    this.authService.agregarCuenta(unaCuenta);
+
+    this.solicitudEnviada = true;
+  }
+
+  CancelarSolicitarCuenta(){
+    this.confirmarSolicitud = false;
   }
 
   CancelarSolicitud(){

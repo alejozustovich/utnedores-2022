@@ -25,7 +25,7 @@
                     <p>{{pd.hora}} hs</p>
                   </ion-label>
                   <ion-avatar slot="end">
-                    <ion-button id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Ver Pedido</ion-button>
+                    <ion-button id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Detalles</ion-button>
                   </ion-avatar>
                 </ion-item>
               </div>
@@ -46,24 +46,6 @@
     </div>
 
 	</ion-grid>
-
-
-  <ion-footer collapse="fade" *ngIf="pedirCuenta == 1">
-    <ion-toolbar>
-      <p id="p_footer" style="width: 100%;">
-        Total = ${{precioPagar}}
-      </p>
-      <p *ngIf="propinaSolicitada" id="p_footer" style="width: 100%;">
-        Grado de satisfaccion: {{opinion.value}}
-      </p>
-      <p *ngIf="propinaSolicitada" id="p_footer" style="width: 100%;">
-        Total a Abonar: ${{precioFinal}}
-      </p>
-      <ion-button *ngIf="!propinaSolicitada" (click)="PedirCuenta()" id="btn_footer2">Pedir la Cuenta</ion-button>
-      <ion-button *ngIf="propinaSolicitada" (click)="CierreCuenta()" id="btn_footer2">Solicitar</ion-button>
-    </ion-toolbar>
-  </ion-footer>
-
 
 
 
@@ -117,14 +99,56 @@
 
 </ion-content>
 
-<ion-footer collapse="fade" *ngIf="pedirCuenta == 1">
+<ion-footer collapse="fade" *ngIf="pedirCuenta == 1 && permisoPedirCuenta == true" [hidden]="scanActive">
   <ion-toolbar>
-    <p id="p_footer" style="width: 100%;">
-      Total = ${{precioPagar}}
+    <p *ngIf="propinaSolicitada" id="p_footer" style="width: 100%;">
+      Grado de satisfaccion: {{opinion.value}}
     </p>
-    <ion-button (click)="PedirCuenta()" id="btn_footer2">Pedir la Cuenta</ion-button>
+    <p id="p_footer" style="width: 100%;">
+      <label>Total = ${{precioPagar}} </label><label *ngIf="propinaSolicitada"> + Propina = ${{propina}}</label>
+    </p>
+    <p *ngIf="propinaSolicitada" id="p_footer" style="width: 100%;">
+      Total a Abonar: ${{precioFinal}}
+    </p>
+    <ion-button *ngIf="!propinaSolicitada" (click)="PedirCuenta()" id="btn_footer2">Pedir la Cuenta</ion-button>
+    <ion-button *ngIf="propinaSolicitada" (click)="CierreCuenta()" id="btn_footer2">Solicitar</ion-button>
   </ion-toolbar>
 </ion-footer>
+
+<ion-footer collapse="fade" *ngIf="pedirCuenta == 1 && permisoPedirCuenta == false" [hidden]="scanActive">
+  <ion-toolbar>
+    <p id="p_footer" style="width: 100%;">
+      <label>Total = ${{precioPagar}} </label><label> + Propina = ${{propina}}</label>
+    </p>
+    <p id="p_footer" style="width: 100%;">
+      Total a Abonar: ${{precioFinal}}
+    </p>
+  </ion-toolbar>
+</ion-footer>
+
+<div class="custom-loading2" *ngIf="confirmarSolicitud">
+
+  <div class="divInterno2" style="height: 180px;">
+    <form class="form">
+      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">¿Solicitar Cuenta?</h3>
+      <ion-button (click)="AceptarSolicitarCuenta()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Confirmar</ion-button>
+      <ion-button (click)="CancelarSolicitarCuenta()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
+
+    </form>
+  </div>
+
+</div>
+
+<div class="custom-loading2" *ngIf="solicitudEnviada">
+
+  <div class="divInterno2">
+    <form class="form">
+      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Solicitud Enviada</h3>
+      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Redirigiendo</h3>
+    </form>
+  </div>
+
+</div>
 
 <ion-modal [isOpen]="isModalOpen">
   <ng-template>
@@ -151,15 +175,13 @@
                     <ion-img [src]="p.foto2" style="margin-top: 5px; margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
                     <ion-img [src]="p.foto3" style="margin-top: 5px; margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
                   </ion-avatar>
-                  <ion-label>
+                  <ion-label style="height: 156px;">
                     <h2>{{p.producto}}</h2>
                     <h3>{{p.descripcion}}</h3>
                     <p *ngIf="p.tamanio != '0'">{{p.tamanio}}</p>
                     <p *ngIf="p.tamanio == '0'">Demora: {{p.tiempoElaboracion}} mins</p>
                     <p>Precio: ${{p.precio}}</p>
                     <p>Cantidad: {{cantProductosAgregados[k]}}</p>
-                    <ion-button (click)="RestarProducto(p.idProducto)"><ion-icon name="remove-outline"></ion-icon></ion-button>
-                    <ion-button (click)="SumarProducto(p.idProducto)"><ion-icon name="add-outline"></ion-icon></ion-button>
                   </ion-label>
                 </ion-item>
               </div>
@@ -174,7 +196,6 @@
       <ion-toolbar>
         <p id="p_footer" style="width: 100%;">
           Total = ${{precioTotal}}
-          Demora: {{tiempoTotal}} mins
         </p>
         <ion-button *ngIf="pedidoRecibido" (click)="ConfirmarPedido()" id="btn_footer2">Recibido</ion-button>
       </ion-toolbar>
