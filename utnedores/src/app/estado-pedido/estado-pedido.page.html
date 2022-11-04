@@ -88,8 +88,8 @@
   <div class="custom-loading2" *ngIf="codigoEscaneado">
 
     <div class="divInterno2">
-      <form class="form">
-        <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Déjanos tu opinión sobre nuestros servicios</h3>
+      <form class="form" [formGroup]="formOpinion">
+        <h3 style="color: rgb(206, 170, 156);">Déjanos tu opinión sobre nuestros servicios</h3>
         
         <!--
           RADIO BUTTONS
@@ -99,9 +99,20 @@
             Regular
             Malo
         -->
-        
+        <ion-radio-group
+        formControlName="opinion"
+      >
+        <ion-row class="mt-2">
+          <ion-col *ngFor="let valor of valores">
+            <ion-radio value="{{valor}}"></ion-radio>
+            <ion-label>{{valor}}</ion-label>
+          </ion-col>
+        </ion-row>
+      </ion-radio-group>
+
         <ion-button (click)="AceptarSolicitud()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Aceptar</ion-button>
-        <ion-button (click)="CancelarSolicitud()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
+        <ion-button (click)="CancelarSolicitud()" style="width: 70%; margin-top: 5px; 
+        margin-bottom: 15px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
       </form>
     </div>
   
@@ -181,12 +192,6 @@
 
     </ng-template>
   </ion-modal>
-
-
-
-
-
-
 
 </ion-content>
 

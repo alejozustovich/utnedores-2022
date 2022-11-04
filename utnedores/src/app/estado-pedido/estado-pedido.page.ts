@@ -6,6 +6,7 @@ import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-estado-pedido',
@@ -29,6 +30,8 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   hayPedido = false;
   productos: Producto[];
   pedidosVisibles = [];
+  valores = ["Excelente", "Muy bueno", "Bueno", "Regular", "Malo"];
+  formOpinion: FormGroup;
   estadoPedido: string[] = [
     "Enviado",
     "Confirmado",
@@ -64,7 +67,8 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private toastController: ToastController,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private fb: FormBuilder
   ) { 
     this.pedirCuenta = (Number(localStorage.getItem('pedircuenta')));
     for(var i = 0 ; i < 50; i++){
@@ -99,6 +103,15 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
         this.TraerPedidos();
       });
     })
+    this.formOpinion = this.fb.group(
+      {
+        opinion: ['', [Validators.required]],
+      }
+    )
+  }
+
+  get opinion() {
+    return this.formOpinion.get('opinion');
   }
 
   ngAfterViewInit() {
@@ -350,6 +363,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
       Regular    5%
       Malo       0%
     */
+   console.log(this.opinion.value);
   }
 
   CancelarSolicitud(){

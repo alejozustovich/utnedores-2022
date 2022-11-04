@@ -77,6 +77,12 @@
     }
   }
 
+  ion-col{
+    ion-label{
+      color: rgb(206, 170, 156);
+    }
+  }
+
   .contenido{
     padding: 10px;
     text-align: center;
@@ -206,7 +212,9 @@
       color: rgb(100, 100, 100) !important;
     }
 
-
+    ion-radio{
+      --color-checked: rgb(206, 170, 156);
+    }
 
     .custom-loading2{
       position: absolute;
@@ -223,7 +231,6 @@
     
     .divInterno2{
       width: 80%;
-      height: 180px;
       border-style: solid;
       border-color: rgb(206, 170, 156);
       background-color: rgb(11, 6, 3);
