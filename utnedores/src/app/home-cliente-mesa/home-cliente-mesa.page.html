@@ -11,7 +11,8 @@
 	<ion-grid>
 		<div class="contenido">
 			<h2>Menú de opciones</h2>
-			<button (click)="IrPedido()"><img src="../../assets/dessert.png" width="30" height="30"> Ordenar un pedido</button>
+			<button *ngIf="permisoPedido" (click)="IrPedido()"><img src="../../assets/dessert.png" width="30" height="30"> Ordenar un pedido</button>
+			<button *ngIf="!permisoPedido" style="color: grey;"><img src="../../assets/dessert.png" width="30" height="30"> Ordenar un pedido</button>
 			<button (click)="EstadoPedido()"><img src="../../assets/home-cliente/cocinando.png" width="30" height="30"> Estado de mi pedido</button>
 			<button (click)="ConsultarMozo()"><img src="../../assets/home-cliente/chat.png" width="30" height="30"> Consultar al Mozo</button>
 			<button (click)="IrJuegos()"><img src="../../assets/home-cliente/game.png" width="30" height="30"> Jugar</button>

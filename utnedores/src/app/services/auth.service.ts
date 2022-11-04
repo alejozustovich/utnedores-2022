@@ -91,6 +91,14 @@ export interface Propina {
 	valor: string;
 }
 
+export interface Cuenta {
+	idField: string;
+	idUsuario: string;
+	total: string;
+	propina: string;
+	mesas: string;
+}
+
 export interface ReservaNoConfirmada {
 	idField: string;
 	idUsuario: string;
@@ -158,6 +166,17 @@ export class AuthService {
 		private firestore: Firestore,
 		private http: HttpClient
 	) {}
+
+
+	traerCuentas(): Observable<Cuenta[]> {
+		const cuentaRef = collection(this.firestore, 'cuentas');
+		return collectionData(cuentaRef, { idField: 'idField' }) as Observable<Cuenta[]>;
+	}
+
+	agregarCuenta(cuenta: Cuenta) {
+		const cuentaRef = collection(this.firestore, 'cuentas');
+		return addDoc(cuentaRef, cuenta);
+	}
 
 	agregarEncuestaCliente(encuesta: EncuestaCliente) {
 		const encuestaRef = collection(this.firestore, 'encuestascliente');
@@ -336,7 +355,6 @@ export class AuthService {
 		const mesaRef = collection(this.firestore, 'mesas');
 		return collectionData(mesaRef, { idField: 'idField' }) as Observable<Mesa[]>;
 	}
-
 
 	addProduct(producto: Producto) {
 		const productRef = collection(this.firestore, 'productos');
