@@ -101,8 +101,8 @@
             Demora: {{tiempoTotal}} mins
           </p>
           <ion-button (click)="RechazarPedido()" id="btn_footer">Rechazar</ion-button>
-          <ion-button (click)="ModificarPedido()" id="btn_footer4">Modificar</ion-button>
-          <ion-button (click)="ConfirmarPedido()" id="btn_footer2">Confirmar</ion-button>
+          <ion-button *ngIf="permitirModificar" (click)="ModificarPedido()" id="btn_footer4">Modificar</ion-button>
+          <ion-button *ngIf="permitirConfirmar" (click)="ConfirmarPedido()" id="btn_footer2">Confirmar</ion-button>
         </ion-toolbar>
       </ion-footer>
 

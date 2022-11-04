@@ -104,6 +104,10 @@ const routes: Routes = [
   {
     path: 'estado-pedido',
     loadChildren: () => import('./estado-pedido/estado-pedido.module').then( m => m.EstadoPedidoPageModule)
+  },
+  {
+    path: 'cierre-mesa',
+    loadChildren: () => import('./cierre-mesa/cierre-mesa.module').then( m => m.CierreMesaPageModule)
   }
 
 ];

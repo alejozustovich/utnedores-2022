@@ -20,6 +20,8 @@ export class MozoVerPedidoPage implements OnInit {
 
   rechazarPedido = false;
   confirmarPedido = false;
+  permitirModificar = false;
+  permitirConfirmar = false;
 
   pedidoValido = true;
   hayPedido = false;
@@ -110,12 +112,20 @@ export class MozoVerPedidoPage implements OnInit {
   }
 
   VerPedido(index: number, numMesa: string, idField: string){
+    this.permitirModificar = false;
+    this.permitirConfirmar = false;
+
     this.idFieldPedidoActual = idField;
     this.pedidoNum = (index + 1).toString();
     this.numeroMesa = numMesa;
 
     for(var i = 0 ; i < 50; i++){
       this.cantProductosAgregados[i] = 0;
+    }
+
+    if(this.pedidos[index].estado.includes("Enviado")){
+      this.permitirModificar = true;
+      this.permitirConfirmar = true;
     }
 
     var pedidoAux = JSON.parse(this.pedidos[index].productos);

@@ -19,13 +19,14 @@
 
               <div *ngFor="let pd of pedidosVisibles; let t = index">
                 <ion-item *ngIf="pd.estado == g">
-                  <ion-label>
+                  <ion-label  style="height: 120px;">
                     <h3>Pedido {{(t + 1)}}</h3>
                     <h4>Mesa: {{pd.numMesa}}</h4>
                     <p>{{pd.hora}} hs</p>
                   </ion-label>
                   <ion-avatar slot="end">
-                    <ion-button id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Detalles</ion-button>
+                    <ion-button style="margin-top:-40px;" id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Detalles</ion-button>
+                    <ion-button style="margin-top:10px;" *ngIf="pd.estado == 'Preparado'" id="btnVerPedidos" (click)="PedidoRecibido(pd.idField)">Recibido</ion-button>
                   </ion-avatar>
                 </ion-item>
               </div>
@@ -126,17 +127,24 @@
   </ion-toolbar>
 </ion-footer>
 
-<div class="custom-loading2" *ngIf="confirmarSolicitud">
+<div class="custom-loading2" *ngIf="poseePedidosPendientes">
+  <div class="divInterno2" style="height: 210px;">
+    <form class="form">
+      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Posee pedidos sin recibir. Revise el estado de sus pedidos o solicite asistencia al mozo.</h3>
+      <ion-button (click)="Entendido()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Entendido</ion-button>
+    </form>
+  </div>
+</div>
 
+
+<div class="custom-loading2" *ngIf="confirmarSolicitud">
   <div class="divInterno2" style="height: 180px;">
     <form class="form">
       <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">¿Solicitar Cuenta?</h3>
       <ion-button (click)="AceptarSolicitarCuenta()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Confirmar</ion-button>
       <ion-button (click)="CancelarSolicitarCuenta()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
-
     </form>
   </div>
-
 </div>
 
 <div class="custom-loading2" *ngIf="solicitudEnviada">

@@ -47,12 +47,13 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   cantTipoPedido = [];
   cantProductosAgregados = [];
   pedirCuenta = 0;
+  permisoPedirCuenta = true;
   mesas: Mesa[];
 
   precioPagar = 0;
   solicitudEnviada = false;
   confirmarSolicitud = false;
-  permisoPedirCuenta = true;
+  pedidosPendientes = false;
 
   pedidoRecibido = false;
   idFieldPedidoActual = "";
@@ -71,6 +72,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     "Bebidas sin alcohol",
     "Bebidas con alcohol",
     "Postres y Café-Te"];
+  poseePedidosPendientes = false;
 
   constructor(
     private router: Router,
@@ -101,6 +103,11 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
     });
+  }
+
+  PedidoRecibido(idField: string){
+    this.authService.pedidoRecibido(idField);
+    this.Alerta("Pedido Recibido!",'success');
   }
 
   TraerCuentas() {
@@ -309,7 +316,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
 
       this.pedidos.forEach(pedido => {
         pedido.hora = ((pedido.hora).substring(0,((pedido.hora).length - 3)));
-        if(pedido.idUsuario.includes(this.usuarioActual.idUsuario)){
+        if(pedido.idUsuario.includes(this.usuarioActual.idUsuario) == true){
           pedidosSeleccionados.push(pedido);
           this.hayPedido = true;
         }
@@ -331,11 +338,13 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   CalcularPago(){
     this.precioPagar = 0;
     this.pedidosVisibles.forEach(pedido => {
-    var productosPedidos = JSON.parse(pedido.productos);
-    for(var i = 0 ; i < productosPedidos.length; i++){
+      var productosPedidos = JSON.parse(pedido.productos);
+      for(var i = 0 ; i < productosPedidos.length; i++){
         for(var k = 0 ; k < this.productos.length ; k++){
           if((Number(this.productos[k].idProducto)) == (Number(productosPedidos[i].idProducto))){
-            this.precioPagar = this.precioPagar + (Number(productosPedidos[i].cantidad)) * (Number(this.productos[k].precio));
+            if(pedido.estado.includes("Recibido")){
+              this.precioPagar = this.precioPagar + (Number(productosPedidos[i].cantidad)) * (Number(this.productos[k].precio));
+            }
           }
         }
       }
@@ -343,9 +352,26 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
   
   PedirCuenta(){
-    this.solicitarCuenta = true;
+    this.pedidosPendientes = false;
+
+    this.pedidos.forEach(pedido => {
+      if(pedido.idUsuario === this.usuarioActual.idUsuario){
+
+        if(!pedido.estado.includes("Recibido") && !pedido.estado.includes("Rechazado")){
+          this.pedidosPendientes = true;
+        }
+      }
+    });
+    if(!this.pedidosPendientes){
+      this.solicitarCuenta = true;
+    }else{
+      this.poseePedidosPendientes = true;
+    }
   }
 
+  Entendido(){
+    this.poseePedidosPendientes = false;
+  }
   CancelarEscanear(){
     this.solicitarCuenta = false;
   }
@@ -429,6 +455,9 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.agregarCuenta(unaCuenta);
 
     this.solicitudEnviada = true;
+    setTimeout(() => {
+      this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+    }, 3000);
   }
 
   CancelarSolicitarCuenta(){
@@ -444,9 +473,9 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     this.confirmarPedido = false;
     this.isModalOpen = false;
     this.Alerta("Pedido Recibido", 'success');
-      if(this.volumenOn){
-        this.utilidades.SonidoConfirmar();
-      }
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
   }
 
   CancelarConfirmarPedido(){

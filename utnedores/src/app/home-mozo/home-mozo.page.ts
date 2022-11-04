@@ -49,6 +49,10 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  CierreMesa(){
+    this.router.navigateByUrl('/cierre-mesa', { replaceUrl: true });
+  }
+
   ngAfterViewInit() {
     BarcodeScanner.prepare();
   }
@@ -120,7 +124,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
       this.cantPedidos = 0;
       this.pedidos = pedidos;
       for(var i = 0 ; i < this.pedidos.length ; i++){
-        if(this.pedidos[i].estado.includes("Enviado")){
+        if(this.pedidos[i].estado.includes("Enviado") || this.pedidos[i].estado.includes("Preparado")){
           this.cantPedidos = this.cantPedidos + 1;
         }
       }
