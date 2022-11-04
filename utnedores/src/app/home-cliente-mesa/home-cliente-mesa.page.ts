@@ -13,12 +13,14 @@ import { ToastController } from '@ionic/angular';
 })
 export class HomeClienteMesaPage implements OnInit {
 
+
   permisoPedido = true;
   usuarioActual: Usuario;
   spinner = true;
   volumenOn = true;
   mensajeEstado = "Mesa asignada. Ya puede realizar su pedido.";
   cuentas: Cuenta[];
+  mesas: Mesa[];
 
   constructor(
     private router: Router,
@@ -36,8 +38,22 @@ export class HomeClienteMesaPage implements OnInit {
         this.TraerCuentas();
       });
     })
-   }
+  }
 
+  TraerMesas() {
+    this.authService.getTables().subscribe(allTables => {
+      this.mesas = allTables;
+      var redirigir = false;
+      this.mesas.forEach(mesa => {
+        if(mesa.idUsuario === this.usuarioActual.idUsuario){
+          redirigir = false;
+        }
+      });
+      if(redirigir){
+        this.Volver();
+      }
+    });
+  }
   Sonido(){
     try {
       var sonido = localStorage.getItem('sonido');

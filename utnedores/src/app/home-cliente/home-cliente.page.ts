@@ -277,7 +277,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   SetTipoMesa(valor) {
     this.preferenciaMesa = valor;
-    console.log(this.preferenciaMesa);
   }
 
   AgregarListaEspera(){
@@ -381,6 +380,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       if(this.estado == 0){
         this.AbrirOpcionesMesa();
+      }
+      if(this.estado == 2){
+        this.Alerta("Escanear QR Mesa", "warning");
       }
 
     }else{
