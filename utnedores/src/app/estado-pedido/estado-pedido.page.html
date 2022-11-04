@@ -19,15 +19,21 @@
 
               <div *ngFor="let pd of pedidosVisibles; let t = index">
                 <ion-item *ngIf="pd.estado == g">
-                  <ion-label  style="height: 120px;">
+                  <ion-label  style="height: 70px;">
                     <h3>Pedido {{(t + 1)}}</h3>
                     <h4>Mesa: {{pd.numMesa}}</h4>
                     <p>{{pd.hora}} hs</p>
                   </ion-label>
-                  <ion-avatar slot="end">
-                    <ion-button style="margin-top:-40px;" id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Detalles</ion-button>
-                    <ion-button style="margin-top:10px;" *ngIf="pd.estado == 'Preparado'" id="btnVerPedidos" (click)="PedidoRecibido(pd.idField)">Recibido</ion-button>
+
+                  <ion-avatar slot="end" *ngIf="pd.estado == 'Preparado'">
+                    <ion-button style="margin-top: -12px;" id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Detalles</ion-button>
+                    <ion-button style="margin-top: 1px; --background: rgb(33, 138, 33);" id="btnVerPedidos" (click)="PedidoRecibido(pd.idField)">Recibido</ion-button>
                   </ion-avatar>
+
+                  <ion-avatar slot="end" *ngIf="pd.estado != 'Preparado'">
+                    <ion-button style="height: 50px;" id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Detalles</ion-button>
+                  </ion-avatar>
+                
                 </ion-item>
               </div>
 
@@ -151,8 +157,7 @@
 
   <div class="divInterno2">
     <form class="form">
-      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Solicitud Enviada</h3>
-      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Redirigiendo</h3>
+      <h3 style="margin-top: 30px; color: rgb(206, 170, 156);">Solicitud Enviada<br>Redirigiendo...</h3>
     </form>
   </div>
 
