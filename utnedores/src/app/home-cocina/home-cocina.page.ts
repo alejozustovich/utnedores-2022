@@ -12,6 +12,7 @@ import { getDownloadURL } from '@angular/fire/storage';
 })
 export class HomeCocinaPage implements OnInit {
 
+  pedidosVisibles: Pedido[];
   pedidos: Pedido[];
   productos: Producto[];
   volumenOn = true;
@@ -21,6 +22,7 @@ export class HomeCocinaPage implements OnInit {
   isModalOpen2 = false;
   confirmarPedido = false;
   idFieldPedidoActual = "";
+  indicePedidoActual = -1;
   hayPedido = false;
   numeroMesa = "0";
   confirmarButton = false;
@@ -32,7 +34,7 @@ export class HomeCocinaPage implements OnInit {
   tipoPedido: string[] = [
     "Confirmado", 
     "Preparado",
-    "Entregado"];
+    "Recibido"];
   cantTipoPedido = [];
   cantProductosAgregados = [];
   cantidadPorCategoria = [];
@@ -56,8 +58,8 @@ export class HomeCocinaPage implements OnInit {
     this.Sonido();
     this.DesactivarSpinner();
     this.ObtenerTipo();
+    this.TraerProductos();
     setTimeout(()=>{
-      this.TraerProductos();
       this.TraerPedidos();
     },4500);
   }
@@ -80,6 +82,7 @@ export class HomeCocinaPage implements OnInit {
   TraerPedidos(){
     this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
+      var pedidosSeleccionados = [];
 
       for(var i = 0 ; i < this.pedidos.length - 1; i++){
         for(var k = i + 1; k < this.pedidos.length ; k++){
@@ -95,35 +98,54 @@ export class HomeCocinaPage implements OnInit {
       }
       for(var i = 0 ; i < this.pedidos.length; i++){
         this.pedidos[i].hora = ((this.pedidos[i].hora).substring(0,((this.pedidos[i].hora).length - 3)));
-        
-        if(this.pedidos[i].estado.includes("Confirmado")){
-          if(this.tipo.includes("Cocinero")){
-            if(this.pedidos[i].listoCocinero.includes("0")){
-              this.cantTipoPedido[0] = 1;
-            }else{
+
+
+        if(this.tipo.includes("Cocinero")){
+          if(this.pedidos[i].aptc.includes("1")){
+            pedidosSeleccionados.push(this.pedidos[i]);
+            this.hayPedido = true;
+            if(this.pedidos[i].estado.includes("Confirmado")){
+                if(this.pedidos[i].listoCocinero.includes("0")){
+                  this.cantTipoPedido[0] = 1;
+                }else{
+                  this.cantTipoPedido[1] = 1;
+                }
+            }
+            if(this.pedidos[i].estado.includes("Preparado")){
               this.cantTipoPedido[1] = 1;
             }
-          }
-          if(this.tipo.includes("Bartender")){
-            if(this.pedidos[i].listoBartender.includes("0")){
-              this.cantTipoPedido[0] = 1;
-            }else{
-              this.cantTipoPedido[1] = 1;
+            if(this.pedidos[i].estado.includes("Recibido")){
+              this.cantTipoPedido[2] = 1;
             }
           }
         }
 
-        if(this.pedidos[i].estado.includes("Preparado")){
-          this.cantTipoPedido[1] = 1;
-        }
-        if(this.pedidos[i].estado.includes("Entregado")){
-          this.cantTipoPedido[2] = 1;
-        }
 
+
+        if(this.tipo.includes("Bartender")){
+
+          if(this.pedidos[i].aptb.includes("1")){
+            pedidosSeleccionados.push(this.pedidos[i]);
+            this.hayPedido = true;
+            if(this.pedidos[i].estado.includes("Confirmado")){
+              if(this.pedidos[i].listoBartender.includes("0")){
+                this.cantTipoPedido[0] = 1;
+              }else{
+                this.cantTipoPedido[1] = 1;
+              }
+            }
+            if(this.pedidos[i].estado.includes("Preparado")){
+              this.cantTipoPedido[1] = 1;
+            }
+            if(this.pedidos[i].estado.includes("Recibido")){
+              this.cantTipoPedido[2] = 1;
+            }
+          }
+        }
       }
-      if(this.pedidos.length > 0){
-        this.hayPedido = true;
-      }
+
+
+      this.pedidosVisibles = pedidosSeleccionados;
     });
   }
 
@@ -179,18 +201,19 @@ export class HomeCocinaPage implements OnInit {
   }
 
   VerPedido(index: number, numMesa: string, idField: string){
+    this.indicePedidoActual = index;
     this.confirmarButton = false;
     this.idFieldPedidoActual = idField;
     this.numeroMesa = numMesa;
 
-    if(this.pedidos[index].estado.includes("Confirmado")){
+    if(this.pedidosVisibles[index].estado.includes("Confirmado")){
       if(this.tipo.includes("Cocinero")){
-        if(this.pedidos[index].listoCocinero.includes("0")){
+        if(this.pedidosVisibles[index].listoCocinero.includes("0")){
           this.confirmarButton = true;
         }
       }
       if(this.tipo.includes("Bartender")){
-        if(this.pedidos[index].listoBartender.includes("0")){
+        if(this.pedidosVisibles[index].listoBartender.includes("0")){
           this.confirmarButton = true;
         }
       }
@@ -200,7 +223,7 @@ export class HomeCocinaPage implements OnInit {
       this.cantProductosAgregados[i] = 0;
     }
 
-    var pedidoAux = JSON.parse(this.pedidos[index].productos);
+    var pedidoAux = JSON.parse(this.pedidosVisibles[index].productos);
     for(var i = 0 ; i< pedidoAux.length; i++){
       
       for(var k = 0 ; k < this.productos.length ; k++){
@@ -242,14 +265,22 @@ export class HomeCocinaPage implements OnInit {
   }
 
   AceptarConfirmarPedido(){
-//COCINERO
-  //SI   listoBartender == "0"   =>   listoCocinero = 1
-  //SI   listoBartender == "1"   =>   listoCocinero = 1   &&    estado = "Preparado"
 
-//BARTENDER
-  //SI   listoCocinero == "0"   =>   listoBartender = 1
-  //SI   listoCocinero == "1"   =>   listoBartender = 1   &&    estado = "Preparado"
-  
+    if(this.tipo.includes("Cocinero")){
+      if(this.pedidos[this.indicePedidoActual].listoBartender.includes("0")){
+        this.authService.listoCocinero(this.idFieldPedidoActual);
+      }else{
+        this.authService.pedidoPreparado(this.idFieldPedidoActual);
+      }
+    }
+    if(this.tipo.includes("Bartender")){
+      if(this.pedidos[this.indicePedidoActual].listoCocinero.includes("0")){
+        this.authService.listoBartender(this.idFieldPedidoActual);
+      }else{
+        this.authService.pedidoPreparado(this.idFieldPedidoActual);
+      }
+    }
+
 
     if(this.volumenOn){
       this.utilidades.SonidoConfirmar();

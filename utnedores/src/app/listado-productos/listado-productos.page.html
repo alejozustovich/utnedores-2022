@@ -1,11 +1,11 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" [hidden]="scanActive">
 	<ion-toolbar>
 		<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
 		<ion-button id="btn_toolbar" (click)="Volver()"><ion-icon name="arrow-undo"></ion-icon></ion-button>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" [hidden]="scanActive">
 
 	<ion-grid style="margin-top: -30px">
 		<div class="contenido">
@@ -28,7 +28,12 @@
 
     </div>
 	</ion-grid>
-
+  <ion-fab horizontal="end" vertical="bottom" [hidden]="scanActive">
+    <ion-fab-button (click)="startScanner()" size="large">
+      <img src="../../assets/qr.png" />
+    </ion-fab-button>
+  </ion-fab>
+  
   <ion-modal [isOpen]="isModalOpen">
     <ng-template>
 
@@ -135,9 +140,61 @@
     </ng-template>
   </ion-modal>
 
+
+  <ion-modal [isOpen]="isModalOpen3">
+    <ng-template>
+
+      <ion-header [translucent]="true">
+        <ion-toolbar>
+          <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
+          <ion-button id="btn_footer3" (click)="VerMenu()">Volver al Menú</ion-button>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <div class="contenido" style="margin-top: -30px">
+          <h3 style="margin-top: 80px;">{{categoriaUnProducto}}</h3>
+          <div>
+
+            <ion-item>
+              <ion-avatar slot="start" style="margin-top: -95px;">
+                <ion-img [src]="unSoloProducto.foto1" style="margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
+                <ion-img [src]="unSoloProducto.foto2" style="margin-top: 5px; margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
+                <ion-img [src]="unSoloProducto.foto3" style="margin-top: 5px; margin-left: 10px; border: 1px solid white; --border-radius: 4px; width: 45px !important; height: 45px !important; float: center;"></ion-img>
+              </ion-avatar>
+              <ion-label>
+                <h2>{{unSoloProducto.producto}}</h2>
+                <h3>{{unSoloProducto.descripcion}}</h3>
+                <p *ngIf="unSoloProducto.tamanio != '0'">{{unSoloProducto.tamanio}}</p>
+                <p *ngIf="unSoloProducto.tamanio == '0'">Demora: {{unSoloProducto.tiempoElaboracion}} mins</p>
+                <p>Precio: ${{unSoloProducto.precio}}</p>
+                <p>Cantidad: {{productosAgregados[unSoloProducto.idProducto].cantidad}}</p>
+                <ion-button (click)="RestarProducto(unSoloProducto.idProducto)"><ion-icon name="remove-outline"></ion-icon></ion-button>
+                <ion-button (click)="SumarProducto(unSoloProducto.idProducto)"><ion-icon name="add-outline"></ion-icon></ion-button>
+              </ion-label>
+            </ion-item>
+
+          </div>
+        </div>
+      </ion-content>
+
+      <ion-footer collapse="fade">
+        <ion-toolbar>
+          <p id="p_footer">
+            Total = ${{precioTotal}}
+            Demora: {{tiempoTotal}} mins
+          </p>
+        </ion-toolbar>
+      </ion-footer>
+
+    </ng-template>
+  </ion-modal>
+
+
+
 </ion-content>
 
-<ion-footer collapse="fade">
+<ion-footer collapse="fade" [hidden]="scanActive">
   <ion-toolbar>
     <p id="p_footer">
       Total = ${{precioTotal}}
@@ -145,6 +202,16 @@
     </p>
   </ion-toolbar>
 </ion-footer>
+
+<ion-row class="scanner-buttons" [hidden]="!scanActive">
+  <ion-col class="ion-no-padding">
+    <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
+  </ion-col>
+</ion-row>
+
+<div class="scan-box" [hidden]="!scanActive">
+</div>
+
 
 <div class="custom-loading" *ngIf="spinner">
 	<div class="spinner">

@@ -98,6 +98,7 @@ export class ListadoClientesPage implements OnInit {
   async ValidarUsuarios() {
 
     this.authService.getUsers().subscribe(allUsers => {
+      this.hayPendientes = false;
       if(this.ingresar){
         this.ingresar = false;
         this.users = allUsers;

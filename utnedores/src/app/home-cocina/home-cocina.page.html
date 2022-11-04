@@ -66,9 +66,11 @@
 						<div *ngIf="hayPedido">
 							<div *ngFor="let g of estadoPedido; let r = index">
 								<div *ngIf="cantTipoPedido[r] > 0">
-								<h2>Pedidos {{estadoPedido[r]}}</h2>
-									<div *ngFor="let pd of pedidos; let t = index">
-										<ion-item>
+									<h2>Pedidos {{estadoPedido[r]}}</h2>
+
+
+									<div *ngFor="let pd of pedidosVisibles; let t = index">
+										<ion-item >
 											<ion-label>
 												<h3>Pedido {{(t + 1)}}</h3>
 												<h4>Mesa: {{pd.numMesa}}</h4>
@@ -79,6 +81,9 @@
 											</ion-avatar>
 										</ion-item>
 									</div>
+
+
+
 								</div>
 							</div>
 						</div>

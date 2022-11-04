@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" [hidden]="scanActive">
 	<ion-toolbar>
 		<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
 		<ion-button id="btn_toolbar" (click)="CerrarSesion()">
@@ -7,14 +7,14 @@
 	</ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [hidden]="scanActive">
 	<ion-grid>
 		<div class="contenido">
 			<img src="../../assets/mozo.png" alt="" width="50" height="50">
 			<h2>Mozo</h2>
 
 			<div style="margin-top: 15px;">
-				<button (click)="IrPedido()"><img src="../../assets/dessert.png" width="30" height="30"><br>Ordenar<br>Pedido</button>
+				<button (click)="startScanner()"><img src="../../assets/dessert.png" width="30" height="30"><br>Ordenar<br>Pedido</button>
 				<button (click)="VerPedidos()"><img src="../../assets/ver-pedidos-mozo.png" width="30" height="30"><br>Ver<br>Pedidos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidos != 0">x{{cantPedidos}}</label></button>
 				<button (click)="CierreMesa()"><img src="../../assets/cierre-mesa.png" width="30" height="30"><br>Cierre<br>Mesa <label style="color:rgb(196, 145, 255);" *ngIf="cantCierreMesas != 0">x{{cantCierreMesas}}</label></button>
 				<button (click)="PedidosListos()"><img src="../../assets/pedidos-listos.png" width="30" height="30"><br>Pedidos<br>Listos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidosListos != 0">x{{cantPedidosListos}}</label></button>
@@ -23,13 +23,23 @@
 
 		</div>
 	</ion-grid>
-	<ion-fab horizontal="end" vertical="bottom" >
+	<ion-fab horizontal="end" vertical="bottom" [hidden]="scanActive">
 		<ion-fab-button size="small" (click)="ActivarDesactivarSonido()">
 			<ion-icon *ngIf="volumenOn" name="volume-high-outline"></ion-icon>
 			<ion-icon *ngIf="!volumenOn" name="volume-mute-outline"></ion-icon>
 		</ion-fab-button>
 	</ion-fab>
+
 </ion-content>
+
+<ion-row class="scanner-buttons" [hidden]="!scanActive">
+	<ion-col class="ion-no-padding">
+	  <ion-button expand="full" (click)="stopScan()">Detener</ion-button>
+	</ion-col>
+</ion-row>
+
+<div class="scan-box" [hidden]="!scanActive">
+</div>
 
 <div class="custom-loading" *ngIf="spinner">
 	<div class="spinner">

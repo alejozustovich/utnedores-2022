@@ -100,6 +100,10 @@ const routes: Routes = [
   {
     path: 'mozo-ver-pedido',
     loadChildren: () => import('./mozo-ver-pedido/mozo-ver-pedido.module').then( m => m.MozoVerPedidoPageModule)
+  },
+  {
+    path: 'estado-pedido',
+    loadChildren: () => import('./estado-pedido/estado-pedido.module').then( m => m.EstadoPedidoPageModule)
   }
 
 ];
