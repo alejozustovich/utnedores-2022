@@ -165,9 +165,10 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     this.numeroMesa = numMesa;
     this.numPedido = (index + 1).toString();
     
+    
     if(this.pedirCuenta == 0){
       this.pedidoRecibido = false;
-      if(this.pedidos[index].estado.includes("Preparado")){
+      if(this.pedidosVisibles[index].estado.includes("Preparado")){
         this.pedidoRecibido = true;
       }
     }
@@ -176,7 +177,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
       this.cantProductosAgregados[i] = 0;
     }
 
-    var pedidoAux = JSON.parse(this.pedidos[index].productos);
+    var pedidoAux = JSON.parse(this.pedidosVisibles[index].productos);
 
     for(var i = 0 ; i < pedidoAux.length; i++){
       

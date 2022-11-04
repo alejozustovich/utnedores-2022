@@ -337,13 +337,21 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   
       productosPedido = productosPedido + "]";
       
+      var estadoPedido = "";
+      if(this.back == 0){
+        var estadoPedido = "Confirmado";
+      }
+      if(this.back == 1){
+        var estadoPedido = "Enviado";
+      }
+
       var unPedido: Pedido = {idField: "",
         idPedido: (this.idRegistroPedido.toString()),
         numMesa: this.numMesa,
         productos: productosPedido,
         fecha: fechaActual,
         hora: horaActual,
-        estado: "Enviado",
+        estado: estadoPedido,
         listoCocinero: "0",
         listoBartender: "0",
         idUsuario: this.idUsuarioMesa,

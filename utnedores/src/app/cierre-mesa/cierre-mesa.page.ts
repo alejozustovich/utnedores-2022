@@ -161,6 +161,6 @@ export class CierreMesaPage implements OnInit {
   }
 
   Volver(){
-    this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+    this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
   }
 }
