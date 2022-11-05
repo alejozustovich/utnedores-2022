@@ -1,5 +1,14 @@
 {
   "projects": {
-    "default": "utnedores-98451"
+    "default": "utnedores-82561"
+  },
+  "targets": {
+    "utnedores-82561": {
+      "hosting": {
+        "app": [
+          "utnedores-82561"
+        ]
+      }
+    }
   }
 }
