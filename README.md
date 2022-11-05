@@ -81,3 +81,57 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/semana2-diagrama-v1.png" width="1000">
 </p>
+
+## Semana 3: Sábado 29/10 al Sábado 05/11
+
+**Tareas realizadas:**
+
+* **ACUÑA ZUSTOVICH, Alejo**
+  * *Módulos desarrollados*
+    * *1: Alta de Clientes*
+    * *2: Alta de Empleados*
+    * *3: Home Metre*
+      * *a- Agregar Nuevo Cliente*
+      * *b- Listado de Clientes en Espera*
+      * *c- Gestionar Mesas*
+    * *4: Home Cocina (Cocinero, Bartender)*
+      * *a- Agregar Producto*
+      * *b- Ver Pedidos*
+    * *5: QR de Ingreso al Local*
+    * *6: Encuesta Empleados*
+
+* **GUELER, Daniel**
+  * *Módulos desarrollados*
+    * *1: Alta de Productos*
+    * *2: Alta de Mesa*
+    * *3: Home Cliente*
+      * *a- Ver Encuestas*
+      * *b- Escanear QR*
+      * *c- Ordenar un Pedido*
+      * *d- Ver Estado del Pedido*
+      * *e- Consultar al Mozo*
+      * *f- Pedir la Cuenta*
+      * *g- Dejar Opinión*
+    * *4: QR de la Mesa*
+    * *5: Encuesta Clientes*
+
+* **MOLINI, Ignacio**
+  * *Módulos desarrollados*
+    * *1: Alta de Dueño/Supervisor*
+    * *2: Home Dueño/Supervisor*
+      * *a- Agregar Nuevo Supervisor/Empleado/Mesa*
+      * *b- Listado de Clientes Pendientes*
+    * *3: Home Mozo*
+      * *a- Ordenar un Pedido*
+      * *b- Ver Pedidos*
+      * *c- Chat con el Cliente*
+      * *d- Cierre de Mesa*
+    * *4: QR de la Propina*
+    * *5: Encuesta Supervisor*
+
+>NOTA: Se continuó trabajando en las pantallas de Inicio (Home) de cada usuario y se empezó a diseñar las encuestas correspondientes. Se le dió funcionalidad a toda la aplicación, trazando el camino desde que el cliente ingresa al restaurant hasta que se retira, pasando por todas las entidades intervinientes en su pedido.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/semana-3-homes.png" width="800">
+  <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/semana-3-pedido.png" width="800">
+</p>
