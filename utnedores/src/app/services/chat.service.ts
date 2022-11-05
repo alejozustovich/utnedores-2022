@@ -27,10 +27,9 @@ export class ChatService {
 		return (collectionData(q, { idField: 'idField' }) as Observable<any>);
 	}
 
-	cargarChatLeido(ruta: string, leido: boolean): Observable<any> {
+	cargarChats(ruta: string, leido: boolean): Observable<any> {
 		const chatRef = collection(this.firestore, ruta);
-		const q = query(chatRef, where('leido', '==', leido));
-		return (collectionData(q, { idField: 'idField' }) as Observable<any>);
+		return (collectionData(chatRef, { idField: 'idField' }) as Observable<any>);
 	}
 
 	agregarChat(chat: any, ruta: string) {

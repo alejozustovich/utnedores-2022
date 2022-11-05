@@ -80,14 +80,18 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      <div class="contenido">
-        <h1>Chats por responder</h1>
-        <div>
-          <div *ngFor="let c of chats">
-            <ion-item>
-              hola
-            </ion-item>
-          </div>
+      <div *ngIf="chats?.length == 0">No hay chats por el momento</div>
+      <div *ngIf="chats?.length > 0" class="contenido">
+        <h1>Chats dispobibles</h1>
+        <div *ngFor="let c of chats" class="mb-3">
+          <ion-item class="item-chats" (click)="entrarChat(c.numMesa)">
+            <ion-avatar slot="start">
+              <ion-img [src]="cargarFoto(c.numMesa)" class="img-mesa"></ion-img>
+            </ion-avatar>
+            <ion-label>
+              <h2 class="text-center">Chat mesa {{c.numMesa}}</h2>
+            </ion-label>
+          </ion-item>
         </div>
       </div>
     </ion-content>
