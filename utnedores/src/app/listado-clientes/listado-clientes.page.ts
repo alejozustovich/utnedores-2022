@@ -98,7 +98,9 @@ export class ListadoClientesPage implements OnInit {
   async ValidarUsuarios() {
 
     this.authService.getUsers().subscribe(allUsers => {
+      this.cargando = true;
       this.hayPendientes = false;
+      this.countPendientes = 0;
       if(this.ingresar){
         this.ingresar = false;
         this.users = allUsers;
@@ -120,6 +122,7 @@ export class ListadoClientesPage implements OnInit {
           }else{
             this.hayPendientes = false;
           }
+          this.cargando = false;
           setTimeout(() => {
             this.ingresar = true;
           }, 5500);
