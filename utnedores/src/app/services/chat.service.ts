@@ -8,32 +8,38 @@ export interface Mensaje {
 	fecha: number;
 }
 
-export interface Chat{
-  idUsuario: string;
-  idField: string;
-  mensajes: Mensaje[];
+export interface Chat {
+	numMesa: string;
+	idField: string;
+	leido: boolean;
+	mensajes: Mensaje[];
 }
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class ChatService {
-  constructor(private firestore: Firestore) { }
+	constructor(private firestore: Firestore) { }
 
-  cargarChat(ruta: string, id: string): Observable<any> {
+	cargarChatMesa(ruta: string, num: string): Observable<any> {
 		const chatRef = collection(this.firestore, ruta);
-		const q = query(chatRef, where('idUsuario', '==', id));
-		return (collectionData(q, {idField: 'idField'}) as Observable<any>);
+		const q = query(chatRef, where('numMesa', '==', num));
+		return (collectionData(q, { idField: 'idField' }) as Observable<any>);
+	}
+
+	cargarChatLeido(ruta: string, leido: boolean): Observable<any> {
+		const chatRef = collection(this.firestore, ruta);
+		const q = query(chatRef, where('leido', '==', leido));
+		return (collectionData(q, { idField: 'idField' }) as Observable<any>);
 	}
 
 	agregarChat(chat: any, ruta: string) {
-    console.log(chat);
 		const chatRef = collection(this.firestore, ruta);
 		return addDoc(chatRef, chat);
 	}
 
-  modificarChat(mensajes: any, ruta: string) {
+	modificarChat(obj: any, ruta: string) {
 		const chatRef = doc(this.firestore, ruta);
-		return updateDoc(chatRef, {mensajes: mensajes});
+		return updateDoc(chatRef, obj);
 	}
 }

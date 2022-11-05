@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { ToastController } from '@ionic/angular';
+import { Chat, ChatService } from '../services/chat.service';
 
 @Component({
   selector: 'app-home-mozo',
@@ -15,46 +16,56 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   mesas: Mesa[];
   result = null;
   numMesa = "0";
+  isModalOpen: boolean = false;
   scanActive = false;
   pedidos: Pedido[];
+  chats: Chat[];
   volumenOn = true;
   spinner = true;
   cantPedidos = 0;
-  cantCierreMesas= 0;
-  cantPedidosListos= 0;
+  cantCierreMesas = 0;
+  cantPedidosListos = 0;
   cantChat = 0;
 
   constructor(
     private toastController: ToastController,
     private router: Router,
     private authService: AuthService,
-    private utilidades: UtilidadesService
-  ) { 
+    private utilidades: UtilidadesService,
+    private chatService: ChatService
+  ) {
     this.DesactivarSpinner();
     this.Sonido();
     this.TraerPedidos();
     this.TraerMesas();
   }
 
-  Sonido(){
+  Sonido() {
     try {
       var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
+      if (sonido != null) {
+        if (sonido.includes("No")) {
           this.volumenOn = false;
         }
       }
     } catch (error) {
-      
+
     }
   }
 
-  CierreMesa(){
+  CierreMesa() {
     this.router.navigateByUrl('/cierre-mesa', { replaceUrl: true });
   }
 
-  ChatClientes(){
-    this.router.navigateByUrl('/chat', { replaceUrl: true });
+  ChatClientes() {
+    this.isModalOpen = true;
+    //this.router.navigateByUrl('/chat', { replaceUrl: true });
+  }
+
+  ngOnInit() {
+    this.chatService.cargarChatLeido('chats', false).subscribe((chats: Chat[]) => {
+      this.chats = chats;
+    })
   }
 
   ngAfterViewInit() {
@@ -65,10 +76,10 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     this.stopScan();
   }
 
-  async startScanner(){
+  async startScanner() {
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
-    if(result.hasContent){
+    if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
       this.AnalizarResultado();
@@ -81,23 +92,23 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  AnalizarResultado(){
+  AnalizarResultado() {
     var flag = false;
     this.mesas.forEach(mesa => {
-      if(mesa.qr === this.result){
+      if (mesa.qr === this.result) {
         flag = true;
         this.numMesa = mesa.numMesa;
         localStorage.setItem('numeroMesa', this.numMesa);
       }
     });
 
-    if(flag){
+    if (flag) {
       this.spinner = true;
       localStorage.setItem('back', '0');
       this.router.navigateByUrl('/listado-productos', { replaceUrl: true });
-    }else{
+    } else {
       this.Alerta("Código no válido", 'danger');
-      if(this.volumenOn){
+      if (this.volumenOn) {
         this.utilidades.SonidoError();
       }
       this.utilidades.VibrarError();
@@ -115,20 +126,23 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     await toast.present();
   }
 
-  stopScan()
-  {
+  stopScan() {
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
-  
-  ngOnInit() { }
 
-  TraerPedidos(){
+
+
+  volver() {
+    this.isModalOpen = false;
+  }
+
+  TraerPedidos() {
     this.authService.traerPedidos().subscribe(pedidos => {
       this.cantPedidos = 0;
       this.pedidos = pedidos;
-      for(var i = 0 ; i < this.pedidos.length ; i++){
-        if(this.pedidos[i].estado.includes("Enviado") || this.pedidos[i].estado.includes("Preparado")){
+      for (var i = 0; i < this.pedidos.length; i++) {
+        if (this.pedidos[i].estado.includes("Enviado") || this.pedidos[i].estado.includes("Preparado")) {
           this.cantPedidos = this.cantPedidos + 1;
         }
       }
@@ -136,14 +150,14 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  DesactivarSpinner(){
+  DesactivarSpinner() {
     setTimeout(() => {
       this.spinner = false;
     }, 7000);
   }
 
   ActivarDesactivarSonido() {
-    if(this.volumenOn) {
+    if (this.volumenOn) {
       this.volumenOn = false;
       localStorage.setItem('sonido', "No");
     } else {
@@ -152,18 +166,18 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  SonidoEgreso(){
-    if(this.volumenOn) {
+  SonidoEgreso() {
+    if (this.volumenOn) {
       this.utilidades.PlayLogout();
     }
     localStorage.clear();
   }
 
-  ActivarSpinner(){
+  ActivarSpinner() {
     this.spinner = true;
   }
 
-  CerrarSesion(){
+  CerrarSesion() {
     this.ActivarSpinner();
     this.SonidoEgreso();
     this.authService.logout();

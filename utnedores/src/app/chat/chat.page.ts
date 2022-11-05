@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService, Mensaje, Usuario } from '../services/auth.service';
 import { Chat, ChatService } from '../services/chat.service';
@@ -14,7 +15,8 @@ import { UtilidadesService } from '../services/utilidades.service';
 export class ChatPage implements OnInit {
 
   volumenOn = true;
-  chat: Chat = {idUsuario: '0', idField: '0', mensajes: []};
+  chat: Chat = { numMesa: '0', idField: '0', leido: false, mensajes: [] };
+  numMesa: string;
   spinner: boolean = true;
   formMsj: FormGroup;
   subChat: Subscription;
@@ -29,7 +31,8 @@ export class ChatPage implements OnInit {
     private fb: FormBuilder,
     private dataUsuarioService: DataUsuarioService,
     private cdref: ChangeDetectorRef,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private router: Router
   ) {
     this.Sonido();
   }
@@ -48,29 +51,32 @@ export class ChatPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.numMesa = localStorage.getItem('numeroMesa');
     this.formMsj = this.fb.group(
       {
         mensaje: ['', [Validators.maxLength(30)]]
       }
     )
-    // this.dataUsuarioService.idUsuarioPedido$.subscribe(id => {
-    //   this.idUsuarioPedido = id;
-    // })
     this.authService.obtenerAuth().onAuthStateChanged(user => {
       this.authService.getUser(user.email).then((user: Usuario) => {
         this.usuarioActual = user;
-        //en el 1 iria this.idUsuarioPedido, que se lo paso al servicio cada vez que entro al chat
-        this.subChat = this.chatService.cargarChat('chats', '1').subscribe((chat: Chat) => {
-          if(chat[0] != undefined){
+        this.subChat = this.chatService.cargarChatMesa('chats', this.numMesa).subscribe((chat: Chat[]) => {
+          if (chat[0] != undefined) {
             this.chat = chat[0];
+            console.log(this.chat);
           }
           this.spinner = false;
         });
       });
     })
-    // this.dataUsuarioService.usuario$.subscribe((usuario: Usuario) => {
-    //   this.usuarioActual = usuario;
-    // })
+  }
+
+  volver(){
+    if(this.usuarioActual.tipo == "Mozo"){
+      this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
+    }else{
+      this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+    }
   }
 
   get mensaje() {
@@ -120,15 +126,21 @@ export class ChatPage implements OnInit {
       mensaje: textoMensaje,
       fecha: new Date().getTime()
     }
-    if (this.chat.mensajes.length == 0) {
+    if (this.chat.numMesa == "0") {
       const chat = {
-        idUsuario: '1',
+        numMesa: this.numMesa,
+        leido: false,
         mensajes: [mensaje]
       }
       this.chatService.agregarChat(chat, 'chats')
     } else {
+      let flag = false;
+      if (this.usuarioActual.tipo == "Mozo") {
+        flag = true;
+      }
       this.chat.mensajes.push(mensaje);
-      this.chatService.modificarChat(this.chat.mensajes, `chats/${this.chat.idField}`)
+      const obj = { leido: flag, mensajes: this.chat.mensajes }
+      this.chatService.modificarChat(obj, `chats/${this.chat.idField}`)
     }
     this.formMsj.reset();
   }

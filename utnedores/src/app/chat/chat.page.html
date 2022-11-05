@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <img id="img_toolbar" src="../../assets/Tenedores.png" width="13%" />
-    <ion-button id="btn_toolbar"
+    <ion-button id="btn_toolbar" (click)="volver()"
       ><ion-icon name="arrow-undo"></ion-icon
     ></ion-button>
   </ion-toolbar>
@@ -9,7 +9,7 @@
 
 <ion-content class="ion-padding">
   <div class="titulo">
-    <h1>Chat mesa 1</h1>
+    <h1>Chat mesa {{numMesa}}</h1>
   </div>
   <div
     class="caja-msjs scroll"
