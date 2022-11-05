@@ -71,7 +71,7 @@ export class AltaProductoPage implements OnInit {
         producto: ['', [Validators.required, Validators.maxLength(25)]],
         descripcion: ['', [Validators.required, Validators.maxLength(40)]],
         tiempoElaboracion: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(1), Validators.maxLength(3)]],
-        tamanio: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(1), Validators.maxLength(5)]],
+        tamanio: ['', [Validators.required]],
         precio: ['', [Validators.required, Validators.pattern('^([0-9])*$'), Validators.minLength(1), Validators.maxLength(6)]]
       }
     )
@@ -130,6 +130,7 @@ export class AltaProductoPage implements OnInit {
   }
 
   AsignarNumeroProducto() {
+    this.numProducto = "0";
     for (var i = 0; i < this.productos.length; i++) {
       if (Number(this.numProducto) < Number(this.productos[i].idProducto)) {
         this.numProducto = this.productos[i].idProducto;
