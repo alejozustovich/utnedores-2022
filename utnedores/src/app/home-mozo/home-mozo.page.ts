@@ -1,6 +1,8 @@
 import { UtilidadesService } from '../services/utilidades.service';
 import { AuthService, Pedido, Mesa } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { getDownloadURL } from '@angular/fire/storage';
+import { getStorage, ref } from "firebase/storage";
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { ToastController } from '@ionic/angular';
@@ -63,7 +65,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.chatService.cargarChatLeido('chats', false).subscribe((chats: Chat[]) => {
+    this.chatService.cargarChats('chats', false).subscribe((chats: Chat[]) => {
       this.chats = chats;
     })
   }
@@ -76,6 +78,10 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     this.stopScan();
   }
 
+  cargarFoto(numMesa: string) {
+    return this.mesas.filter(mesa => mesa.numMesa == numMesa)[0].foto;
+  }
+
   async startScanner() {
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
@@ -86,9 +92,24 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  entrarChat(numMesa: string) {
+    localStorage.setItem('numeroMesa', numMesa);
+    this.isModalOpen = false;
+    setTimeout(() => {
+      this.router.navigateByUrl('/chat', { replaceUrl: true });
+    }, 10);
+  }
+
   TraerMesas() {
     this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
+      this.mesas.forEach(mesa => {
+        const storage = getStorage();
+        const storageRef = ref(storage, ("mesas/" + mesa.foto));
+        getDownloadURL(storageRef).then((response) => {
+          mesa.foto = response;
+        });
+      })
     });
   }
 
