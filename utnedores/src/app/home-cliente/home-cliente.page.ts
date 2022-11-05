@@ -347,7 +347,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       var mesasDisponibles = "";
       var cant = 0;
       this.mesas.forEach(u => {
-        if(u.idUsuario === this.usuarioLogueado.idUsuario) {
+        if(this.usuarioLogueado.idUsuario != "0" && u.idUsuario === this.usuarioLogueado.idUsuario) {
           this.estado = 2;//TIENE AL MENOS 1 MESA ASIGNADA
 
           cant = cant + 1;
@@ -362,9 +362,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
         this.ModificarEstado("ESCANEAR QR LOCAL");
       }else{
         if(cant == 1){
-          this.ModificarEstado(("MESA DISPONIBLE: " + mesasDisponibles));
+          this.ModificarEstado(("MESA ASIGNADA: " + mesasDisponibles));
         }else{
-          this.ModificarEstado(("MESAS DISPONIBLES: " + mesasDisponibles));
+          this.ModificarEstado(("MESAS ASIGNADAS: " + mesasDisponibles));
         }
       }
     }
