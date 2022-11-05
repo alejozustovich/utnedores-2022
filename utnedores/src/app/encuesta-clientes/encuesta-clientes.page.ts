@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService, Usuario } from '../services/auth.service';
+import { AuthService, Usuario, EncuestaCliente } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-encuesta-clientes',
@@ -17,21 +18,31 @@ export class EncuestaClientesPage implements OnInit {
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
-  srcProductPhoto: string[] = ["../../assets/galeria.png", "../../assets/galeria.png", "../../assets/galeria.png"];
+  nombreFotos: string[] = ["", "", ""];
+  srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
   fotoCargada = false;
   fotosLleno = false;
+  prodPhoto = "../../assets/dessert-photo.png";
+  files: File[] = [];
+  encuestaEnviada = false;
+  idEncuesta = "0";
+  encuestas: EncuestaCliente[];
+  idUsuarioEncuesta = "0";
 
   constructor(
+    private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder,
     private utilidades: UtilidadesService
   ) {
     //COMIENZO SPINNER
+    this.idUsuarioEncuesta = localStorage.getItem('idUsuarioEncuesta');
     this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 1500);
+    this.AsignarNombreFotos();
   }
 
   Sonido(){
@@ -46,6 +57,7 @@ export class EncuestaClientesPage implements OnInit {
       
     }
   }
+
   ngOnInit() {
     this.formEncuesta = this.fb.group(
       {
@@ -56,6 +68,18 @@ export class EncuestaClientesPage implements OnInit {
         preguntaCinco: ['1', [Validators.required]]
       }
     )
+  }
+
+  TraerEncuestasClientes() {
+    this.authService.traerEncuestaCliente().subscribe(listaencuestas => {
+      this.encuestas = listaencuestas;
+      this.encuestas.forEach(encuesta => {
+        if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
+          this.idEncuesta = encuesta.idEncuesta;
+        }
+        this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
+      });
+    });
   }
 
   get preguntaUno() {
@@ -96,17 +120,98 @@ export class EncuestaClientesPage implements OnInit {
     this.preguntaDos.setValue(numero);
   }
 
+  Cargar(event: any): void {
+    var selectFile = event.target.files;
+    var num = selectFile.length;
+    var cant = 0;
+    var indice = 0;
+
+    for (var i = 0; i < this.srcProductPhoto.length; i++) {
+      if (this.srcProductPhoto[i].includes(this.prodPhoto)) {
+        cant = cant + 1;
+      }
+    }
+
+    if (num <= cant) {
+
+      if (this.files[0] == null) {
+        this.files[0] = event.target.files[indice];
+        this.AsignarImagen(0);
+        indice = indice + 1;
+      }
+
+      if (this.files[1] == null && num >= (indice + 1)) {
+        this.files[1] = event.target.files[indice];
+        this.AsignarImagen(1);
+        indice = indice + 1;
+      }
+
+      if (this.files[2] == null && num >= (indice + 1)) {
+        this.files[2] = event.target.files[indice];
+        this.AsignarImagen(2);
+      }
+      this.fotosLleno = true;
+
+      setTimeout(() => {
+        this.fotoCargada = true;
+        for (var i = 0; i < 3; i++) {
+          if (this.srcProductPhoto[i].includes(this.prodPhoto)) {
+            this.fotosLleno = false;
+            this.fotoCargada = false;
+          }
+        }
+      }, 50);
+    }
+    else {
+      if (cant == 1) {
+        this.Alerta("Seleccionar 1 imagen", 'warning');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
+      } else {
+        this.Alerta(("Seleccionar " + cant.toString() + " imágenes"), 'warning');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
+      }
+    }
+  }
+
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present()
+  }
+
+  AsignarImagen(indice: number) {
+    var readerVar = new FileReader();
+    readerVar.readAsDataURL(this.files[indice]);
+    readerVar.onload = (_event) => {
+      this.srcProductPhoto[indice] = (readerVar.result).toString();
+    }
+  }
+
   Fotos() {
     (<HTMLInputElement>document.getElementById('inputFiles')).click();
   }
 
   LimpiarFoto(num: number) {
-    // this.files[num] = null;
-    // this.srcProductPhoto[num] = this.prodPhoto;
-    // this.fotosLleno = false;
+    this.files[num] = null;
+    this.srcProductPhoto[num] = this.prodPhoto;
+    this.fotosLleno = false;
+    this.fotoCargada = false;
   }
 
-  ImagenCelular() { }
+  ImagenCelular() {
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
 
   Foto() { }
 
@@ -143,11 +248,68 @@ export class EncuestaClientesPage implements OnInit {
   }
 
   enviarEncuesta() {
-    console.log(this.preguntaUno.value);
-    console.log(this.preguntaDos.value);
-    console.log(this.preguntaTres.value);
-    console.log(this.preguntaCuatro.value);
-    console.log(this.preguntaCinco.value);
+    this.spinner = true;
+    var date = new Date();
+    var fechaHoy = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" +  date.getFullYear().toString();
+    var encuestaCliente : EncuestaCliente = {
+      fecha: fechaHoy,
+      idUsuario: this.idUsuarioEncuesta,
+      idEncuesta: this.idEncuesta,
+      atencion: this.preguntaUno.value,
+      precioCalidad: this.preguntaDos.value,
+      ambiente: this.preguntaTres.value,
+      limpieza: this.preguntaCuatro.value,
+      rapidez: this.preguntaCinco.value,
+      foto1: this.nombreFotos[0],
+      foto2: this.nombreFotos[1],
+      foto3: this.nombreFotos[2]
+    }
+    this.authService.agregarEncuestaCliente(encuestaCliente);
+    this.SubirImagenes();
+  }
+
+  Caracteres(dato: string) {
+    var retorno = dato.toString();
+    if (dato.length == 1) {
+      retorno = "0" + retorno;
+    }
+    return retorno;
+  }
+
+  AsignarNombreFotos() {
+    var date = new Date();
+    this.nombreFotos[0] =  date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    setTimeout(() => {
+      date = new Date();
+      this.nombreFotos[1] = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    }, 2000);
+    setTimeout(() => {
+      date = new Date();
+      this.nombreFotos[2] = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    }, 4000);
+  }
+
+  SubirImagenes() {
+    setTimeout(() => {
+      this.authService.subirImagenFile(("encuestas/" + this.nombreFotos[0]), this.files[0]);
+      setTimeout(() => {
+        this.authService.subirImagenFile(("encuestas/" + this.nombreFotos[1]), this.files[1]);
+      }, 3000);
+      setTimeout(() => {
+        this.authService.subirImagenFile(("encuestas/" + this.nombreFotos[2]), this.files[2]);
+      
+        this.spinner = false;
+        this.encuestaEnviada = true;
+        if(this.volumenOn){
+          this.utilidades.SonidoAlta();
+        }
+    
+        setTimeout(() => {
+          this.Volver();
+        }, 2500);
+      
+      }, 6000);
+    }, 2000);
   }
 
   Volver() {

@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="contenedor">
+  <div class="contenedor" style="margin-top: 50px;">
     <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
@@ -37,7 +37,7 @@
             <ion-label class="ps-2">Relacion precio-calidad:</ion-label>
             <ion-row>
               <ion-col *ngFor="let valor of valores">
-                <ion-item lines="none">
+                <ion-item lines="none" style="width: 60px;">
                   <ion-label>{{valor}}</ion-label>
                   <ion-checkbox
                     (click)="cambios($event, valor)"
@@ -139,9 +139,6 @@
                 style="--background: rgb(71, 18, 18)"
                 ><ion-icon name="folder-outline"></ion-icon
               ></ion-button>
-              <ion-button (click)="Foto()" style="--background: rgb(71, 18, 18)"
-                ><ion-icon name="camera-outline"></ion-icon
-              ></ion-button>
             </ion-item>
           </div>
         </div>
@@ -157,6 +154,14 @@
       </form>
     </ion-grid>
   </div>
+  <input
+      hidden
+      id="inputFiles"
+      class="custom-file-input"
+      type="file"
+      (change)="Cargar($event)"
+      multiple="multiple"
+    />
 </ion-content>
 
 <div class="custom-loading" *ngIf="spinner">
@@ -168,4 +173,16 @@
       <img src="../../assets/Logo.png" style="width: 200px" />
     </div>
   </div>
+</div>
+
+
+<div class="custom-loading2" *ngIf="encuestaEnviada">
+
+	<div class="divInterno2">
+		<form class="form">
+			<h2 style="margin-top: 30px;">Encuesta enviada con éxito!</h2>
+      <h2 style="margin-top: 40px;">Redirigiendo</h2>
+		</form>
+	</div>
+
 </div>

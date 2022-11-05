@@ -108,6 +108,10 @@ const routes: Routes = [
   {
     path: 'cierre-mesa',
     loadChildren: () => import('./cierre-mesa/cierre-mesa.module').then( m => m.CierreMesaPageModule)
+  },
+  {
+    path: 'gestion-usuarios',
+    loadChildren: () => import('./gestion-usuarios/gestion-usuarios.module').then( m => m.GestionUsuariosPageModule)
   }
 
 ];

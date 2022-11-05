@@ -78,6 +78,15 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl('/listado-clientes', { replaceUrl: true });
   }
 
+  IrFormulario(){
+    this.ActivarSpinner();
+
+    //SELECCIONAR UN CLIENTE
+    //localStorage.setItem('idUsuarioEncuesta', idUsuario);
+
+    this.router.navigateByUrl('/encuesta-clientes', { replaceUrl: true });
+  }
+
   IrVerReservas(){
     this.ActivarSpinner();
     this.router.navigateByUrl('/reservas', { replaceUrl: true });

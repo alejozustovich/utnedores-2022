@@ -36,6 +36,7 @@ export class HomeClienteMesaPage implements OnInit {
       this.authService.getUser(user.email).then((user: Usuario) => {
         this.usuarioActual = user;
         this.TraerCuentas();
+        this.TraerMesas();
       });
     })
   }
@@ -43,7 +44,7 @@ export class HomeClienteMesaPage implements OnInit {
   TraerMesas() {
     this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
-      var redirigir = false;
+      var redirigir = true;
       this.mesas.forEach(mesa => {
         if(mesa.idUsuario === this.usuarioActual.idUsuario){
           redirigir = false;
