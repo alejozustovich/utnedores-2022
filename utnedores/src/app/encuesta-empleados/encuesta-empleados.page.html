@@ -6,7 +6,7 @@
 
 <ion-content class="ion-padding" [fullscreen]="true">
   <div class="contenedor">
-    <ion-grid style="margin-top: 160px;">
+    <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
         <h2>Encuesta empleado</h2>
@@ -34,7 +34,7 @@
             <ion-label class="ps-2">Orden de mesas y sillas:</ion-label>
             <ion-row>
               <ion-col *ngFor="let valor of valores">
-                <ion-item lines="none" style="width: 60px;">
+                <ion-item lines="none">
                   <ion-label>{{valor}}</ion-label>
                   <ion-checkbox
                     (click)="cambios($event, valor)"

@@ -1,4 +1,4 @@
-ion-header {
+ion-header, ion-footer {
   text-align: center !important;
 
   ion-toolbar {
@@ -16,13 +16,6 @@ ion-header {
   }
 }
 
-.contenedor {
-  height: 85vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 ion-content {
   --background: linear-gradient(
     45deg,
@@ -31,9 +24,9 @@ ion-content {
   );
 }
 
-hr{
+hr {
   margin: 0;
-  opacity: .75;
+  opacity: 0.75;
   border-top: 2px solid white;
 }
 
@@ -45,37 +38,11 @@ hr{
   color: #fff;
 }
 
-.error-borde {
-  box-shadow: 0px 0px 3px 3px #ff3c3c;
-}
-
-ion-input {
-  color: rgb(255, 255, 255);
-  background-color: rgba(46, 17, 3, 0.5);
-  border: 2px solid white;
-  border-radius: 5px;
-  opacity: 70%;
-  text-align: center;
-}
-
-.sc-ion-input-md-h{
-  --padding-start: 0 !important;
-}
-
-ion-input:hover {
-  --placeholder-color: transparent;
-}
-
-ion-button {
-  width: 100%;
-  height: 40px;
-  white-space: normal;
-}
-
 ion-row {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 5px;
 }
 
 ion-col {
@@ -95,109 +62,69 @@ ion-item {
     color: #fff;
   }
 }
-ion-checkbox {
-  margin: 0;
-  --size: 20px;
-  --background: rgba(46, 17, 3, 0);
-  --background-checked: rgba(46, 17, 3, 0.8);
-  --border-color: white;
-}
-ion-checkbox::part(container) {
-  border-radius: 6px;
-  --border-color-checked: rgba(46, 17, 3, 0.8);
+
+.scroll{
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 65vh;
 }
 
-ion-select {
-  text-align: center;
-  background-color: rgba(46, 17, 3, 0.3) !important;
-  border-radius: 10px !important;
-  width: 100%;
+.scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: rgba(46, 17, 3, 0.3);
+  border-radius: 10px;
+}
+
+.row-nombre{
+  background: rgba(46, 17, 3, 0.3);
+}
+
+.img-lugar{
+  height: 60px;
+  width: 80px;
   border: 2px solid white;
 }
-ion-select::part(icon) {
-  margin-right: 7px;
-}
 
-//range
-ion-range {
-  padding: 0 15px;
-}
-ion-range::part(pin) {
-  display: inline-flex;
+.contenedor {
+  height: 70vh;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(46, 17, 3, 0.8);
-  color: #fff;
-  border-radius: 50%;
-  transform: scale(1);
-  top: -20px;
-  min-width: 28px;
-  height: 28px;
-  transition: transform 120ms ease;
 }
-ion-range::part(pin)::before {
-  content: none;
-}
-ion-range::part(knob) {
-  background: rgba(46, 17, 3, 1);
-}
-ion-range::part(tick-active) {
-  background: rgba(46, 17, 3, 0.5);
-  height: 5px;
-  width: 3px;
-}
-ion-range::part(tick) {
-  background: rgba(46, 17, 3, 0.5);
-  height: 5px;
-  width: 3px;
-}
-ion-range::part(bar) {
-  background: rgba(46, 17, 3, 0.5);
-}
-ion-range::part(bar-active) {
-  background: rgba(46, 17, 3, 0.5);
-}
-//range
-
-//radio
-ion-radio {
-  width: 25px;
-  height: 25px;
-}
-ion-radio::part(container) {
-  border-radius: 100%;
-  border: 2px solid #ddd;
-}
-ion-radio::part(mark) {
-  background: none;
-  transition: none;
-  transform: none;
-  border-radius: 0;
-}
-ion-radio.radio-checked::part(container) {
-  background: rgba(46, 17, 3, 0.8);
-  border-color: transparent;
-}
-ion-radio.radio-checked::part(mark) {
-  width: 6px;
-  height: 10px;
-  border-width: 0px 2px 2px 0px;
-  border-style: solid;
-  border-color: #fff;
-  transform: rotate(45deg);
-}
-//radio
 
 .titulo_form {
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
-
+  align-items: center;
   h2 {
     font-size: 25px;
     color: white;
     margin-left: 5px;
   }
+}
+
+.titulo_estadisticas {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  h2 {
+    font-size: 30px;
+    color: white;
+    margin: 10px;
+  }
+}
+
+#btn_footer {
+  margin-right: 10px;
+  height: 30px;
+  --background: rgb(82, 27, 145);
 }
 
 #img_toolbar {
@@ -276,7 +203,7 @@ ion-radio.radio-checked::part(mark) {
   align-items: center;
 }
 
-.custom-loading2{
+.custom-loading2 {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -289,7 +216,7 @@ ion-radio.radio-checked::part(mark) {
   align-items: center;
 }
 
-.divInterno2{
+.divInterno2 {
   width: 80%;
   height: 180px;
   border-style: solid;

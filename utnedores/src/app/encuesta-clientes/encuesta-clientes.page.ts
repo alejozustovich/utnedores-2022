@@ -20,10 +20,10 @@ export class EncuestaClientesPage implements OnInit {
   valores = [1, 2, 3, 4, 5];
   tipo = "";
   nombreFotos: string[] = ["", "", ""];
-  srcProductPhoto: string[] = ["../../assets/dessert-photo.png", "../../assets/dessert-photo.png", "../../assets/dessert-photo.png"];
+  srcProductPhoto: string[] = ["../../assets/galeria.png", "../../assets/galeria.png", "../../assets/galeria.png"];
   fotoCargada = false;
   fotosLleno = false;
-  prodPhoto = "../../assets/dessert-photo.png";
+  prodPhoto = "../../assets/galeria.png";
   files: File[] = [];
   encuestaEnviada = false;
   idEncuesta = "0";

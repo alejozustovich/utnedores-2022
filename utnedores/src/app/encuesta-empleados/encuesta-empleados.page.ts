@@ -28,6 +28,7 @@ export class EncuestaEmpleadosPage implements OnInit {
   idEncuesta = "0";
   encuestas: EncuestaEmpleado[];
   encuestaEnviada = false;
+  usuarioActual: Usuario;
 
   options: CameraOptions = {
     quality: 50,
@@ -189,6 +190,7 @@ export class EncuestaEmpleadosPage implements OnInit {
         for (var i = 0; i < allUsers.length; i++) {
           if (((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {
             this.tipo = this.users[i].tipo;
+            this.usuarioActual = allUsers[i];
             i = allUsers.length;
           }
         }
@@ -241,12 +243,13 @@ export class EncuestaEmpleadosPage implements OnInit {
       var nombreImagen = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
     
       var unaEncuesta: EncuestaEmpleado = {
+        idUsuario: this.usuarioActual.idUsuario,
         idEncuesta: this.idEncuesta,
         ambiente: this.preguntaUno.value,
         orden: this.preguntaDos.value,
         limpieza: this.preguntaTres.value,
         estadoCocina: this.preguntaCuatro.value,
-        estadoHigiene: this.preguntaCinco.value,
+        estadoBanios: this.preguntaCinco.value,
         foto1: nombreImagen
       };
       this.authService.agregarEncuestaEmpleado(unaEncuesta);

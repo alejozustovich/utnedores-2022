@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="contenedor" style="margin-top: 50px;">
+  <div class="contenedor">
     <ion-grid>
       <div class="titulo_form">
         <img src="../../assets/form.png" width="60" height="60" />
@@ -37,7 +37,7 @@
             <ion-label class="ps-2">Relacion precio-calidad:</ion-label>
             <ion-row>
               <ion-col *ngFor="let valor of valores">
-                <ion-item lines="none" style="width: 60px;">
+                <ion-item lines="none">
                   <ion-label>{{valor}}</ion-label>
                   <ion-checkbox
                     (click)="cambios($event, valor)"

@@ -35,6 +35,7 @@
     "@ionic/angular": "^6.1.9",
     "angularx-qrcode": "^14.0.0",
     "chart.js": "^3.9.1",
+    "chartjs-plugin-datalabels": "^2.1.0",
     "cordova-plugin-camera": "^6.0.0",
     "cordova-plugin-flashlight": "^3.2.0",
     "cordova-plugin-ionic-webview": "^5.0.0",

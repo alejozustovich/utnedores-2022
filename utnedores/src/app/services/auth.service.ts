@@ -128,12 +128,13 @@ export interface EncuestaCliente {
 }
 
 export interface EncuestaEmpleado {
+	idUsuario: string;
 	idEncuesta: string;
 	ambiente: string;
 	orden: string;
 	limpieza: string;
 	estadoCocina: string;
-	estadoHigiene: string;
+	estadoBanios: string;
 	foto1: string;
 }
 

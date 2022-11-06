@@ -116,6 +116,14 @@ const routes: Routes = [
   {
     path: 'historial-usuario',
     loadChildren: () => import('./historial-usuario/historial-usuario.module').then( m => m.HistorialUsuarioPageModule)
+  },
+  {
+    path: 'resultados-encuestas-cliente',
+    loadChildren: () => import('./resultados-encuestas-cliente/resultados-encuestas-cliente.module').then( m => m.ResultadosEncuestasClientePageModule)
+  },
+  {
+    path: 'resultados-encuestas-empleado',
+    loadChildren: () => import('./resultados-encuestas-empleado/resultados-encuestas-empleado.module').then( m => m.ResultadosEncuestasEmpleadoPageModule)
   }
 
 ];
