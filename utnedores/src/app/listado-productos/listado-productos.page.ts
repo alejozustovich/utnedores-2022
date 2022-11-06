@@ -48,8 +48,6 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   numMesa = "";
   pedidoEnviado = false;
   idUsuarioMesa = "0";
-  aptcRegistrar = "0";
-  aptbRegistrar = "0";
   back = 0;
   categoriaUnProducto = "";
   unSoloProducto: Producto;
@@ -274,8 +272,6 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   CantidadPorCategoria(){
-    this.aptcRegistrar = "0"
-    this.aptbRegistrar = "0"
     for(var i = 0 ; i < this.categorias.length ; i++){
       this.cantidadPorCategoria[i] = 0;
     }
@@ -284,12 +280,6 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
         for(var i = 0 ; i < this.categorias.length ; i++){
           if(this.categorias[i].includes(element.categoria)){
             this.cantidadPorCategoria[i] = this.cantidadPorCategoria[i] + element.cantidad;
-            if(i < 4){
-              this.aptcRegistrar = "1";
-            }
-            if(i > 3){
-              this.aptbRegistrar = "1";
-            }
           }
         }
       }
@@ -322,10 +312,23 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
       
       var productosPedido = "[";
   
+      var lCocinero = "-1";
+      var lBartender = "-1";
+
       for(var i = 0 ; i < this.productos.length; i++){
         var index = Number(this.productos[i].idProducto);
         if(this.productosAgregados[index].cantidad > 0){
   
+          for(var k = 0 ; k < this.categorias.length ; k++){
+            if((this.categorias[k]).includes(this.productos[i].categoria)){
+              if(k < 4){
+                lCocinero = "0";
+              }else{
+                lBartender = "0";
+              }
+            }
+          }
+
           if(flag){
             flag = false;
             productosPedido = productosPedido + '{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
@@ -352,11 +355,9 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
         fecha: fechaActual,
         hora: horaActual,
         estado: estadoPedido,
-        listoCocinero: "0",
-        listoBartender: "0",
-        idUsuario: this.idUsuarioMesa,
-        aptc: this.aptcRegistrar,
-        aptb: this.aptbRegistrar
+        listoCocinero: lCocinero,
+        listoBartender: lBartender,
+        idUsuario: this.idUsuarioMesa
       };
   
       this.authService.agregarPedido(unPedido);

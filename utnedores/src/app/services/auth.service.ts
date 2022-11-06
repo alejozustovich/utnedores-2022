@@ -71,8 +71,6 @@ export interface Producto {
 }
 
 export interface Pedido {
-	aptc: string;
-	aptb: string;
 	idPedido: string;
 	idField: string;
 	numMesa: string;

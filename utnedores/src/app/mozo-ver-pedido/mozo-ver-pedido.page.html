@@ -23,6 +23,18 @@
                     <h3>Pedido {{(t + 1)}}</h3>
                     <h4>Mesa: {{pd.numMesa}}</h4>
                     <p>Solicitado a las: {{pd.hora}} hs</p>
+                    <div *ngIf="pd.estado == 'Confirmado'">
+                      <div >
+                        <p *ngIf="pd.listoCocinero == '-1'">Cocinero: No requerido</p>
+                        <p *ngIf="pd.listoCocinero == '0'">Cocinero: En Preparación</p>
+                        <p *ngIf="pd.listoCocinero == '1'">Cocinero: Listo</p>
+                      </div>
+                      <div>
+                        <p *ngIf="pd.listoBartender == '-1'">Bartender: No requerido</p>
+                        <p *ngIf="pd.listoBartender == '0'">Bartender: En Preparación</p>
+                        <p *ngIf="pd.listoBartender == '1'">Bartender: Listo</p>
+                      </div>
+                    </div>
                   </ion-label>
                   <ion-avatar slot="end">
                     <ion-button id="btnVerPedidos" (click)="VerPedido(t, pd.numMesa, pd.idField)">Ver Pedido</ion-button>

@@ -61,7 +61,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ChatClientes() {
     this.isModalOpen = true;
-    //this.router.navigateByUrl('/chat', { replaceUrl: true });
+    this.router.navigateByUrl('/chat', { replaceUrl: true });
   }
 
   ngOnInit() {

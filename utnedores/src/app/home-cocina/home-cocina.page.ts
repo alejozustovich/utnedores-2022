@@ -4,6 +4,7 @@ import { AuthService, Pedido, Producto } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home-cocina',
@@ -35,7 +36,6 @@ export class HomeCocinaPage implements OnInit {
     "Confirmado", 
     "Preparado",
     "Recibido"];
-  cantTipoPedido = [];
   cantProductosAgregados = [];
   cantidadPorCategoria = [];
   categorias: string[] = [
@@ -48,13 +48,11 @@ export class HomeCocinaPage implements OnInit {
     "Postres y Café-Te"];
 
   constructor(
+    private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
     private utilidades: UtilidadesService
   ) { 
-    for(var i = 0 ; i < 3; i++){
-      this.cantTipoPedido.push(0);
-    }
     this.Sonido();
     this.DesactivarSpinner();
     this.ObtenerTipo();
@@ -65,6 +63,17 @@ export class HomeCocinaPage implements OnInit {
   }
 
   ngOnInit() { }
+
+  async Alerta(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      position: 'top',
+      duration: 2500,
+      color: color,
+      cssClass: 'custom-toast'
+    });
+    await toast.present();
+  }
 
   Sonido(){
     try {
@@ -93,57 +102,37 @@ export class HomeCocinaPage implements OnInit {
           }
         }
       }
-      for(var u = 0 ; u < this.tipoPedido.length ; u++){
-        this.cantTipoPedido[u] = 0;
-      }
       for(var i = 0 ; i < this.pedidos.length; i++){
         this.pedidos[i].hora = ((this.pedidos[i].hora).substring(0,((this.pedidos[i].hora).length - 3)));
 
 
         if(this.tipo.includes("Cocinero")){
-          if(this.pedidos[i].aptc.includes("1")){
-            pedidosSeleccionados.push(this.pedidos[i]);
+          if(this.pedidos[i].listoCocinero === "0"){
             this.hayPedido = true;
-            if(this.pedidos[i].estado.includes("Confirmado")){
-                if(this.pedidos[i].listoCocinero.includes("0")){
-                  this.cantTipoPedido[0] = 1;
-                }else{
-                  this.cantTipoPedido[1] = 1;
-                }
-            }
-            if(this.pedidos[i].estado.includes("Preparado")){
-              this.cantTipoPedido[1] = 1;
-            }
-            if(this.pedidos[i].estado.includes("Recibido")){
-              this.cantTipoPedido[2] = 1;
-            }
+            this.pedidos[i].estado = "Pendientes";
+            pedidosSeleccionados.push(this.pedidos[i]);
           }
+          if(this.pedidos[i].listoCocinero === "1"){
+            this.hayPedido = true;
+            this.pedidos[i].estado = "Confirmados";
+            pedidosSeleccionados.push(this.pedidos[i]);
+          }            
         }
-
 
 
         if(this.tipo.includes("Bartender")){
-
-          if(this.pedidos[i].aptb.includes("1")){
-            pedidosSeleccionados.push(this.pedidos[i]);
+          if(this.pedidos[i].listoBartender === "0"){
             this.hayPedido = true;
-            if(this.pedidos[i].estado.includes("Confirmado")){
-              if(this.pedidos[i].listoBartender.includes("0")){
-                this.cantTipoPedido[0] = 1;
-              }else{
-                this.cantTipoPedido[1] = 1;
-              }
-            }
-            if(this.pedidos[i].estado.includes("Preparado")){
-              this.cantTipoPedido[1] = 1;
-            }
-            if(this.pedidos[i].estado.includes("Recibido")){
-              this.cantTipoPedido[2] = 1;
-            }
+            this.pedidos[i].estado = "Pendientes";
+            pedidosSeleccionados.push(this.pedidos[i]);
           }
+          if(this.pedidos[i].listoBartender === "1"){
+            this.hayPedido = true;
+            this.pedidos[i].estado = "Confirmados";
+            pedidosSeleccionados.push(this.pedidos[i]);
+          }            
         }
       }
-
 
       this.pedidosVisibles = pedidosSeleccionados;
     });
@@ -193,7 +182,18 @@ export class HomeCocinaPage implements OnInit {
 
   IrAltaMesa(){
     this.spinner = true;
-    this.router.navigateByUrl('/alta-producto', { replaceUrl: true });
+    if(this.tipo.includes("Cocinero") || this.tipo.includes("Bartender")){
+      this.router.navigateByUrl('/alta-producto', { replaceUrl: true });
+    }else
+    {
+      this.spinner = false;
+      this.ObtenerTipo();
+      this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
+    }
   }
 
   ConfirmarPedido(){
@@ -206,7 +206,7 @@ export class HomeCocinaPage implements OnInit {
     this.idFieldPedidoActual = idField;
     this.numeroMesa = numMesa;
 
-    if(this.pedidosVisibles[index].estado.includes("Confirmado")){
+    if(this.pedidosVisibles[index].estado.includes("Pendientes")){
       if(this.tipo.includes("Cocinero")){
         if(this.pedidosVisibles[index].listoCocinero.includes("0")){
           this.confirmarButton = true;
@@ -316,6 +316,7 @@ export class HomeCocinaPage implements OnInit {
     setTimeout(()=>{
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.tipo = user.tipo;
+        localStorage.setItem('tipoAlta', user.tipo);
       });
     },2500);
   }
