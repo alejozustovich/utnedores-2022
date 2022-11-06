@@ -112,6 +112,10 @@ const routes: Routes = [
   {
     path: 'gestion-usuarios',
     loadChildren: () => import('./gestion-usuarios/gestion-usuarios.module').then( m => m.GestionUsuariosPageModule)
+  },
+  {
+    path: 'historial-usuario',
+    loadChildren: () => import('./historial-usuario/historial-usuario.module').then( m => m.HistorialUsuarioPageModule)
   }
 
 ];

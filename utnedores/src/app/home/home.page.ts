@@ -80,11 +80,7 @@ export class HomePage implements OnInit {
 
   IrFormulario(){
     this.ActivarSpinner();
-
-    //SELECCIONAR UN CLIENTE
-    //localStorage.setItem('idUsuarioEncuesta', idUsuario);
-
-    this.router.navigateByUrl('/encuesta-clientes', { replaceUrl: true });
+    this.router.navigateByUrl('/gestion-usuarios', { replaceUrl: true });
   }
 
   IrVerReservas(){
