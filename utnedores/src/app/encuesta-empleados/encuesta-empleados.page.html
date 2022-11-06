@@ -104,6 +104,11 @@
                   style="max-width: 100px; max-height: 100px"
                 ></ion-img>
               </ion-thumbnail>
+              <ion-button
+              (click)="ImagenCelular()"
+              style="--background: rgb(71, 18, 18)"
+              ><ion-icon name="folder-outline"></ion-icon
+            ></ion-button>
               <ion-button (click)="Foto()" style="--background: rgb(71, 18, 18)"
                 ><ion-icon name="camera-outline"></ion-icon
               ></ion-button>
@@ -120,6 +125,13 @@
           <ion-button (click)="SaltarEncuesta()">Saltar encuesta</ion-button>
       </form>
     </ion-grid>
+    <input
+      id="inputFiles"
+      class="custom-file-input"
+      type="file"
+      (change)="Cargar($event)"
+      hidden
+    />
   </div>
 </ion-content>
 

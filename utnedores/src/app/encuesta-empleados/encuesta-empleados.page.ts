@@ -24,6 +24,7 @@ export class EncuestaEmpleadosPage implements OnInit {
   base64Image = "";
   fotoFile = false;
   fotoCelular = false;
+  file: File;
   idEncuesta = "0";
   encuestas: EncuestaEmpleado[];
   encuestaEnviada = false;
@@ -160,7 +161,25 @@ export class EncuestaEmpleadosPage implements OnInit {
     this.preguntaDos.setValue(numero);
   }
 
-  ImagenCelular() { }
+  Cargar(event: any): void {
+    this.file = event.target.files[0];
+    this.AsignarImagen();
+    this.fotoCargada = true;
+    this.fotoFile = true;
+    this.fotoCelular = false;
+  }
+
+  AsignarImagen() {
+    var readerVar = new FileReader();
+    readerVar.readAsDataURL(this.file);
+    readerVar.onload = (_event) => {
+      this.srcUserPhoto = (readerVar.result).toString();
+    }
+  }
+
+  ImagenCelular() {
+    (<HTMLInputElement>document.getElementById('inputFiles')).click();
+  }
 
   GuardarPerfil() {
     var usuarioLogueado = this.authService.usuarioActual();
@@ -233,8 +252,16 @@ export class EncuestaEmpleadosPage implements OnInit {
       this.authService.agregarEncuestaEmpleado(unaEncuesta);
 
       setTimeout(() => {
-        var rutaImagen = "encuestaempleado/" + nombreImagen;
-        this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+
+        if (this.fotoCelular) {
+          var rutaImagen = "encuestaempleado/" + nombreImagen;
+          this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+        }
+  
+        if (this.fotoFile) {
+          var imagenStorage = "encuestaempleado/" + nombreImagen;
+          this.authService.subirImagenFile(imagenStorage, this.file);
+        }
 
         this.spinner = false;
         this.encuestaEnviada = true;
