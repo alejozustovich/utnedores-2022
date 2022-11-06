@@ -55,8 +55,8 @@ export class EncuestaSupervisorPage implements OnInit {
         if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
           this.idEncuesta = encuesta.idEncuesta;
         }
-        this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
       });
+      this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
     });
   }
 
@@ -145,7 +145,7 @@ export class EncuestaSupervisorPage implements OnInit {
       this.DesactivarSpinner();
 
       var unaEncuesta : EncuestaSupervisor = {
-        idEncuesta: "",
+        idEncuesta: this.idEncuesta,
         amable: this.preguntaUno.value,
         respeto: this.preguntaDos.value,
         paciencia: this.preguntaTres.value,

@@ -12,6 +12,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class EncuestaClientesPage implements OnInit {
   
+  flagAux = true;
   volumenOn = true;
   formEncuesta: FormGroup;
   spinner: boolean = false;
@@ -36,11 +37,11 @@ export class EncuestaClientesPage implements OnInit {
     private fb: FormBuilder,
     private utilidades: UtilidadesService
   ) {
-    //COMIENZO SPINNER
+    this.spinner = true;
     this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
-    }, 1500);
+    }, 2500);
     this.AsignarNombreFotos();
     this.TraerEncuestasClientes();
   }
@@ -78,8 +79,8 @@ export class EncuestaClientesPage implements OnInit {
         if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
           this.idEncuesta = encuesta.idEncuesta;
         }
-        this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
       });
+      this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
     });
   }
 
@@ -152,16 +153,18 @@ export class EncuestaClientesPage implements OnInit {
         this.AsignarImagen(2);
       }
       this.fotosLleno = true;
+      this.flagAux = false;
 
       setTimeout(() => {
+        this.flagAux = true;
         this.fotoCargada = true;
         for (var i = 0; i < 3; i++) {
-          if (this.srcProductPhoto[i].includes(this.prodPhoto)) {
+          if (this.srcProductPhoto[i] === this.prodPhoto) {
             this.fotosLleno = false;
             this.fotoCargada = false;
           }
         }
-      }, 50);
+      }, 1500);
     }
     else {
       if (cant == 1) {
@@ -228,7 +231,7 @@ export class EncuestaClientesPage implements OnInit {
             i = allUsers.length;
           }
         }
-        //FIN SPINNER
+        this.spinner = false;
       });
     }, 1500);
   }
@@ -243,7 +246,12 @@ export class EncuestaClientesPage implements OnInit {
         if (this.tipo.includes("Bartender") || this.tipo.includes("Cocinero")) {
           this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
         } else {
-          //Error
+          this.GuardarPerfil();
+          this.Alerta('Surgió un error. Reintentar', 'danger');
+          if(this.volumenOn){
+            this.utilidades.SonidoError();
+          }
+          this.utilidades.VibrarError();
         }
       }
     }
