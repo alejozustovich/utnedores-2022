@@ -46,7 +46,7 @@ export class HomeClienteMesaPage implements OnInit {
       this.mesas = allTables;
       var redirigir = true;
       this.mesas.forEach(mesa => {
-        if(mesa.idUsuario === this.usuarioActual.idUsuario){
+        if(mesa.idUsuario === this.usuarioActual.idUsuario && !this.usuarioActual.idUsuario.includes("0")){
           redirigir = false;
         }
       });

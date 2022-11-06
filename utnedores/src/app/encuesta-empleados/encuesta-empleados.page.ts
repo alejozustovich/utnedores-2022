@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, Usuario } from '../services/auth.service';
+import { AuthService, Usuario, EncuestaEmpleado } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 
 @Component({
   selector: 'app-encuesta-empleados',
@@ -14,25 +15,45 @@ export class EncuestaEmpleadosPage implements OnInit {
   
   volumenOn = true;
   formEncuesta: FormGroup;
-  spinner: boolean = true;
+  spinner: boolean = false;
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
   tipo = "";
   srcUserPhoto = "../../assets/galeria.png";
   fotoCargada = false;
+  base64Image = "";
+  fotoFile = false;
+  fotoCelular = false;
+  idEncuesta = "0";
+  encuestas: EncuestaEmpleado[];
+  encuestaEnviada = false;
+
+  options: CameraOptions = {
+    quality: 50,
+    allowEdit: false,
+    correctOrientation: true,
+    encodingType: this.camera.EncodingType.JPEG,
+    mediaType: this.camera.MediaType.PICTURE,
+    saveToPhotoAlbum: true,
+    sourceType: this.camera.PictureSourceType.CAMERA,
+    destinationType: this.camera.DestinationType.DATA_URL
+  }
 
   constructor(
     private toastController : ToastController,
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private camera: Camera,
   ) {
+    this.spinner = true;
+    this.DesactivarSpinner();
     this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 2000);
-    this.DesactivarSpinner();
+    this.TraerEncuestasEmpleados();
   }
 
   Sonido(){
@@ -46,6 +67,30 @@ export class EncuestaEmpleadosPage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  TraerEncuestasEmpleados() {
+    this.authService.traerEncuestaEmpleado().subscribe(listaencuestas => {
+      this.encuestas = listaencuestas;
+      this.idEncuesta = "0";
+      this.encuestas.forEach(encuesta => {
+        if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
+          this.idEncuesta = encuesta.idEncuesta;
+        }
+        this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
+      });
+    });
+  }
+
+  Foto() {
+    this.camera.getPicture(this.options).then((imageData) => {
+      this.base64Image = 'data:image/jpeg;base64,' + imageData;
+      this.srcUserPhoto = this.base64Image;
+      this.fotoFile = false;
+      this.fotoCargada = true;
+      this.fotoCelular = true;
+    }, (err) => {
+    });
   }
 
   DesactivarSpinner(){
@@ -117,8 +162,6 @@ export class EncuestaEmpleadosPage implements OnInit {
 
   ImagenCelular() { }
 
-  Foto() { }
-
   GuardarPerfil() {
     var usuarioLogueado = this.authService.usuarioActual();
     setTimeout(() => {
@@ -154,11 +197,54 @@ export class EncuestaEmpleadosPage implements OnInit {
     }
   }
 
+  Caracteres(dato: string) {
+    var retorno = dato.toString();
+    if (dato.length == 1) {
+      retorno = "0" + retorno;
+    }
+    return retorno;
+  }
+
   enviarEncuesta() {
-    console.log(this.preguntaUno.value);
-    console.log(this.preguntaDos.value);
-    console.log(this.preguntaTres.value);
-    console.log(this.preguntaCuatro.value);
-    console.log(this.preguntaCinco.value);
+
+    if(this.idEncuesta === "0"){
+      this.TraerEncuestasEmpleados();
+      this.Alerta("Error, reintentar", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
+    }else{
+
+      this.spinner = true;
+      this.DesactivarSpinner();
+      var date = new Date();
+      var nombreImagen = date.getFullYear().toString() + this.Caracteres(date.getMonth().toString()) + this.Caracteres(date.getDate().toString()) + this.Caracteres(date.getHours().toString()) + this.Caracteres(date.getMinutes().toString()) + this.Caracteres(date.getSeconds().toString());
+    
+      var unaEncuesta: EncuestaEmpleado = {
+        idEncuesta: this.idEncuesta,
+        ambiente: this.preguntaUno.value,
+        orden: this.preguntaDos.value,
+        limpieza: this.preguntaTres.value,
+        estadoCocina: this.preguntaCuatro.value,
+        estadoHigiene: this.preguntaCinco.value,
+        foto1: nombreImagen
+      };
+
+      setTimeout(() => {
+        var rutaImagen = "encuestaempleado/" + nombreImagen;
+        this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+
+        this.spinner = false;
+        this.encuestaEnviada = true;
+        if(this.volumenOn){
+          this.utilidades.SonidoAlta();
+        }
+        setTimeout(() => {
+          this.SaltarEncuesta();
+        }, 3000);
+
+      }, 2000);
+    }
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { AuthService, Usuario } from '../services/auth.service';
+import { AuthService, Usuario, EncuestaSupervisor } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 
 @Component({
@@ -17,7 +17,10 @@ export class EncuestaSupervisorPage implements OnInit {
   spinner: boolean = false;
   users: Usuario[];
   valores = [1, 2, 3, 4, 5];
-  tipo = "";
+  idUsuarioEncuesta = "0";
+  idEncuesta = "0";
+  encuestas: EncuestaSupervisor[];
+  encuestaEnviada = false;
 
   constructor(
     private toastController : ToastController,
@@ -27,10 +30,8 @@ export class EncuestaSupervisorPage implements OnInit {
     private utilidades: UtilidadesService
   ) {
     this.Sonido();
-    setTimeout(() => {
-      this.GuardarPerfil();
-    }, 2000);
-    this.DesactivarSpinner();
+    this.idUsuarioEncuesta = localStorage.getItem('idUsuarioEncuesta');
+    this.TraerEncuestasSupervisor();
   }
 
   Sonido(){
@@ -44,6 +45,19 @@ export class EncuestaSupervisorPage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  TraerEncuestasSupervisor() {
+    this.authService.traerEncuestaSupervisor().subscribe(listaencuestas => {
+      this.encuestas = listaencuestas;
+      this.idEncuesta = "0";
+      this.encuestas.forEach(encuesta => {
+        if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
+          this.idEncuesta = encuesta.idEncuesta;
+        }
+        this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
+      });
+    });
   }
 
   DesactivarSpinner(){
@@ -113,32 +127,43 @@ export class EncuestaSupervisorPage implements OnInit {
     this.preguntaDos.setValue(numero);
   }
 
-  GuardarPerfil() {
-    var usuarioLogueado = this.authService.usuarioActual();
-    setTimeout(() => {
-      this.authService.getUsers().subscribe(allUsers => {
-        this.users = allUsers;
-        for (var i = 0; i < allUsers.length; i++) {
-          if (((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {
-            this.tipo = this.users[i].tipo;
-            i = allUsers.length;
-          }
-        }
-        this.spinner = false;
-      });
-    }, 1500);
-  }
-
-  SaltarEncuesta() {
+  Volver() {
+    this.spinner = true;
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
   enviarEncuesta() {
-    console.log(this.preguntaUno.value);
-    console.log(this.preguntaDos.value);
-    console.log(this.preguntaTres.value);
-    console.log(this.preguntaCuatro.value);
-    console.log(this.preguntaCinco.value);
-  }
+    if(this.idEncuesta === "0"){
+      this.TraerEncuestasSupervisor();
+      this.Alerta("Error, reintentar", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
+    }else{
+      this.spinner = true;
+      this.DesactivarSpinner();
 
+      var unaEncuesta : EncuestaSupervisor = {
+        idEncuesta: "",
+        amable: this.preguntaUno.value,
+        respeto: this.preguntaDos.value,
+        paciencia: this.preguntaTres.value,
+        simpatia: this.preguntaCuatro.value,
+        higiene: this.preguntaCinco.value,
+        idUsuario: this.idUsuarioEncuesta
+      };
+
+      this.authService.agregarEncuestaSupervisor(unaEncuesta);
+
+      this.spinner = false;
+      this.encuestaEnviada = true;
+        if(this.volumenOn){
+          this.utilidades.SonidoAlta();
+        }
+        setTimeout(() => {
+          this.Volver();
+        }, 3000);
+      }
+    }
 }

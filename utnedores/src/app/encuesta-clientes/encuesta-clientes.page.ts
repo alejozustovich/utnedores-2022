@@ -37,12 +37,12 @@ export class EncuestaClientesPage implements OnInit {
     private utilidades: UtilidadesService
   ) {
     //COMIENZO SPINNER
-    this.idUsuarioEncuesta = localStorage.getItem('idUsuarioEncuesta');
     this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 1500);
     this.AsignarNombreFotos();
+    this.TraerEncuestasClientes();
   }
 
   Sonido(){
@@ -73,6 +73,7 @@ export class EncuestaClientesPage implements OnInit {
   TraerEncuestasClientes() {
     this.authService.traerEncuestaCliente().subscribe(listaencuestas => {
       this.encuestas = listaencuestas;
+      this.idEncuesta = "0";
       this.encuestas.forEach(encuesta => {
         if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
           this.idEncuesta = encuesta.idEncuesta;
@@ -223,6 +224,7 @@ export class EncuestaClientesPage implements OnInit {
         for (var i = 0; i < allUsers.length; i++) {
           if (((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {
             this.tipo = this.users[i].tipo;
+            this.idUsuarioEncuesta = this.users[i].idUsuario;
             i = allUsers.length;
           }
         }
@@ -248,24 +250,34 @@ export class EncuestaClientesPage implements OnInit {
   }
 
   enviarEncuesta() {
-    this.spinner = true;
-    var date = new Date();
-    var fechaHoy = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" +  date.getFullYear().toString();
-    var encuestaCliente : EncuestaCliente = {
-      fecha: fechaHoy,
-      idUsuario: this.idUsuarioEncuesta,
-      idEncuesta: this.idEncuesta,
-      atencion: this.preguntaUno.value,
-      precioCalidad: this.preguntaDos.value,
-      ambiente: this.preguntaTres.value,
-      limpieza: this.preguntaCuatro.value,
-      rapidez: this.preguntaCinco.value,
-      foto1: this.nombreFotos[0],
-      foto2: this.nombreFotos[1],
-      foto3: this.nombreFotos[2]
+
+    if(this.idEncuesta === "0"){
+      this.TraerEncuestasClientes();
+      this.Alerta("Error, reintentar", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
+        }
+        this.utilidades.VibrarError();
+    }else{
+      this.spinner = true;
+      var date = new Date();
+      var fechaHoy = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" +  date.getFullYear().toString();
+      var encuestaCliente : EncuestaCliente = {
+        fecha: fechaHoy,
+        idUsuario: this.idUsuarioEncuesta,
+        idEncuesta: this.idEncuesta,
+        atencion: this.preguntaUno.value,
+        precioCalidad: this.preguntaDos.value,
+        ambiente: this.preguntaTres.value,
+        limpieza: this.preguntaCuatro.value,
+        rapidez: this.preguntaCinco.value,
+        foto1: this.nombreFotos[0],
+        foto2: this.nombreFotos[1],
+        foto3: this.nombreFotos[2]
+      };
+      this.authService.agregarEncuestaCliente(encuestaCliente);
+      this.SubirImagenes();
     }
-    this.authService.agregarEncuestaCliente(encuestaCliente);
-    this.SubirImagenes();
   }
 
   Caracteres(dato: string) {
