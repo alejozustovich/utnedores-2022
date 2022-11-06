@@ -77,8 +77,8 @@ export class EncuestaEmpleadosPage implements OnInit {
         if((Number(encuesta.idEncuesta)) > (Number(this.idEncuesta))){
           this.idEncuesta = encuesta.idEncuesta;
         }
-        this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
       });
+      this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
     });
   }
 
@@ -230,6 +230,7 @@ export class EncuestaEmpleadosPage implements OnInit {
         estadoHigiene: this.preguntaCinco.value,
         foto1: nombreImagen
       };
+      this.authService.agregarEncuestaEmpleado(unaEncuesta);
 
       setTimeout(() => {
         var rutaImagen = "encuestaempleado/" + nombreImagen;

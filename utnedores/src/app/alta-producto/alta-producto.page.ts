@@ -13,6 +13,7 @@ import { UtilidadesService } from '../services/utilidades.service';
 })
 export class AltaProductoPage implements OnInit {
   
+  flagAux = true;
   volumenOn = true;
   formProducto: FormGroup;
   bebida = false;
@@ -228,14 +229,16 @@ export class AltaProductoPage implements OnInit {
         this.AsignarImagen(2);
       }
       this.fotosLleno = true;
+      this.flagAux = false;
 
       setTimeout(() => {
+        this.flagAux = true;
         for (var i = 0; i < 3; i++) {
           if (this.srcProductPhoto[i].includes(this.prodPhoto)) {
             this.fotosLleno = false;
           }
         }
-      }, 50);
+      }, 1500);
     }
     else {
       if (cant == 1) {

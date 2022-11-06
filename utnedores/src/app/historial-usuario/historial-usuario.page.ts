@@ -20,7 +20,6 @@ export class HistorialUsuarioPage implements OnInit {
     private toastController : ToastController,
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder,
     private utilidades: UtilidadesService
   ) {
     this.idUsuarioEncuesta = localStorage.getItem('idUsuarioEncuesta');
