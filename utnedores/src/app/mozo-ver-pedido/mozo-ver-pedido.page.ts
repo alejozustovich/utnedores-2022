@@ -369,8 +369,8 @@ export class MozoVerPedidoPage implements OnInit {
 
     productosPedido = productosPedido + "]";
 
-    var lCocinero = "1";
-    var lBartender = "1";
+    var lCocinero = "-1";
+    var lBartender = "-1";
 
     for(var i = 0 ; i < this.cantidadPorCategoria.length ; i++){
       if(i < 4){

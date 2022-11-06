@@ -23,13 +23,17 @@
             (ionChange)="SelectChange()"
             interface="popover"
           >
+          <div *ngIf="tipo == 'Cocinero'">
             <ion-select-option value="0">Entradas</ion-select-option>
             <ion-select-option value="1">Promociones</ion-select-option>
             <ion-select-option value="2">Platos fríos</ion-select-option>
             <ion-select-option value="3">Platos calientes</ion-select-option>
+          </div>
+          <div *ngIf="tipo == 'Bartender'">
             <ion-select-option value="4">Bebidas sin alcohol</ion-select-option>
             <ion-select-option value="5">Bebidas con alcohol</ion-select-option>
             <ion-select-option value="6">Postres y Café-Te</ion-select-option>
+          </div>
           </ion-select>
 
           <ion-input

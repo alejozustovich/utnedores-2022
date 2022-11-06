@@ -13,6 +13,7 @@ import { UtilidadesService } from '../services/utilidades.service';
 })
 export class AltaProductoPage implements OnInit {
   
+  tipo = "";
   flagAux = true;
   volumenOn = true;
   formProducto: FormGroup;
@@ -47,6 +48,7 @@ export class AltaProductoPage implements OnInit {
     private fb: FormBuilder,
     private utilidades: UtilidadesService
   ) {
+    this.tipo = localStorage.getItem('tipoAlta');
     this.Sonido();
     this.TraerProductos();
     this.AsignarNombreFotos();
@@ -290,6 +292,13 @@ export class AltaProductoPage implements OnInit {
     }
     else {
       //AGREGAR FOTOS
+
+      var tiempo = "3";
+
+      if((Number(this.categoria.value)) < 4){
+        tiempo = (this.tiempoElaboracion.value).toString();
+      }
+
       var unProducto: Producto = {
         idField: "",
         idProducto: this.numProducto,
@@ -297,7 +306,7 @@ export class AltaProductoPage implements OnInit {
         producto: this.producto.value,
         tamanio: this.tamanio.value,
         descripcion: this.descripcion.value,
-        tiempoElaboracion: this.tiempoElaboracion.value,
+        tiempoElaboracion: tiempo,
         foto1: this.nombreFotos[0],
         foto2: this.nombreFotos[1],
         foto3: this.nombreFotos[2],
