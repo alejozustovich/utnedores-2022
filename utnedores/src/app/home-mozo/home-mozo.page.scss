@@ -93,11 +93,20 @@ ion-content {
   }
 }
 
+.borde-noti{
+  border: 2px solid green !important;
+}
 
-.item-chats{
-    div{
-      height: 130px !important;
-    }
+.noti {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+  background-color: green;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
 }
 
 .img-mesa {
@@ -105,7 +114,6 @@ ion-content {
   --border-radius: 4px;
   transform: scale(1.2);
 }
-
 
 #msjEstado {
   margin-top: 20px;

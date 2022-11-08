@@ -84,7 +84,9 @@
       <div *ngIf="chats?.length > 0" class="contenido">
         <h1>Chats dispobibles</h1>
         <div *ngFor="let c of chats" class="mb-3">
-          <ion-item class="item-chats" (click)="entrarChat(c.numMesa)">
+          <ion-item class="item-chats" (click)="entrarChat(c.numMesa)" [class.borde-noti]="!c.leido">
+            <div class="noti" *ngIf="!c.leido">!
+            </div>
             <ion-avatar slot="start">
               <ion-img [src]="cargarFoto(c.numMesa)" class="img-mesa"></ion-img>
             </ion-avatar>

@@ -59,12 +59,12 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ObtenerTipo(){
-    setTimeout(()=>{
+  ObtenerTipo() {
+    setTimeout(() => {
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.idFieldToken = user.token;
       });
-    },2500);
+    }, 2500);
   }
 
   CierreMesa() {
@@ -73,12 +73,26 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ChatClientes() {
     this.isModalOpen = true;
-    this.router.navigateByUrl('/chat', { replaceUrl: true });
   }
 
   ngOnInit() {
     this.chatService.cargarChats('chats', false).subscribe((chats: Chat[]) => {
-      this.chats = chats;
+      const chatAbiertos = [];
+      chats.forEach((c: Chat) => {
+        if (c.mensajes.length != 0) {
+          chatAbiertos.push(c);
+        }
+      })
+      chatAbiertos.sort(function (a, b) {
+        if (a.mensajes[a.mensajes.length - 1].fecha < b.mensajes[b.mensajes.length - 1].fecha) {
+          return 1;
+        }
+        if (a.mensajes[a.mensajes.length - 1].fecha > b.mensajes[b.mensajes.length - 1].fecha) {
+          return -1;
+        }
+        return 0;
+      })
+      this.chats = chatAbiertos;
     })
   }
 
@@ -211,13 +225,13 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   CerrarSesion() {
     this.ActivarSpinner();
     this.authService.logout();
-    setTimeout(()=>{
+    setTimeout(() => {
       this.pnService.eliminarToken(this.idFieldToken);
-    },1000);
-    setTimeout(()=>{
+    }, 1000);
+    setTimeout(() => {
       this.SonidoEgreso();
       this.router.navigateByUrl('/login', { replaceUrl: true });
-    },2000);
+    }, 2000);
   }
 
   VerPedidos() {
