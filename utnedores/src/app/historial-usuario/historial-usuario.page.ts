@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { AuthService, EncuestaSupervisor } from '../services/auth.service';
+import { AuthService, EncuestaSupervisor , Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
+import { getStorage, ref } from "firebase/storage";
+import { getDownloadURL } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-historial-usuario',
@@ -13,8 +15,15 @@ import { UtilidadesService } from '../services/utilidades.service';
 export class HistorialUsuarioPage implements OnInit {
 
   idUsuarioEncuesta = "0";
+  iconoEncuesta = "../../assets/form.png";
   encuestas: EncuestaSupervisor[];
-  spinner: boolean = false;
+  users: Usuario[];
+  selectedUsers = [];
+  spinner: boolean = true;
+  cargando = true;
+  cargandoNombre = true;
+  nombreUsuario = "";
+  apellidoUsuario = "";
 
   constructor(
     private toastController : ToastController,
@@ -23,9 +32,33 @@ export class HistorialUsuarioPage implements OnInit {
     private utilidades: UtilidadesService
   ) {
     this.idUsuarioEncuesta = localStorage.getItem('idUsuarioEncuesta');
+    this.spinner = true;
+    this.cargando = true;
+
+    setTimeout(() => {
+      this.TraerEncuestasSupervisor();
+      this.TraerUsuarios();
+    }, 2000);
+
+    setTimeout(() => {
+      this.ObtenerDatosUsuario();
+      this.cargandoNombre = false;
+    }, 3000);
+
+    setTimeout(() => {
+      this.spinner = false;
+      this.cargando = false;
+    }, 5000);
   }
 
   ngOnInit() {
+  }
+
+  DesactivarSpinner() {
+    setTimeout(() => {
+      this.spinner = false;
+      this.cargando = false;
+    }, 4000);
   }
 
   TraerEncuestasSupervisor() {
@@ -34,9 +67,57 @@ export class HistorialUsuarioPage implements OnInit {
     });
   }
 
+
+  async TraerUsuarios() {
+    var usuariosSeleccionados = [];
+    this.authService.getUsers().subscribe(allUsers => {
+        this.users = allUsers;
+        this.users.forEach(user => {
+          if(!user.aprobado.includes("No")) {
+            if(!user.perfil.includes("Supervisor")){
+              if(!user.perfil.includes("Dueño")){
+                if(!user.tipo.includes("Anónimo")){
+                  usuariosSeleccionados.push(user);
+                }
+              }
+            }
+          }
+        });
+        this.selectedUsers = usuariosSeleccionados;
+        for(var i = 0 ; i < this.selectedUsers.length - 1; i++){
+          for(var k = i + 1 ; k < this.selectedUsers.length; k++){
+            if(((this.selectedUsers[i].nombre).localeCompare(this.selectedUsers[k].nombre)) == 1){
+              var userAux = this.selectedUsers[i];
+              this.selectedUsers[i] = this.selectedUsers[k];
+              this.selectedUsers[k] = userAux;
+            }
+          }
+        }
+        this.selectedUsers.forEach(u => {
+          var fotoBuscar = "usuarios/" + u.foto;
+          const storage = getStorage();
+          const storageRef = ref(storage, fotoBuscar);
+          getDownloadURL(storageRef).then((response) => {
+            u.foto = response;
+          });
+        });
+        this.cargando = false;
+        this.spinner = false;
+    });
+  }
+
+  ObtenerDatosUsuario() {
+    this.users.forEach(u => {
+      if(this.idUsuarioEncuesta == u.idUsuario) {
+        this.nombreUsuario = u.nombre;
+        this.apellidoUsuario = u.apellido;
+      }
+    });
+  }
+
   Volver() {
     this.spinner = true;
-    this.router.navigateByUrl('/home', { replaceUrl: true });
+    this.router.navigateByUrl('/gestion-usuarios', { replaceUrl: true });
   }
 
 
