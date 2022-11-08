@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-home',
@@ -13,11 +14,13 @@ export class HomePage implements OnInit {
   volumenOn = true;
   spinner = true;
   perfil = "Perfil";
+  idFieldToken = "";
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
     ) { 
       this.Sonido();
       this.DesactivarSpinner();
@@ -47,6 +50,7 @@ export class HomePage implements OnInit {
     setTimeout(()=>{
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.perfil = user.perfil;
+        this.idFieldToken = user.token;
         this.spinner = false;
       });
     },2500);
@@ -107,8 +111,13 @@ export class HomePage implements OnInit {
 
   CerrarSesion(){
     this.spinner = true;
-    this.SonidoEgreso();
     this.authService.logout();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+    setTimeout(()=>{
+      this.pnService.eliminarToken(this.idFieldToken);
+    },1000);
+    setTimeout(()=>{
+      this.SonidoEgreso();
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    },2000);
   }
 }

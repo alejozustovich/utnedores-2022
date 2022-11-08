@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-home-metre',
@@ -13,13 +14,18 @@ export class HomeMetrePage implements OnInit {
   volumenOn = true;
   spinner = false;
   users: Usuario[];
+  idFieldToken = "";
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
   ) { 
+    this.DesactivarSpinner();
+    this.spinner = true;
     this.Sonido();
+    this.ObtenerTipo();
   }
 
   Sonido(){
@@ -33,6 +39,21 @@ export class HomeMetrePage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  DesactivarSpinner() {
+    setTimeout(() => {
+      this.spinner = false;
+    }, 7000);
+  }
+  
+  ObtenerTipo(){
+    setTimeout(()=>{
+      this.authService.getUser(this.authService.usuarioActual()).then(user => {
+        this.idFieldToken = user.token;
+        this.spinner = false;
+      });
+    },2500);
   }
 
   ngOnInit() {}
@@ -76,9 +97,14 @@ export class HomeMetrePage implements OnInit {
 
   CerrarSesion(){
     this.ActivarSpinner();
-    this.SonidoEgreso();
     this.authService.logout();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+    setTimeout(()=>{
+      this.pnService.eliminarToken(this.idFieldToken);
+    },1000);
+    setTimeout(()=>{
+      this.SonidoEgreso();
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    },2000);
   }
 
 }

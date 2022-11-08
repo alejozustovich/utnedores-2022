@@ -28,16 +28,16 @@ export class PushNotificationService {
     private http: HttpClient
   ) { }
 
-  sendPush(tokens){
+  sendPush(tokens, oneTitle, oneBody){
     this.sendPushNotifications({
       registration_ids: tokens,
       notification: {
-        title: 'Un Titulo',
-        body: 'Un Body'
+        title: oneTitle,
+        body: oneBody
       },
       data: {
-        id: 1,
-        nombre: 'Daniel'
+        id: 0,
+        nombre: 'UTNEDORES'
       },
     })
     .subscribe((data) => {

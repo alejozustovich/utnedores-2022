@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, Pedido, Producto } from '../services/auth.service';
+import { AuthService, Pedido, Producto, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-home-cocina',
@@ -27,6 +28,8 @@ export class HomeCocinaPage implements OnInit {
   hayPedido = false;
   numeroMesa = "0";
   confirmarButton = false;
+  users: Usuario[];
+  idFieldToken = "";
 
   estadoPedido: string[] = [
     "Pendientes",
@@ -51,7 +54,8 @@ export class HomeCocinaPage implements OnInit {
     private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
   ) { 
     this.Sonido();
     this.DesactivarSpinner();
@@ -73,6 +77,12 @@ export class HomeCocinaPage implements OnInit {
       cssClass: 'custom-toast'
     });
     await toast.present();
+  }
+
+  TraerUsuarios(){
+    this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+    });
   }
 
   Sonido(){
@@ -266,11 +276,32 @@ export class HomeCocinaPage implements OnInit {
 
   AceptarConfirmarPedido(){
 
+    var flag = true;
+    var tokens = [""];
+
+    this.users.forEach(user => {
+      if(user.perfil.includes("Mozo")){
+        if(user.token != ""){
+          if(flag){
+            flag = false;
+            tokens[0] = user.token;
+          }else{
+            tokens.push(user.token);
+          }
+        }
+      }
+    });
+
     if(this.tipo.includes("Cocinero")){
       if(this.pedidos[this.indicePedidoActual].listoBartender.includes("0")){
         this.authService.listoCocinero(this.idFieldPedidoActual);
       }else{
         this.authService.pedidoPreparado(this.idFieldPedidoActual);
+        setTimeout(() => {
+          if(!flag){
+            this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido");
+          }
+        }, 1500);
       }
     }
     if(this.tipo.includes("Bartender")){
@@ -278,9 +309,13 @@ export class HomeCocinaPage implements OnInit {
         this.authService.listoBartender(this.idFieldPedidoActual);
       }else{
         this.authService.pedidoPreparado(this.idFieldPedidoActual);
+        setTimeout(() => {
+          if(!flag){
+            this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido");
+          }
+        }, 1500);
       }
     }
-
 
     if(this.volumenOn){
       this.utilidades.SonidoConfirmar();
@@ -316,6 +351,7 @@ export class HomeCocinaPage implements OnInit {
     setTimeout(()=>{
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.tipo = user.tipo;
+        this.idFieldToken = user.token;
         localStorage.setItem('tipoAlta', user.tipo);
       });
     },2500);
@@ -340,9 +376,14 @@ export class HomeCocinaPage implements OnInit {
 
   CerrarSesion(){
     this.spinner = true;
-    this.SonidoEgreso();
     this.authService.logout();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+    setTimeout(()=>{
+      this.pnService.eliminarToken(this.idFieldToken);
+    },1000);
+    setTimeout(()=>{
+      this.SonidoEgreso();
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    },2000);
   }
 
 }

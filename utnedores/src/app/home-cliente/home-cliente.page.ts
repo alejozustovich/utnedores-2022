@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-home-cliente',
@@ -58,7 +59,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     private toastController : ToastController,
     private router: Router,
     private authService: AuthService,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
   ) { 
     this.Sonido();
     this.DesactivarSpinner();
@@ -282,6 +284,22 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   AgregarListaEspera(){
+    var flag = true;
+    var tokens = [""];
+
+    this.users.forEach(user => {
+      if(user.perfil.includes("Metre")){
+        if(user.token != ""){
+          if(flag){
+            flag = false;
+            tokens[0] = user.token;
+          }else{
+            tokens.push(user.token);
+          }
+        }
+      }
+    });  
+
     var date = new Date();
     var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
     var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
@@ -306,6 +324,11 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.ingresarCantidad = false;
+    setTimeout(() => {
+      if(!flag){
+        this.pnService.sendPush(tokens, "Ingresó un Cliente", "En Lista de Espera");
+      }
+    }, 1500);
   }
 
   ModificarListaEspera(){
@@ -373,7 +396,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.spinner = false;
   }
 
-  
   AnalizarResultado(){
     var numeroMesa = "";
     if(this.result.includes(this.qrLocal)){

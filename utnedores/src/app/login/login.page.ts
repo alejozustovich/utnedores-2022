@@ -119,18 +119,24 @@ export class LoginPage implements OnInit {
 
   async iniciarSesion() {
     this.spinner = true;
+    var idFieldToken = "";
+    
     const data = { email: this.email.value, password: this.password.value }
     const user = await this.authService.login(data);
     if (user) {
       for (var i = 0; i < this.usersSelect.length; i++) {
         if (((this.usersSelect[i].correo).toLocaleLowerCase()) === ((this.email.value.toLocaleLowerCase()))) {
           this.perfil = this.usersSelect[i].perfil;
+          idFieldToken = this.usersSelect[i].idField;
           break;
         }
       }
       localStorage.setItem('sonido', "Si");
       if (this.perfil.includes("Dueño") || this.perfil.includes("Supervisor")) {
-        this.router.navigateByUrl('/home', { replaceUrl: true });
+        this.pnService.getUser(idFieldToken);
+        setTimeout(()=>{
+          this.router.navigateByUrl('/home', { replaceUrl: true });
+        },1500);
         this.SonidoIngreso();
       } else {
         if (this.perfil.includes("Cliente")) {
@@ -138,7 +144,10 @@ export class LoginPage implements OnInit {
           this.SonidoIngreso();
         } else {
           if (this.perfil.includes("Empleado")) {
-            this.router.navigateByUrl('/encuesta-empleados', { replaceUrl: true });
+            this.pnService.getUser(idFieldToken);
+            setTimeout(()=>{
+              this.router.navigateByUrl('/encuesta-empleados', { replaceUrl: true });
+            },1500);
             this.SonidoIngreso();
           }else{
             //ERROR

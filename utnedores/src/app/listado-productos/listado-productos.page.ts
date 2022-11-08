@@ -1,4 +1,3 @@
-
 import { AuthService, Producto, Pedido, Usuario, Mesa } from '../services/auth.service';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
@@ -7,6 +6,7 @@ import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-listado-productos',
@@ -51,12 +51,14 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   back = 0;
   categoriaUnProducto = "";
   unSoloProducto: Producto;
+  users: Usuario[];
 
   constructor(
     private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
   ) {
     for(var i = 0 ; i < 50; i++){
       this.productosAgregados.push({tiempo: 0, cantidad: 0, precio: 0, categoria: ""});
@@ -68,6 +70,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.TraerProductos();
     this.TraerPedidos();
     this.TraerMesas();
+    this.TraerUsuarios();
   }
 
   Sonido(){
@@ -81,6 +84,12 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     } catch (error) {
       
     }
+  }
+
+  TraerUsuarios(){
+    this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+    });
   }
 
   ngAfterViewInit() {
@@ -302,6 +311,10 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.spinner = true;
 
     if(this.idRegistroPedido != 0){
+
+      var tokens = [""];
+      var flagOnce = true;
+
       this.isModalOpen2 = false;
       this.DesactivarSpinner();
   
@@ -338,6 +351,42 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
         }
       }
   
+      this.users.forEach(user => {
+        
+        if(user.token != ""){
+          if(this.back == 0){
+            var entrar = false;
+            if(user.perfil.includes("Cocinero") && lCocinero == "0"){
+              entrar = true;
+            }
+            if(user.perfil.includes("Bartender") && lBartender == "0"){
+              entrar = true;
+            }
+            if(entrar){
+              if(flagOnce){
+                flagOnce = false;
+                tokens[0] = user.token;
+              }else{
+                tokens.push(user.token);
+              }
+            }
+          }
+          
+          if(this.back == 1){
+            if(user.perfil.includes("Mozo")){
+              if(user.token != ""){
+                if(flagOnce){
+                  flagOnce = false;
+                  tokens[0] = user.token;
+                }else{
+                  tokens.push(user.token);
+                }
+              }
+            }
+          }
+        }
+      });
+
       productosPedido = productosPedido + "]";
       
       var estadoPedido = "";
@@ -366,10 +415,16 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
       if(this.volumenOn){
         this.utilidades.SonidoConfirmar();
       }
+
+      setTimeout(() => {
+        if(!flagOnce){
+          this.pnService.sendPush(tokens, "Ingreso un Pedido", "Pedido Pendiente");
+        }
+      }, 1500);
+
       setTimeout(() => {
         this.Redirigir();
       }, 3000);
-      //PUSH NOTIFICATION MOZO*/
     }else{
       //CHECKEAR QUE SE VEA EL AVISO POR MODAL
       this.Alerta("Código no válido", 'danger');

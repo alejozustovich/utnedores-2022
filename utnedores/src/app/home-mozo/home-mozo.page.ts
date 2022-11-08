@@ -7,6 +7,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { ToastController } from '@ionic/angular';
 import { Chat, ChatService } from '../services/chat.service';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-home-mozo',
@@ -28,18 +29,21 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   cantCierreMesas = 0;
   cantPedidosListos = 0;
   cantChat = 0;
+  idFieldToken = "";
 
   constructor(
     private toastController: ToastController,
     private router: Router,
     private authService: AuthService,
     private utilidades: UtilidadesService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private pnService: PushNotificationService
   ) {
     this.DesactivarSpinner();
     this.Sonido();
     this.TraerPedidos();
     this.TraerMesas();
+    this.ObtenerTipo();
   }
 
   Sonido() {
@@ -53,6 +57,14 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     } catch (error) {
 
     }
+  }
+
+  ObtenerTipo(){
+    setTimeout(()=>{
+      this.authService.getUser(this.authService.usuarioActual()).then(user => {
+        this.idFieldToken = user.token;
+      });
+    },2500);
   }
 
   CierreMesa() {
@@ -152,8 +164,6 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     this.scanActive = false;
   }
 
-
-
   volver() {
     this.isModalOpen = false;
   }
@@ -200,9 +210,14 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
   CerrarSesion() {
     this.ActivarSpinner();
-    this.SonidoEgreso();
     this.authService.logout();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+    setTimeout(()=>{
+      this.pnService.eliminarToken(this.idFieldToken);
+    },1000);
+    setTimeout(()=>{
+      this.SonidoEgreso();
+      this.router.navigateByUrl('/login', { replaceUrl: true });
+    },2000);
   }
 
   VerPedidos() {

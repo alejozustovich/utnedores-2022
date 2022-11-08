@@ -6,6 +6,7 @@ import { AuthService, Mensaje, Usuario } from '../services/auth.service';
 import { Chat, ChatService } from '../services/chat.service';
 import { DataUsuarioService } from '../services/data-usuario.service';
 import { UtilidadesService } from '../services/utilidades.service';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-chat',
@@ -23,6 +24,9 @@ export class ChatPage implements OnInit {
   subCajaMsj: Subscription;
   usuarioActual: Usuario;
   idUsuarioPedido: string;
+  users: Usuario[];
+  flagToken = true;
+
   @ViewChildren('cajaMsj') cajaMsj: QueryList<ElementRef>;
 
   constructor(
@@ -32,9 +36,15 @@ export class ChatPage implements OnInit {
     private dataUsuarioService: DataUsuarioService,
     private cdref: ChangeDetectorRef,
     private utilidades: UtilidadesService,
-    private router: Router
+    private router: Router,
+    private pnService: PushNotificationService
   ) {
+    this.spinner = true;
+    setTimeout(()=>{
+      this.spinner = false;
+    },5000);
     this.Sonido();
+    this.TraerUsuarios();
   }
 
   Sonido() {
@@ -48,6 +58,13 @@ export class ChatPage implements OnInit {
     } catch (error) {
 
     }
+  }
+
+  TraerUsuarios(){
+    this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+      this.spinner = false;
+    });
   }
 
   ngOnInit(): void {
@@ -116,6 +133,24 @@ export class ChatPage implements OnInit {
   }
 
   enviarMensaje() {
+    var tokens = [""];
+    var flagArrayToken = true;
+
+    if(this.flagToken){
+      this.users.forEach(user => {
+        if(user.perfil.includes("Mozo")){
+          if(user.token != ""){
+            if(flagArrayToken){
+              flagArrayToken = false;
+              tokens[0] = user.token;
+            }else{
+              tokens.push(user.token);
+            }
+          }
+        }
+      }); 
+    }
+
     const textoMensaje = this.formMsj.value.mensaje;
     const usuario = {
       id: this.usuarioActual.idUsuario, nombre: this.usuarioActual.nombre,
@@ -137,6 +172,13 @@ export class ChatPage implements OnInit {
       let flag = false;
       if (this.usuarioActual.tipo == "Mozo") {
         flag = true;
+      }else{
+        if(this.flagToken){
+          this.flagToken = false;
+          if(!flagArrayToken){
+            this.pnService.sendPush(tokens, "Consulta Cliente", "Chat Pendiente");
+          }
+        }
       }
       this.chat.mensajes.push(mensaje);
       const obj = { leido: flag, mensajes: this.chat.mensajes }
@@ -144,5 +186,4 @@ export class ChatPage implements OnInit {
     }
     this.formMsj.reset();
   }
-
 }

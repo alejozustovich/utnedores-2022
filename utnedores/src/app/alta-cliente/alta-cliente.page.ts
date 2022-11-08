@@ -280,6 +280,22 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   // INICIO Guardar Usuarios.
   GuardarUsuarioRegistrado() {
+    var flag = true;
+    var tokens = [""];
+
+    this.users.forEach(user => {
+      if(user.perfil.includes("Dueño") || user.perfil.includes("Supervisor")){
+        if(user.token != ""){
+          if(flag){
+            flag = false;
+            tokens[0] = user.token;
+          }else{
+            tokens.push(user.token);
+          }
+        }
+      }
+    });
+
     var unUsuarioRegistrado: Usuario = {
       idField: "",
       idUsuario: this.idRegistroUsuario,
@@ -316,11 +332,15 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
         this.utilidades.SonidoAlta();
       }
       setTimeout(() => {
+        if(!flag){
+          this.pnService.sendPush(tokens, "Cliente Registrado", "Dar de Alta");
+        }
+      }, 1500);
+      setTimeout(() => {
         this.Redirigir();
       }, 2500);
     }, 2500);
   }
-
 
   GuardarUsuarioAnonimo() {
     var unUsuarioAnonimo: Usuario = {
