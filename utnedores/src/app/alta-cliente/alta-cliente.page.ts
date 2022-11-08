@@ -6,12 +6,14 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UtilidadesService } from '../services/utilidades.service';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-alta-cliente',
   templateUrl: './alta-cliente.page.html',
   styleUrls: ['./alta-cliente.page.scss'],
 })
+
 export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   volumenOn = true;
@@ -53,7 +55,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     private camera: Camera,
     private fb: FormBuilder,
     private router: Router,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
   ) {
     this.Sonido();
     this.DesactivarSpinner();

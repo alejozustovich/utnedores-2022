@@ -22,6 +22,7 @@
               <p>{{c.fecha}} {{c.hora}}</p>
               <p>Comensales: {{c.cantPersonas}}</p>
               <p>Preferencia: {{c.preferencia}}</p>
+              <ion-button style="--background: rgb(255, 0, 0);" (click)="EliminarEspera(c.idField)">Eliminar</ion-button>
               <ion-button style="--background: rgb(27, 27, 27);" (click)="setOpen(c.cantPersonas, c.idField, c.idUsuario)">Asignar Mesa</ion-button>
             </ion-label>
           </ion-item>
@@ -32,6 +33,16 @@
         <h2 style="margin-top: 50px; font-size: 40px;">No hay clientes en espera</h2>
       </div>
 
+    </div>
+
+    <div class="custom-loading2" *ngIf="eliminarEspera">
+      <div class="divInterno3">
+        <form class="form">
+          <h2>¿Eliminar espera?</h2>
+          <ion-button (click)="AceptarEliminarEspera()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Eliminar</ion-button>
+          <ion-button (click)="CancelarEliminarEspera()" style="width: 70%; margin-top: 5px; font-size: 1em; color: rgb(11, 6, 3); --background:rgb(206, 170, 156);">Cancelar</ion-button>
+        </form>
+      </div>
     </div>
 	</ion-grid>
 

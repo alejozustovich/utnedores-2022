@@ -166,6 +166,11 @@ export class AuthService {
 		private http: HttpClient
 	) {}
 
+	eliminarCuenta(idField: string) {
+		const cuentaDocRef = doc(this.firestore, `cuentas/${idField}`);
+		return deleteDoc(cuentaDocRef);
+	}
+
 	cerrarCuenta(idField: string) {
 		const cuentaRef = doc(this.firestore, `cuentas/${idField}`);
 		return updateDoc(cuentaRef, { idUsuario: "-1"});

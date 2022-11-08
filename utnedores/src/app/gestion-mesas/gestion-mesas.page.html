@@ -24,7 +24,7 @@
                   <p>Capacidad: {{m.capacidad}}</p>
                   <ion-button style="--background: rgb(82, 27, 145);" (click)="Modificar(m.idField)">Modificar</ion-button>
                   <ion-button *ngIf="m.idUsuario == '0'" style="--background: rgb(255, 0, 0);" (click)="Eliminar(m.idField)">Eliminar</ion-button>
-                  <ion-button *ngIf="m.idUsuario != '0'" style="--background: rgb(31, 190, 202);" (click)="Liberar(m.idField, m.idUsuario)">Liberar</ion-button>
+                  <ion-button *ngIf="m.idUsuario != '0'" style="--background: rgb(31, 190, 202);" (click)="Liberar(m.idField, m.idUsuario, m.numMesa)">Liberar</ion-button>
                 </ion-label>
               </ion-item>
             </div>

@@ -28,6 +28,7 @@ export class ListaEsperaPage implements OnInit {
   cantidadSeleccionada = 0;
   asignar = false;
   mensajeLugares = "";
+  eliminarEspera = false;
 
   @ViewChild(IonContent) content: IonContent;
 
@@ -58,6 +59,19 @@ export class ListaEsperaPage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  EliminarEspera(idField: string){
+    this.idFieldEliminar = idField;
+    this.eliminarEspera = true;
+  }
+
+  AceptarEliminarEspera(){
+    this.authService.eliminarEspera(this.idFieldEliminar);
+  }
+
+  CancelarEliminarEspera(){
+    this.eliminarEspera = false;
   }
 
   TraerListaEspera(){

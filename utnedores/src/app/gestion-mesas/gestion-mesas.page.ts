@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, Espera, Usuario, Mesa } from '../services/auth.service';
+import { AuthService, Cuenta, Usuario, Mesa, Pedido } from '../services/auth.service';
+import { ChatService, Chat } from '../services/chat.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
 import { ToastController } from '@ionic/angular';
@@ -18,16 +19,23 @@ export class GestionMesasPage implements OnInit {
   mesas: Mesa [];
   hayMesas = false;
   spinner = false;
+  pedidos: Pedido [];
+  cuentas: Cuenta[];
+  chats: Chat[];
+  recargar = true;
 
   constructor(
     private toastController: ToastController,
     public router: Router ,
     private authService: AuthService,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private chatService: ChatService
   ) { 
     this.Sonido();
     this.ActivarSpinner();
     this.TraerMesas();
+    this.TraerPedidos();
+    this.TraerChat();
   }
 
   Sonido(){
@@ -43,6 +51,30 @@ export class GestionMesasPage implements OnInit {
     }
   }
 
+  TraerCuentas() {
+    this.authService.traerCuentas().subscribe(listaCuentas => {
+      if(this.recargar){
+        this.cuentas = listaCuentas;
+      }
+    });
+  }
+
+  TraerChat() {
+    this.chatService.cargarChats("chats", false).subscribe(listaChats => {
+      if(this.recargar){
+        this.chats = listaChats;
+      }
+    });
+  }
+
+  TraerPedidos() {
+    this.authService.traerPedidos().subscribe(pedidos => {
+      if(this.recargar){
+        this.pedidos = pedidos;
+      }
+    });
+  }
+  
   async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -105,14 +137,28 @@ export class GestionMesasPage implements OnInit {
     }, 1000);
   }
 
-  Liberar(idField: string, idUsuario: string){
+
+  Liberar(idField: string, idUsuario: string, numMesa: string){
+    this.recargar = false;
     this.ActivarSpinner();
     this.authService.asignarMesa(idField, "0");
 
-    //idUsuario
-    //LIBERAR PEDIDO
-    //LIBERAR CIERRE CUENTA
-    //LIBERAR CHAT
+    this.pedidos.forEach(pedido => {
+      if(pedido.numMesa === numMesa){
+        this.authService.eliminarPedido(pedido.idField);
+      }
+    });
+    this.cuentas.forEach(cuenta => {
+      if(cuenta.idUsuario === idUsuario){
+        this.authService.eliminarCuenta(cuenta.idField);
+      }
+    });
+    this.chats.forEach(chat => {
+      if(chat.numMesa === numMesa){
+        const obj = {leido: false, mensajes: []};
+        this.chatService.modificarChat(obj, `chats/${chat.idField}`);
+      }
+    });
 
     setTimeout(() => {
       this.Alerta("Mesa liberada", 'success');

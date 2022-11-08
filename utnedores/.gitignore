@@ -32,6 +32,7 @@ npm-debug.log*
 /plugins
 /www
 /src/environments
+/android/app/google-services.json
 
 # Firebase
 .firebase
