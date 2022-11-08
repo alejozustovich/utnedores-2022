@@ -236,27 +236,6 @@ export class EncuestaClientesPage implements OnInit {
     }, 1500);
   }
 
-  SaltarEncuesta() {
-    if (this.tipo.includes("Metre")) {
-      this.router.navigateByUrl('/home-metre', { replaceUrl: true });
-    } else {
-      if (this.tipo.includes("Mozo")) {
-        this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
-      } else {
-        if (this.tipo.includes("Bartender") || this.tipo.includes("Cocinero")) {
-          this.router.navigateByUrl('/home-cocina', { replaceUrl: true });
-        } else {
-          this.GuardarPerfil();
-          this.Alerta('Surgió un error. Reintentar', 'danger');
-          if(this.volumenOn){
-            this.utilidades.SonidoError();
-          }
-          this.utilidades.VibrarError();
-        }
-      }
-    }
-  }
-
   enviarEncuesta() {
 
     if(this.idEncuesta === "0"){

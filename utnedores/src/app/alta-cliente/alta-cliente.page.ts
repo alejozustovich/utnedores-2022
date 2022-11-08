@@ -292,7 +292,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       foto: this.nombreImagen,
       perfil: "Cliente",
       tipo: "Registrado",
-      aprobado: "No"
+      aprobado: "No",
+      token: ""
     };
 
     this.authService.addUser(unUsuarioRegistrado); //Guardar usuario a la espera de que se apruebe.
@@ -334,7 +335,8 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       foto: this.nombreImagen,
       perfil: "Cliente",
       tipo: "Anónimo",
-      aprobado: ""
+      aprobado: "",
+      token: ""
     };
 
     this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.

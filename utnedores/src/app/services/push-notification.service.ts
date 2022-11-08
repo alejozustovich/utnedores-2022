@@ -73,6 +73,11 @@ export class PushNotificationService {
     })
   }
 
+  eliminarToken(idField: string) {
+		const userRef = doc(this.firestore, `users/${idField}`);
+		return updateDoc(userRef, { token: "" });
+	}
+
   private async addListeners(): Promise<void> {
     await PushNotifications.addListener(
       'registration',

@@ -341,7 +341,8 @@ export class AltaSupervisorPage implements OnInit {
         foto: this.nombreImagen,
         perfil: this.perfil,
         tipo: this.perfil,
-        aprobado: ""
+        aprobado: "",
+        token: ""
       };
       const registro = { emailNuevo: usuario.correo, passwordNuevo: usuario.clave };
       if (this.verificarUsuario(usuario)) {

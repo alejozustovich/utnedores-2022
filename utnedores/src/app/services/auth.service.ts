@@ -27,6 +27,7 @@ export interface Usuario {
 	perfil: string;
 	tipo: string;
 	aprobado: string;
+	token: string;
 }
 
 export interface Espera {

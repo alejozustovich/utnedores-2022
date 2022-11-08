@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
 import { DataUsuarioService } from '../services/data-usuario.service';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,8 @@ export class LoginPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private utilidades: UtilidadesService,
-    private dataUsuarioService: DataUsuarioService
+    private dataUsuarioService: DataUsuarioService,
+    private pnService: PushNotificationService
   ) {
     this.TraerUsuarios();
   }
@@ -153,7 +155,6 @@ export class LoginPage implements OnInit {
       this.Alerta('Correo o clave incorrecto/a!', 'danger');
       this.utilidades.SonidoError();
       this.utilidades.VibrarError();
-
     }
   }
 

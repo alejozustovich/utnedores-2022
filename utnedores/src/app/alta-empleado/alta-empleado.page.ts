@@ -337,7 +337,8 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
         foto: this.nombreImagen,
         perfil: "Empleado",
         tipo: this.tipo.value,
-        aprobado: ""
+        aprobado: "",
+        token: ""
       };
   
       this.authService.addUser(unUsuario);

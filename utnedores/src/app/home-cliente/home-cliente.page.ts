@@ -35,7 +35,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     foto: "0",
     perfil: "0",
     tipo: "0",
-    aprobado: "0"
+    aprobado: "0",
+    token: ""
   };
   mensajeEstado = ""; 
   estado = 0;
@@ -87,7 +88,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {}
 
   IrEncuestas(){
-    
+    this.spinner = true;
+    this.router.navigateByUrl('/encuesta-clientes', { replaceUrl: true });
   }
 
   IrReservar(){

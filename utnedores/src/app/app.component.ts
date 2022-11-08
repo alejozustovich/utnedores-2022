@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { UtilidadesService } from './services/utilidades.service';
 import { Plugins } from '@capacitor/core';
 const { SplashScreen } = Plugins;
-import { PushNotificationService } from './services/push-notification.service';
 
 @Component({
   selector: 'app-root',
@@ -16,12 +15,10 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     public router: Router,
-    private utilidades: UtilidadesService,
-    private pnService: PushNotificationService
+    private utilidades: UtilidadesService
   ) {
     this.initializeApp();
     this.Inicializar();
-    //this.pnService.getUser();
   }
 
   public initializeApp() 
