@@ -204,7 +204,7 @@ export class ListadoClientesPage implements OnInit {
         this.idFieldRechazar = "";
         this.correoRechazar = "";
       }, 1000);
-
+      this.spinner = false;
     }, 2500);
   }
 

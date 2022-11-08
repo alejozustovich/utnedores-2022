@@ -138,7 +138,7 @@ export class ChatPage implements OnInit {
 
     if(this.flagToken){
       this.users.forEach(user => {
-        if(user.perfil.includes("Mozo")){
+        if(user.tipo.includes("Mozo")){
           if(user.token != ""){
             if(flagArrayToken){
               flagArrayToken = false;

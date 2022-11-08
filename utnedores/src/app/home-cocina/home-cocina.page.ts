@@ -280,7 +280,7 @@ export class HomeCocinaPage implements OnInit {
     var tokens = [""];
 
     this.users.forEach(user => {
-      if(user.perfil.includes("Mozo")){
+      if(user.tipo.includes("Mozo")){
         if(user.token != ""){
           if(flag){
             flag = false;

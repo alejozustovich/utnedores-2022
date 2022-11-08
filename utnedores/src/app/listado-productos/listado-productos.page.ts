@@ -356,10 +356,10 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
         if(user.token != ""){
           if(this.back == 0){
             var entrar = false;
-            if(user.perfil.includes("Cocinero") && lCocinero == "0"){
+            if(user.tipo.includes("Cocinero") && lCocinero == "0"){
               entrar = true;
             }
-            if(user.perfil.includes("Bartender") && lBartender == "0"){
+            if(user.tipo.includes("Bartender") && lBartender == "0"){
               entrar = true;
             }
             if(entrar){

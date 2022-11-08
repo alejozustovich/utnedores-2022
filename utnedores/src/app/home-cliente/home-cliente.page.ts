@@ -66,6 +66,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.DesactivarSpinner();
     this.TraerMesas();
     this.TraerEsperas();
+    this.TraerUsuarios();
     this.ObtenerUsuario();
   }
 
@@ -121,6 +122,12 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       retorno = "0" + retorno;
     }
     return retorno;
+  }
+
+  TraerUsuarios(){
+    this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+    });
   }
 
   ActivarSpinner(){
@@ -288,7 +295,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     var tokens = [""];
 
     this.users.forEach(user => {
-      if(user.perfil.includes("Metre")){
+      if(user.tipo.includes("Metre")){
         if(user.token != ""){
           if(flag){
             flag = false;
