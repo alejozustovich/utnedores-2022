@@ -25,8 +25,8 @@ export class AppComponent {
   {
     this.platform.ready().then(() => {
       setTimeout(() => {
-        SplashScreen.hide();
-        this.router.navigateByUrl('/splash', { replaceUrl: true });
+        // SplashScreen.hide();
+        // this.router.navigateByUrl('/splash', { replaceUrl: true });
       }, 1000);
     });
   }

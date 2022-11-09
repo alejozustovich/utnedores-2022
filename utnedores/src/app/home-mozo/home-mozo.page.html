@@ -82,7 +82,7 @@
     <ion-content class="ion-padding">
       <div *ngIf="chats?.length == 0">No hay chats por el momento</div>
       <div *ngIf="chats?.length > 0" class="contenido">
-        <h1>Chats dispobibles</h1>
+        <h1>Chats Disponibles</h1>
         <div *ngFor="let c of chats" class="mb-3">
           <ion-item class="item-chats" (click)="entrarChat(c.numMesa)" [class.borde-noti]="!c.leido">
             <div class="noti" *ngIf="!c.leido">!

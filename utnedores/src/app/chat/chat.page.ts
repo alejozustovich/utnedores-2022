@@ -68,10 +68,11 @@ export class ChatPage implements OnInit {
   }
 
   ngOnInit(): void {
+    // localStorage.setItem('numeroMesa', '9')
     this.numMesa = localStorage.getItem('numeroMesa');
     this.formMsj = this.fb.group(
       {
-        mensaje: ['', [Validators.maxLength(30)]]
+        mensaje: [{value: '', disabled: true}, [Validators.maxLength(30)]]
       }
     )
     this.authService.obtenerAuth().onAuthStateChanged(user => {
@@ -82,6 +83,7 @@ export class ChatPage implements OnInit {
             this.chat = chat[0];
             console.log(this.chat);
           }
+          this.mensaje.enable();
           this.spinner = false;
         });
       });

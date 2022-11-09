@@ -49,14 +49,12 @@
     <ion-grid class="grilla">
       <ion-row class="fila">
         <ion-col> 
-          
           <input 
             type="text"
             class="form-control"
             formControlName="mensaje"
             placeholder="Ingrese un mensaje"
             [class.error-borde]="mensaje.errors"
-            [readonly]="chat.numMesa == '0'"
           />
         </ion-col>
         <ion-col size="2" class="col-btn">
