@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { getStorage, ref } from "firebase/storage";
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-listado-clientes',
   templateUrl: './listado-clientes.page.html',
   styleUrls: ['./listado-clientes.page.scss'],
 })
-export class ListadoClientesPage implements OnInit {
+export class ListadoClientesPage implements OnInit, OnDestroy {
 
   volumenOn = true;
   spinner = true;
@@ -24,6 +25,7 @@ export class ListadoClientesPage implements OnInit {
   currentPassword = "";
   ingresarMotivoRechazo = false;
   cargando = true;
+  subUsers: Subscription;
 
   idFieldRechazar = "";
   correoRechazar = "";
@@ -63,6 +65,10 @@ export class ListadoClientesPage implements OnInit {
     }
   }
 
+  ngOnDestroy(){	
+    this.subUsers.unsubscribe();
+  }
+
   async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -97,7 +103,7 @@ export class ListadoClientesPage implements OnInit {
 
   async ValidarUsuarios() {
 
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.cargando = true;
       this.hayPendientes = false;
       this.countPendientes = 0;

@@ -1,18 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { AuthService, EncuestaSupervisor , Usuario } from '../services/auth.service';
+import { AuthService, EncuestaSupervisor, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-historial-usuario',
   templateUrl: './historial-usuario.page.html',
   styleUrls: ['./historial-usuario.page.scss'],
 })
-export class HistorialUsuarioPage implements OnInit {
+export class HistorialUsuarioPage implements OnInit, OnDestroy {
 
   idUsuarioEncuesta = "0";
   iconoEncuesta = "../../assets/form.png";
@@ -24,6 +25,8 @@ export class HistorialUsuarioPage implements OnInit {
   cargandoNombre = true;
   nombreUsuario = "";
   apellidoUsuario = "";
+  subUsers: Subscription;
+  subEncuestas: Subscription;
 
   constructor(
     private toastController : ToastController,
@@ -51,6 +54,11 @@ export class HistorialUsuarioPage implements OnInit {
     }, 5000);
   }
 
+  ngOnDestroy(){	
+    this.subUsers.unsubscribe();
+    this.subEncuestas.unsubscribe();
+  }
+
   ngOnInit() {
   }
 
@@ -62,7 +70,7 @@ export class HistorialUsuarioPage implements OnInit {
   }
 
   TraerEncuestasSupervisor() {
-    this.authService.traerEncuestaSupervisor().subscribe(listaencuestas => {
+    this.subEncuestas = this.authService.traerEncuestaSupervisor().subscribe(listaencuestas => {
       this.encuestas = listaencuestas;
     });
   }
@@ -70,7 +78,7 @@ export class HistorialUsuarioPage implements OnInit {
 
   async TraerUsuarios() {
     var usuariosSeleccionados = [];
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
         this.users = allUsers;
         this.users.forEach(user => {
           if(!user.aprobado.includes("No")) {

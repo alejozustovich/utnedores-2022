@@ -5,6 +5,7 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-cliente',
@@ -48,6 +49,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   idFieldEspera = "";
   cantidadPersonas = 0;
   ingresarCantidad = false;
+  subUsers: Subscription;
+  subListaEspera: Subscription;
+  subMesas: Subscription;	
 
   idEsperaMayor = 0;
   //0   => Escanear QR Local
@@ -96,7 +100,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   IrReservar(){
-
   }
 
   async Alerta( mensaje : string , color : string ) {
@@ -125,7 +128,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerUsuarios(){
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
     });
   }
@@ -173,6 +176,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subUsers.unsubscribe();
+    this.subMesas.unsubscribe();
+    this.subListaEspera.unsubscribe();
   }
 
   ObtenerUsuario(){
@@ -187,7 +193,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerMesas(){
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       for(var i = 0 ; i < this.mesas.length - 1; i++){
         for(var k = i + 1 ; k < this.mesas.length; k++){
@@ -206,7 +212,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerEsperas(){
-    this.authService.listaEspera().subscribe(esperas => {
+    this.subListaEspera = this.authService.listaEspera().subscribe(esperas => {
       this.listaEspera = esperas;
       this.listaEspera.forEach(u => {
         if(this.idEsperaMayor < (Number(u.idEspera))){

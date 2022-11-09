@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, Usuario, EncuestaCliente } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { ToastController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-encuesta-clientes',
   templateUrl: './encuesta-clientes.page.html',
   styleUrls: ['./encuesta-clientes.page.scss'],
 })
-export class EncuestaClientesPage implements OnInit {
+
+export class EncuestaClientesPage implements OnInit, OnDestroy {
   
   flagAux = true;
   volumenOn = true;
@@ -29,6 +31,7 @@ export class EncuestaClientesPage implements OnInit {
   idEncuesta = "0";
   encuestas: EncuestaCliente[];
   idUsuarioEncuesta = "0";
+  subEncuestas: Subscription;
 
   constructor(
     private toastController: ToastController,
@@ -38,12 +41,19 @@ export class EncuestaClientesPage implements OnInit {
     private utilidades: UtilidadesService
   ) {
     this.spinner = true;
+    this.DesactivarSpinner();
     this.Sonido();
     setTimeout(() => {
       this.GuardarPerfil();
     }, 2500);
     this.AsignarNombreFotos();
     this.TraerEncuestasClientes();
+  }
+
+  DesactivarSpinner() {
+    setTimeout(() => {
+      this.spinner = false;
+    }, 7000);
   }
 
   Sonido(){
@@ -59,6 +69,10 @@ export class EncuestaClientesPage implements OnInit {
     }
   }
 
+  ngOnDestroy(){	
+    this.subEncuestas.unsubscribe();
+  }
+
   ngOnInit() {
     this.formEncuesta = this.fb.group(
       {
@@ -72,7 +86,7 @@ export class EncuestaClientesPage implements OnInit {
   }
 
   TraerEncuestasClientes() {
-    this.authService.traerEncuestaCliente().subscribe(listaencuestas => {
+    this.subEncuestas = this.authService.traerEncuestaCliente().subscribe(listaencuestas => {
       this.encuestas = listaencuestas;
       this.idEncuesta = "0";
       this.encuestas.forEach(encuesta => {

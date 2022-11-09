@@ -40,11 +40,13 @@
             formControlName="producto"
             type="text"
             placeholder="Producto"
+            maxlength="15"
             [ngClass]="{'error-borde mb-0': (producto.dirty || producto.touched) && producto.errors}"
           ></ion-input>
           <ion-input
             formControlName="descripcion"
             type="text"
+            maxlength="15"
             placeholder="Descripción"
             [ngClass]="{'error-borde mb-0': (descripcion.dirty || descripcion.touched) && descripcion.errors}"
           ></ion-input>
@@ -52,6 +54,7 @@
             id="tiempoElab"
             formControlName="tiempoElaboracion"
             type="text"
+            maxlength="3"
             placeholder="Tiempo de elaboración (Minutos)"
             [ngClass]="{'error-borde': (tiempoElaboracion.dirty || tiempoElaboracion.touched) && tiempoElaboracion.errors}"
           ></ion-input>
@@ -60,6 +63,7 @@
               <ion-input
                 id="tamanio"
                 formControlName="tamanio"
+                maxlength="3"
                 type="text"
                 placeholder="Tamaño (l o ml)"
                 class="me-1"
@@ -70,6 +74,7 @@
               <ion-input
                 formControlName="precio"
                 type="text"
+                maxlength="5"
                 placeholder="Precio ($)"
                 class="ms-1"
                 [ngClass]="{'error-borde': (precio.dirty || precio.touched) && precio.errors}"

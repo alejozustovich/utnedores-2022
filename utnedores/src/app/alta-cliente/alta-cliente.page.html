@@ -33,6 +33,7 @@
             formControlName="nombre"
             type="text"
             placeholder="Nombre"
+            maxlength="15"
             [ngClass]="{'error-borde mb-0': (nombre.dirty || nombre.touched) && nombre.errors}"
           ></ion-input>
           <ion-input
@@ -40,6 +41,7 @@
             formControlName="apellido"
             type="text"
             placeholder="Apellido"
+            maxlength="15"
             [ngClass]="{'error-borde mb-0': (apellido.dirty || apellido.touched) && apellido.errors}"
             *ngIf="esRegistrado"
           ></ion-input>
@@ -48,6 +50,7 @@
             formControlName="dni"
             type="text"
             placeholder="DNI"
+            maxlength="9"
             [ngClass]="{'error-borde mb-0': (dni.dirty || dni.touched) && dni.errors}"
             *ngIf="esRegistrado"
           ></ion-input>
@@ -55,6 +58,7 @@
             formControlName="correo"
             type="text"
             placeholder="Correo"
+            maxlength="30"
             [ngClass]="{'error-borde mb-0': (correo.dirty || correo.touched) && correo.errors}"
           ></ion-input>
           <ion-row class="pe-1">
@@ -63,6 +67,7 @@
                 formControlName="clave"
                 type="password"
                 placeholder="Clave"
+                maxlength="10"
                 class="me-1"
                 [ngClass]="{'error-borde mb-0': (clave.dirty || clave.touched) && clave.errors}"
               ></ion-input>
@@ -73,6 +78,7 @@
                 type="password"
                 placeholder="Confirmar clave"
                 class="ms-1"
+                maxlength="10"
                 [ngClass]="{'error-borde mb-0': (claveConfirmada.dirty || claveConfirmada.touched) && (claveConfirmada.errors || formRegistro.errors?.noCoinciden)}"
               ></ion-input>
             </ion-col>

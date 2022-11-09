@@ -25,6 +25,7 @@
                 <ion-input
                   type="number"
                   placeholder="Puntaje 1 a 5"
+                  maxlength="1"
                   formControlName="preguntaUno"
                   [ngClass]="{'error-borde mb-0': (preguntaUno.dirty || preguntaUno.touched) && preguntaUno.errors}"
                 >

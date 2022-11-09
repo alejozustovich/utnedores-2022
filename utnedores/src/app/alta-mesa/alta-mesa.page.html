@@ -33,6 +33,7 @@
 			formControlName="capacidad"
             type="text"
             placeholder="Capacidad"
+            maxlength="2"
             [ngClass]="{'error-borde mb-0': (capacidad.dirty || capacidad.touched) && capacidad.errors}"
           ></ion-input>
           <ion-item style="--min-height: 90px; margin-top: 20px">

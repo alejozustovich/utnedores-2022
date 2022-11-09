@@ -6,19 +6,21 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-anonimo',
   templateUrl: './alta-anonimo.page.html',
   styleUrls: ['./alta-anonimo.page.scss'],
 })
+
 export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
 
   volumenOn = true;
   formRegistro: FormGroup;
   users: Usuario[];
   idRegistroUsuario = "0";
-  spinner = true;
+  spinner = false;
   esRegistrado = false;
   esAnonimo = true;
   srcUserPhoto = "../../assets/user-photo.png";
@@ -34,6 +36,7 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
   perfil = "Perfil";
   clienteAgregado = false;
   claveRegistro = "111111111111";
+  subUsers: Subscription;
 
   options: CameraOptions = {
     quality: 50,
@@ -54,8 +57,9 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private utilidades: UtilidadesService
   ) {
-    this.Sonido();
+    this.spinner = true;
     this.DesactivarSpinner();
+    this.Sonido();
     this.GuardarId();
     this.AsignarNombreFoto();
   }
@@ -166,8 +170,9 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
     BarcodeScanner.prepare();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(){
     this.stopScan();
+	  this.subUsers.unsubscribe();
   }
 
   PrimeraMayuscula(cadena: String) {
@@ -243,7 +248,7 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   GuardarId() {
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       for (var i = 0; i < allUsers.length; i++) {
         if (Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {
@@ -308,7 +313,6 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
       }, 2500);
     }, 2500);
   }
-
 
   GuardarUsuarioAnonimo() {
 

@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService, Usuario, EncuestaEmpleado } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
 import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-encuesta-empleados',
   templateUrl: './encuesta-empleados.page.html',
   styleUrls: ['./encuesta-empleados.page.scss'],
 })
-export class EncuestaEmpleadosPage implements OnInit {
+export class EncuestaEmpleadosPage implements OnInit, OnDestroy {
   
   volumenOn = true;
   formEncuesta: FormGroup;
@@ -29,6 +30,8 @@ export class EncuestaEmpleadosPage implements OnInit {
   encuestas: EncuestaEmpleado[];
   encuestaEnviada = false;
   usuarioActual: Usuario;
+  subEncuestas: Subscription;
+  subUsers: Subscription;	
 
   options: CameraOptions = {
     quality: 50,
@@ -71,8 +74,13 @@ export class EncuestaEmpleadosPage implements OnInit {
     }
   }
 
+  ngOnDestroy(){	
+    this.subUsers.unsubscribe();
+    this.subEncuestas.unsubscribe();
+  }
+
   TraerEncuestasEmpleados() {
-    this.authService.traerEncuestaEmpleado().subscribe(listaencuestas => {
+    this.subEncuestas = this.authService.traerEncuestaEmpleado().subscribe(listaencuestas => {
       this.encuestas = listaencuestas;
       this.idEncuesta = "0";
       this.encuestas.forEach(encuesta => {
@@ -185,7 +193,7 @@ export class EncuestaEmpleadosPage implements OnInit {
   GuardarPerfil() {
     var usuarioLogueado = this.authService.usuarioActual();
     setTimeout(() => {
-      this.authService.getUsers().subscribe(allUsers => {
+      this.subUsers = this.authService.getUsers().subscribe(allUsers => {
         this.users = allUsers;
         for (var i = 0; i < allUsers.length; i++) {
           if (((this.users[i].correo).toLocaleLowerCase()).includes((usuarioLogueado.toLocaleLowerCase()))) {

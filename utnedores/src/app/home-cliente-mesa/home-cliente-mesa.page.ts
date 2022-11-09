@@ -1,18 +1,17 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Mesa, Usuario, Espera, Cuenta } from '../services/auth.service';
+import { AuthService, Mesa, Usuario, Cuenta } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-
+import { Subscription } from 'rxjs';
+import { Unsubscribe } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-home-cliente-mesa',
   templateUrl: './home-cliente-mesa.page.html',
   styleUrls: ['./home-cliente-mesa.page.scss'],
 })
-export class HomeClienteMesaPage implements OnInit {
-
+export class HomeClienteMesaPage implements OnInit, OnDestroy {
 
   permisoPedido = true;
   usuarioActual: Usuario;
@@ -21,6 +20,9 @@ export class HomeClienteMesaPage implements OnInit {
   mensajeEstado = "Mesa asignada. Ya puede realizar su pedido.";
   cuentas: Cuenta[];
   mesas: Mesa[];
+  subMesa: Subscription;
+  sub: Unsubscribe;
+  subCuentas: Subscription;
 
   constructor(
     private router: Router,
@@ -31,8 +33,14 @@ export class HomeClienteMesaPage implements OnInit {
     this.Sonido();
   }
 
+  ngOnDestroy(){
+    this.subMesa.unsubscribe();
+    this.sub();
+    this.subCuentas.unsubscribe();
+  }
+
   ngOnInit() {
-    this.authService.obtenerAuth().onAuthStateChanged(user => {
+    this.sub = this.authService.obtenerAuth().onAuthStateChanged(user => {
       this.authService.getUser(user.email).then((user: Usuario) => {
         this.usuarioActual = user;
         this.TraerCuentas();
@@ -42,11 +50,11 @@ export class HomeClienteMesaPage implements OnInit {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesa = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       var redirigir = true;
       this.mesas.forEach(mesa => {
-        if(mesa.idUsuario === this.usuarioActual.idUsuario && !this.usuarioActual.idUsuario.includes("0")){
+        if(mesa.idUsuario === this.usuarioActual.idUsuario && this.usuarioActual.idUsuario != "0"){
           redirigir = false;
         }
       });
@@ -55,6 +63,7 @@ export class HomeClienteMesaPage implements OnInit {
       }
     });
   }
+
   Sonido(){
     try {
       var sonido = localStorage.getItem('sonido');
@@ -75,7 +84,7 @@ export class HomeClienteMesaPage implements OnInit {
   }
 
   TraerCuentas() {
-    this.authService.traerCuentas().subscribe(listaCuentas => {
+    this.subCuentas =this.authService.traerCuentas().subscribe(listaCuentas => {
       this.cuentas = listaCuentas;
       this.cuentas.forEach(cuenta => {
         if(cuenta.idUsuario === this.usuarioActual.idUsuario){

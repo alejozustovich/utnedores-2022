@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService, Mesa } from '../services/auth.service';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-mesa',
   templateUrl: './alta-mesa.page.html',
   styleUrls: ['./alta-mesa.page.scss'],
 })
-export class AltaMesaPage implements OnInit {
+export class AltaMesaPage implements OnInit, OnDestroy {
 
   volumenOn = true;
   formMesa: FormGroup;
@@ -29,6 +30,7 @@ export class AltaMesaPage implements OnInit {
   spinner = false;
   fotosLleno = false;
   nombreFoto = "";
+  subMesa: Subscription;
 
   mesaAgregado = false;
   
@@ -55,6 +57,10 @@ export class AltaMesaPage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  ngOnDestroy(){
+    this.subMesa.unsubscribe();
   }
 
   Volver(){
@@ -103,7 +109,7 @@ export class AltaMesaPage implements OnInit {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesa = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       this.AsignarNumeroMesa();
     });

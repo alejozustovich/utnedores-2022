@@ -6,6 +6,7 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -32,6 +33,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   nombreImagen = "";
   base64Image = "";
   empleadoAgregado = false;
+  subUsers: Subscription;
 
   currentEmail = "";
   currentPassword = "";
@@ -219,6 +221,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subUsers.unsubscribe();
   }
 
   async startScanner() {
@@ -288,7 +291,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   GuardarId() {
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       for (var i = 0; i < allUsers.length; i++) {
         if (Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {

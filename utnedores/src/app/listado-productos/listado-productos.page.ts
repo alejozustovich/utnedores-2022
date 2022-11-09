@@ -7,6 +7,7 @@ import { UtilidadesService } from '../services/utilidades.service';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-listado-productos',
@@ -53,6 +54,11 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   unSoloProducto: Producto;
   users: Usuario[];
 
+  subUsers: Subscription;			
+  subMesas: Subscription;
+  subProductos: Subscription;
+  subPedidos: Subscription;
+
   constructor(
     private toastController: ToastController,
     private authService: AuthService,
@@ -87,7 +93,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerUsuarios(){
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
     });
   }
@@ -98,6 +104,10 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subUsers.unsubscribe();
+    this.subMesas.unsubscribe();
+    this.subProductos.unsubscribe();
+    this.subPedidos.unsubscribe();
   }
 
   async startScanner(){
@@ -143,7 +153,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       this.mesas.forEach(m => {
         if(m.numMesa.includes(this.numMesa)){
@@ -154,7 +164,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerPedidos(){
-    this.authService.traerPedidos().subscribe(pedidos => {
+    this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
 
       var mayorId = 0;
@@ -180,7 +190,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerProductos() {
-    this.authService.getProducts().subscribe(allProducts => {
+    this.subProductos = this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.productos.forEach(u => {
           

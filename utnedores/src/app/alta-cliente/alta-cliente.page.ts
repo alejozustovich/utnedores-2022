@@ -7,6 +7,7 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn,
 import { Router } from '@angular/router';
 import { UtilidadesService } from '../services/utilidades.service';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-cliente',
@@ -37,6 +38,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   clienteAgregado = false;
   currentEmail = "";
   currentPassword = "";
+  subUsers: Subscription;	
 
   options: CameraOptions = {
     quality: 50,
@@ -177,6 +179,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subUsers.unsubscribe();
   }
 
   PrimeraMayuscula(cadena: String) {
@@ -255,7 +258,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   GuardarId() {
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       for (var i = 0; i < allUsers.length; i++) {
         if (Number(this.idRegistroUsuario) < Number(allUsers[i].idUsuario)) {

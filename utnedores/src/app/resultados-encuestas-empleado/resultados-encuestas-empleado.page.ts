@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { AuthService, EncuestaCliente, EncuestaEmpleado, Usuario } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
@@ -8,13 +8,14 @@ import { ChartConfiguration } from 'chart.js';
 import { ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-resultados-encuestas-empleado',
   templateUrl: './resultados-encuestas-empleado.page.html',
   styleUrls: ['./resultados-encuestas-empleado.page.scss'],
 })
-export class ResultadosEncuestasEmpleadoPage implements OnInit {
+export class ResultadosEncuestasEmpleadoPage implements OnInit, OnDestroy {
   encuestas: EncuestaEmpleado[];
   usuarios: Usuario[];
   spinner: boolean = true;
@@ -69,13 +70,16 @@ export class ResultadosEncuestasEmpleadoPage implements OnInit {
     ]
   };
 
+  subUsers: Subscription;
+  subEncuestas: Subscription;
+
   constructor(private authService: AuthService, private router: Router) {
   }
 
   ngOnInit() {
-    this.authService.getUsers().subscribe((u: Usuario[]) => {
+    this.subUsers = this.authService.getUsers().subscribe((u: Usuario[]) => {
       this.usuarios = u;
-      this.authService.traerEncuestaEmpleado().subscribe((e: EncuestaEmpleado[]) => {
+      this.subEncuestas = this.authService.traerEncuestaEmpleado().subscribe((e: EncuestaEmpleado[]) => {
         this.encuestas = e;
         this.encuestas.forEach(async (enc, i) => {
           const storage = getStorage();
@@ -90,6 +94,11 @@ export class ResultadosEncuestasEmpleadoPage implements OnInit {
         }
       })
     })
+  }
+
+  ngOnDestroy(){	
+    this.subUsers.unsubscribe();
+    this.subEncuestas.unsubscribe();
   }
 
   traerNombre(id: string) {

@@ -1,17 +1,18 @@
 import { UtilidadesService } from '../services/utilidades.service';
 import { AuthService, Pedido, Producto } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mozo-ver-pedido',
   templateUrl: './mozo-ver-pedido.page.html',
   styleUrls: ['./mozo-ver-pedido.page.scss'],
 })
-export class MozoVerPedidoPage implements OnInit {
+export class MozoVerPedidoPage implements OnInit, OnDestroy {
 
   productos: Producto[];
 
@@ -64,6 +65,8 @@ export class MozoVerPedidoPage implements OnInit {
     "Recibido",
     "Rechazado"];
   cantTipoPedido = [];
+  subProductos: Subscription;
+  subPedidos: Subscription;
 
   constructor(
     private router: Router,
@@ -98,6 +101,11 @@ export class MozoVerPedidoPage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  ngOnDestroy(){
+    this.subProductos.unsubscribe();
+    this.subPedidos.unsubscribe();
   }
 
   FiltrarCategoria(categoria) {
@@ -235,7 +243,7 @@ export class MozoVerPedidoPage implements OnInit {
   }
 
   TraerProductos() {
-    this.authService.getProducts().subscribe(allProducts => {
+    this.subProductos = this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.productos.forEach(u => {
           
@@ -286,7 +294,7 @@ export class MozoVerPedidoPage implements OnInit {
   }
 
   TraerPedidos(){
-    this.authService.traerPedidos().subscribe(pedidos => {
+    this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
 
       for(var i = 0 ; i < this.pedidos.length - 1; i++){

@@ -2,14 +2,15 @@ import { UtilidadesService } from '../services/utilidades.service';
 import { AuthService, Cuenta, Mesa, Pedido } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cierre-mesa',
   templateUrl: './cierre-mesa.page.html',
   styleUrls: ['./cierre-mesa.page.scss'],
 })
-export class CierreMesaPage implements OnInit {
+export class CierreMesaPage implements OnInit, OnDestroy {
 
   cuentas: Cuenta[];
   hayCuenta = false;
@@ -18,10 +19,13 @@ export class CierreMesaPage implements OnInit {
   cierreListo = false;
   cierresPendientes = [];
   cierresListos = [];
-  spinner = true;
+  spinner = false;
   volumenOn = true;
   mesas: Mesa[];
   pedidos: Pedido[];
+  subMesas: Subscription;
+  subPedidos: Subscription;
+  subCuentas: Subscription;
 
   constructor(
     private router: Router,
@@ -29,8 +33,9 @@ export class CierreMesaPage implements OnInit {
     private toastController: ToastController,
     private utilidades: UtilidadesService
   ) { 
-    this.Sonido();
+    this.spinner = true;
     this.DesactivarSpinner();
+    this.Sonido();
     this.TraerCuentas();
     this.TraerMesas();
     this.TraerPedidos();
@@ -59,19 +64,25 @@ export class CierreMesaPage implements OnInit {
   }
 
   TraerPedidos(){
-    this.authService.traerPedidos().subscribe(pedidos => {
+    this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
     });
   }
 
+  ngOnDestroy(){	
+    this.subMesas.unsubscribe();
+    this.subPedidos.unsubscribe();
+    this.subCuentas.unsubscribe();
+  }
+
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
     });
   }
 
   TraerCuentas() {
-    this.authService.traerCuentas().subscribe(listaCuentas => {
+    this.subCuentas = this.authService.traerCuentas().subscribe(listaCuentas => {
 
       this.cierrePendiente = false;
       this.cierreListo = false;

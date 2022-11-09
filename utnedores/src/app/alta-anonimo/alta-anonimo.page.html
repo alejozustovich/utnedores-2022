@@ -33,6 +33,7 @@
             formControlName="nombre"
             type="text"
             placeholder="Nombre"
+            maxlength="15"
             [ngClass]="{'error-borde mb-0': (nombre.dirty || nombre.touched) && nombre.errors}"
           ></ion-input>
           <ion-input
@@ -55,6 +56,7 @@
             formControlName="correo"
             type="text"
             placeholder="Correo"
+            maxlength="30"
             [ngClass]="{'error-borde mb-0': (correo.dirty || correo.touched) && correo.errors}"
           ></ion-input>
           <ion-row class="pe-1">

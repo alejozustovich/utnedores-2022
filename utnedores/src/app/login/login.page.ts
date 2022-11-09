@@ -1,4 +1,3 @@
-import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService, Usuario } from '../services/auth.service';
 import { Router } from '@angular/router';
@@ -6,13 +5,15 @@ import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
 import { DataUsuarioService } from '../services/data-usuario.service';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
 
   formLogin: FormGroup;
   spinner = false;
@@ -23,6 +24,7 @@ export class LoginPage implements OnInit {
   tipo = "";
   selectNoDisponible = true;
   selectTitle = "Cargando...";
+  subUsers: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -36,8 +38,12 @@ export class LoginPage implements OnInit {
     this.TraerUsuarios();
   }
 
+  ngOnDestroy(){
+    this.subUsers.unsubscribe();
+  }
+
   TraerUsuarios() {
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       for(var i = 0 ; i < this.users.length - 1; i++){
         for(var k = i + 1; k < this.users.length ; k++){
@@ -121,7 +127,7 @@ export class LoginPage implements OnInit {
     this.spinner = true;
     var idFieldToken = "";
     
-    const data = { email: this.email.value, password: this.password.value }
+    const data = { email: this.email.value, password: this.password.value };
     const user = await this.authService.login(data);
     if (user) {
       for (var i = 0; i < this.usersSelect.length; i++) {

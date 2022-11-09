@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService, Producto } from '../services/auth.service';
 import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-producto',
   templateUrl: './alta-producto.page.html',
   styleUrls: ['./alta-producto.page.scss'],
 })
-export class AltaProductoPage implements OnInit {
+export class AltaProductoPage implements OnInit, OnDestroy {
   
   tipo = "";
   flagAux = true;
@@ -40,6 +41,7 @@ export class AltaProductoPage implements OnInit {
 
   public myAngularxQrCode: string = "";
   public qrCodeDownloadLink: SafeUrl = "";
+  subProductos: Subscription;
 
   constructor(
     private toastController: ToastController,
@@ -65,6 +67,10 @@ export class AltaProductoPage implements OnInit {
     } catch (error) {
       
     }
+  }
+
+  ngOnDestroy(){	
+    this.subProductos.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -122,7 +128,7 @@ export class AltaProductoPage implements OnInit {
   }
 
   TraerProductos() {
-    this.authService.getProducts().subscribe(allProducts => {
+    this.subProductos = this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.AsignarNumeroProducto();
     });

@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService, Usuario, EncuestaSupervisor } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-encuesta-supervisor',
   templateUrl: './encuesta-supervisor.page.html',
   styleUrls: ['./encuesta-supervisor.page.scss'],
 })
-export class EncuestaSupervisorPage implements OnInit {
+export class EncuestaSupervisorPage implements OnInit, OnDestroy {
   
   volumenOn = true;
   formEncuesta: FormGroup;
@@ -21,6 +22,7 @@ export class EncuestaSupervisorPage implements OnInit {
   idEncuesta = "0";
   encuestas: EncuestaSupervisor[];
   encuestaEnviada = false;
+  subEncuestas: Subscription;
 
   constructor(
     private toastController : ToastController,
@@ -48,7 +50,7 @@ export class EncuestaSupervisorPage implements OnInit {
   }
 
   TraerEncuestasSupervisor() {
-    this.authService.traerEncuestaSupervisor().subscribe(listaencuestas => {
+    this.subEncuestas = this.authService.traerEncuestaSupervisor().subscribe(listaencuestas => {
       this.encuestas = listaencuestas;
       this.idEncuesta = "0";
       this.encuestas.forEach(encuesta => {
@@ -58,6 +60,10 @@ export class EncuestaSupervisorPage implements OnInit {
       });
       this.idEncuesta = (Number(this.idEncuesta) + 1).toString();
     });
+  }
+
+  ngOnDestroy(){
+    this.subEncuestas.unsubscribe();
   }
 
   DesactivarSpinner(){

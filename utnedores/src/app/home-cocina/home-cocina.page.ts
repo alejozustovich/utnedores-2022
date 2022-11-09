@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, Pedido, Producto, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
@@ -6,13 +6,14 @@ import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-cocina',
   templateUrl: './home-cocina.page.html',
   styleUrls: ['./home-cocina.page.scss'],
 })
-export class HomeCocinaPage implements OnInit {
+export class HomeCocinaPage implements OnInit, OnDestroy {
 
   pedidosVisibles: Pedido[];
   pedidos: Pedido[];
@@ -50,6 +51,10 @@ export class HomeCocinaPage implements OnInit {
     "Bebidas con alcohol",
     "Postres y Café-Te"];
 
+  subUsers: Subscription;
+  subPedidos: Subscription;
+  subProductos: Subscription;
+
   constructor(
     private toastController: ToastController,
     private authService: AuthService,
@@ -61,12 +66,19 @@ export class HomeCocinaPage implements OnInit {
     this.DesactivarSpinner();
     this.ObtenerTipo();
     this.TraerProductos();
+    this.TraerUsuarios();
     setTimeout(()=>{
       this.TraerPedidos();
     },4500);
   }
 
   ngOnInit() { }
+
+  ngOnDestroy(){	
+    this.subUsers.unsubscribe();
+    this.subProductos.unsubscribe();
+    this.subPedidos.unsubscribe();
+  }
 
   async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
@@ -80,7 +92,7 @@ export class HomeCocinaPage implements OnInit {
   }
 
   TraerUsuarios(){
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
     });
   }
@@ -99,7 +111,7 @@ export class HomeCocinaPage implements OnInit {
   }
 
   TraerPedidos(){
-    this.authService.traerPedidos().subscribe(pedidos => {
+    	this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
       var pedidosSeleccionados = [];
 
@@ -149,7 +161,7 @@ export class HomeCocinaPage implements OnInit {
   }
 
   TraerProductos() {
-    this.authService.getProducts().subscribe(allProducts => {
+    this.subProductos = this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.productos.forEach(u => {
           

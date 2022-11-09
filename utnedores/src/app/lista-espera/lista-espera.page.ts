@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy  } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, Espera, Usuario, Mesa } from '../services/auth.service';
+import { AuthService, Espera, Mesa } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
 import { IonContent } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-lista-espera',
@@ -13,7 +14,7 @@ import { UtilidadesService } from '../services/utilidades.service';
   styleUrls: ['./lista-espera.page.scss'],
 })
 
-export class ListaEsperaPage implements OnInit {
+export class ListaEsperaPage implements OnInit, OnDestroy  {
 
   volumenOn = true;
   listado: Espera[];
@@ -29,6 +30,8 @@ export class ListaEsperaPage implements OnInit {
   asignar = false;
   mensajeLugares = "";
   eliminarEspera = false;
+  subListaEspera: Subscription;
+  subMesas: Subscription;
 
   @ViewChild(IonContent) content: IonContent;
 
@@ -61,6 +64,11 @@ export class ListaEsperaPage implements OnInit {
     }
   }
 
+  ngOnDestroy(){
+    this.subMesas.unsubscribe();
+    this.subListaEspera.unsubscribe();
+  }
+
   EliminarEspera(idField: string){
     this.idFieldEliminar = idField;
     this.eliminarEspera = true;
@@ -68,6 +76,8 @@ export class ListaEsperaPage implements OnInit {
 
   AceptarEliminarEspera(){
     this.authService.eliminarEspera(this.idFieldEliminar);
+    this.eliminarEspera = false;
+    this.Alerta("Espera Eliminada!", 'success');
   }
 
   CancelarEliminarEspera(){
@@ -75,7 +85,7 @@ export class ListaEsperaPage implements OnInit {
   }
 
   TraerListaEspera(){
-    this.authService.listaEspera().subscribe(lista => {
+    this.subListaEspera = this.authService.listaEspera().subscribe(lista => {
         this.listado = lista;
 
         this.listado.forEach(u => {
@@ -103,7 +113,7 @@ export class ListaEsperaPage implements OnInit {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
 
       this.mesas.forEach(u => {

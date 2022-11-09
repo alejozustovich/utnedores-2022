@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { getStorage, ref } from "firebase/storage";
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-gestion-usuarios',
   templateUrl: './gestion-usuarios.page.html',
   styleUrls: ['./gestion-usuarios.page.scss'],
 })
-export class GestionUsuariosPage implements OnInit {
+export class GestionUsuariosPage implements OnInit, OnDestroy {
 
   volumenOn = true;
   spinner = true;
@@ -19,6 +20,7 @@ export class GestionUsuariosPage implements OnInit {
   selectedUsers = [];
   pathFoto = "../../assets/user-photo.png";
   cargando = true;
+  subUsers: Subscription;
 
   constructor(
     private toastController: ToastController,
@@ -30,6 +32,10 @@ export class GestionUsuariosPage implements OnInit {
     this.Sonido();
     this.DesactivarSpinner();
     this.TraerUsuarios();
+  }
+
+  ngOnDestroy(){	
+    this.subUsers.unsubscribe();
   }
 
   Sonido(){
@@ -78,7 +84,7 @@ export class GestionUsuariosPage implements OnInit {
 
   async TraerUsuarios() {
     var usuariosSeleccionados = [];
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
         this.users = allUsers;
         this.users.forEach(user => {
           if(!user.aprobado.includes("No")) {

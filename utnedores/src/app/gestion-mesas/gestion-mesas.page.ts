@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, Cuenta, Usuario, Mesa, Pedido } from '../services/auth.service';
 import { ChatService, Chat } from '../services/chat.service';
@@ -6,13 +6,14 @@ import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
 import { ToastController } from '@ionic/angular';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-gestion-mesas',
   templateUrl: './gestion-mesas.page.html',
   styleUrls: ['./gestion-mesas.page.scss'],
 })
-export class GestionMesasPage implements OnInit {
+export class GestionMesasPage implements OnInit, OnDestroy {
 
   volumenOn = true;
   cargando = true;
@@ -23,6 +24,10 @@ export class GestionMesasPage implements OnInit {
   cuentas: Cuenta[];
   chats: Chat[];
   recargar = true;
+  subMesas: Subscription;
+  subPedidos: Subscription;
+  subChats: Subscription;
+  subCuentas: Subscription;
 
   constructor(
     private toastController: ToastController,
@@ -51,8 +56,15 @@ export class GestionMesasPage implements OnInit {
     }
   }
 
+  ngOnDestroy(){	
+    this.subMesas.unsubscribe();
+    this.subPedidos.unsubscribe();
+    this.subCuentas.unsubscribe();
+    this.subChats.unsubscribe();
+  }
+
   TraerCuentas() {
-    this.authService.traerCuentas().subscribe(listaCuentas => {
+    this.subCuentas = this.authService.traerCuentas().subscribe(listaCuentas => {
       if(this.recargar){
         this.cuentas = listaCuentas;
       }
@@ -60,7 +72,7 @@ export class GestionMesasPage implements OnInit {
   }
 
   TraerChat() {
-    this.chatService.cargarChats("chats", false).subscribe(listaChats => {
+    this.subChats = this.chatService.cargarChats("chats", false).subscribe(listaChats => {
       if(this.recargar){
         this.chats = listaChats;
       }
@@ -68,7 +80,7 @@ export class GestionMesasPage implements OnInit {
   }
 
   TraerPedidos() {
-    this.authService.traerPedidos().subscribe(pedidos => {
+    this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       if(this.recargar){
         this.pedidos = pedidos;
       }
@@ -87,7 +99,7 @@ export class GestionMesasPage implements OnInit {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
 
       this.mesas.forEach(u => {

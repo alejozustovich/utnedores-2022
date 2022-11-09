@@ -7,6 +7,8 @@ import { ToastController } from '@ionic/angular';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Unsubscribe } from '@angular/fire/firestore';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-estado-pedido',
@@ -74,6 +76,12 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
     "Postres y Café-Te"];
   poseePedidosPendientes = false;
 
+  subMesas: Subscription;
+  subCuentas: Subscription;
+  subPedidos: Subscription;
+  subProductos: Subscription;
+  sub: Unsubscribe;
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -100,7 +108,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
     });
   }
@@ -111,7 +119,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerCuentas() {
-    this.authService.traerCuentas().subscribe(listaCuentas => {
+    this.subCuentas = this.authService.traerCuentas().subscribe(listaCuentas => {
       this.cuentas = listaCuentas;
       this.cuentas.forEach(cuenta => {
         if(cuenta.idUsuario === this.usuarioActual.idUsuario){
@@ -125,7 +133,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.authService.obtenerAuth().onAuthStateChanged(user => {
+    this.sub = this.authService.obtenerAuth().onAuthStateChanged(user => {
       this.authService.getUser(user.email).then((user: Usuario) => {
         this.usuarioActual = user;
         this.TraerPedidos();
@@ -151,6 +159,11 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subMesas.unsubscribe();
+    this.subProductos.unsubscribe();
+    this.subPedidos.unsubscribe();
+    this.subCuentas.unsubscribe();
+    this.sub();
   }
 
   stopScan()
@@ -240,7 +253,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerProductos() {
-    this.authService.getProducts().subscribe(allProducts => {
+    this.subProductos = this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.productos.forEach(u => {
           
@@ -298,7 +311,7 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerPedidos(){
-    this.authService.traerPedidos().subscribe(pedidos => {
+    this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
       var pedidosSeleccionados = [];
       for(var i = 0 ; i < this.pedidos.length - 1; i++){

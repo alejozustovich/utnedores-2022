@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { AuthService, Usuario } from '../services/auth.service';
@@ -6,13 +6,15 @@ import { Camera, CameraOptions } from "@awesome-cordova-plugins/camera/ngx";
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Router } from '@angular/router';
 import { UtilidadesService } from '../services/utilidades.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-supervisor',
   templateUrl: './alta-supervisor.page.html',
   styleUrls: ['./alta-supervisor.page.scss'],
 })
-export class AltaSupervisorPage implements OnInit {
+
+export class AltaSupervisorPage implements OnInit, OnDestroy {
   
   volumenOn = true;
   users: Usuario[];
@@ -34,6 +36,7 @@ export class AltaSupervisorPage implements OnInit {
   currentPassword = "";
 
   usuarioAgregado = false;
+  subUsers: Subscription;	
 
   options: CameraOptions = {
     quality: 50,
@@ -55,8 +58,8 @@ export class AltaSupervisorPage implements OnInit {
     private utilidades: UtilidadesService
   ) {
     this.spinner = true;
-    this.Sonido();
     this.DesactivarSpinner();
+    this.Sonido();
     this.AsignarNombreFoto();
     setTimeout(() => {
       this.ObtenerPerfil();
@@ -132,6 +135,7 @@ export class AltaSupervisorPage implements OnInit {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subUsers.unsubscribe();
   }
 
   ngOnInit() {
@@ -309,7 +313,7 @@ export class AltaSupervisorPage implements OnInit {
   }
 
   traerUsuarios() {
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       this.asignarID(this.users);
     });
