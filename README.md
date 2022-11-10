@@ -135,3 +135,60 @@
   <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/semana-3-homes.png" width="800">
   <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/semana-3-pedido.png" width="800">
 </p>
+
+## Semana 4: Sábado 05/11 al Sábado 12/11
+
+**Tareas realizadas:**
+
+* **ACUÑA ZUSTOVICH, Alejo**
+  * *Módulos desarrollados*
+    * *1: Alta de Clientes*
+    * *2: Alta de Empleados*
+    * *3: Home Metre*
+      * *a- Agregar Nuevo Cliente*
+      * *b- Listado de Clientes en Espera*
+      * *c- Gestionar Mesas*
+    * *4: Home Cocina (Cocinero, Bartender)*
+      * *a- Agregar Producto*
+      * *b- Ver Pedidos*
+    * *5: QR de Ingreso al Local*
+    * *6: Encuesta Empleados*
+    * *7: Resultado Encuesta Empleados*
+    * *8: Push Notification al Agregar Cliente (Dueño/Supervisor)*
+
+* **GUELER, Daniel**
+  * *Módulos desarrollados*
+    * *1: Alta de Productos*
+    * *2: Alta de Mesa*
+    * *3: Home Cliente*
+      * *a- Ver Encuestas*
+      * *b- Escanear QR*
+      * *c- Ordenar un Pedido*
+      * *d- Ver Estado del Pedido*
+      * *e- Consultar al Mozo*
+      * *f- Pedir la Cuenta*
+      * *g- Dejar Opinión*
+    * *4: QR de la Mesa*
+    * *5: Encuesta Clientes*
+    * *6: Resultado Encuesta Clientes*
+    * *7: Push Notification al Ingresar al Local (Metre)*
+    * *8: Push Notification al Confirmar el Pedido (Bartender/Cocinero)*
+
+* **MOLINI, Ignacio**
+  * *Módulos desarrollados*
+    * *1: Alta de Dueño/Supervisor*
+    * *2: Home Dueño/Supervisor*
+      * *a- Agregar Nuevo Supervisor/Empleado/Mesa*
+      * *b- Listado de Clientes Pendientes*
+    * *3: Home Mozo*
+      * *a- Ordenar un Pedido*
+      * *b- Ver Pedidos*
+      * *c- Chat con el Cliente*
+      * *d- Cierre de Mesa*
+    * *4: QR de la Propina*
+    * *5: Encuesta Supervisor*
+    * *6: Chat Cliente-Mozo*
+    * *7: Push Notification al Consultar al Mozo (Mozo)*
+    * *8: Push Notification al Realizar el Pedido (Mozo)*
+
+>NOTA: Se trabajó en las encuestas y los gráficos que muestran los resultados de las mismas. Se incorporó el chat de Cliente-Mozo y se añadieron los Push Notification. Se realizaron las pruebas integrales de toda la aplicación.
