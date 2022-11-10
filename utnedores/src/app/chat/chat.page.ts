@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChildren, QueryList, ElementRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -7,13 +7,14 @@ import { Chat, ChatService } from '../services/chat.service';
 import { DataUsuarioService } from '../services/data-usuario.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Unsubscribe } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit {
+export class ChatPage implements OnInit, OnDestroy {
 
   volumenOn = true;
   chat: Chat = { numMesa: '0', idField: '0', leido: false, mensajes: [] };
@@ -26,6 +27,8 @@ export class ChatPage implements OnInit {
   idUsuarioPedido: string;
   users: Usuario[];
   flagToken = true;
+  subUsers: Subscription;
+  sub: Unsubscribe;
 
   @ViewChildren('cajaMsj') cajaMsj: QueryList<ElementRef>;
 
@@ -61,7 +64,7 @@ export class ChatPage implements OnInit {
   }
 
   TraerUsuarios(){
-    this.authService.getUsers().subscribe(allUsers => {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       this.spinner = false;
     });
@@ -75,7 +78,7 @@ export class ChatPage implements OnInit {
         mensaje: [{value: '', disabled: true}, [Validators.maxLength(30)]]
       }
     )
-    this.authService.obtenerAuth().onAuthStateChanged(user => {
+    this.sub = this.authService.obtenerAuth().onAuthStateChanged(user => {
       this.authService.getUser(user.email).then((user: Usuario) => {
         this.usuarioActual = user;
         this.subChat = this.chatService.cargarChatMesa('chats', this.numMesa).subscribe((chat: Chat[]) => {
@@ -122,6 +125,8 @@ export class ChatPage implements OnInit {
 
   ngOnDestroy(): void {
     this.subChat.unsubscribe();
+    this.subUsers.unsubscribe();
+    this.sub();
   }
 
   bgMsjOpuesto(msj: Mensaje) {

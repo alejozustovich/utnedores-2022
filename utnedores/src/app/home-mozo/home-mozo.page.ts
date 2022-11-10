@@ -8,6 +8,7 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { ToastController } from '@ionic/angular';
 import { Chat, ChatService } from '../services/chat.service';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-mozo',
@@ -30,6 +31,8 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   cantPedidosListos = 0;
   cantChat = 0;
   idFieldToken = "";
+  subMesas: Subscription;
+  subPedidos: Subscription;
 
   constructor(
     private toastController: ToastController,
@@ -102,6 +105,8 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+    this.subMesas.unsubscribe();
+    this.subPedidos.unsubscribe();
   }
 
   cargarFoto(numMesa: string) {
@@ -127,7 +132,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerMesas() {
-    this.authService.getTables().subscribe(allTables => {
+    this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       this.mesas.forEach(mesa => {
         const storage = getStorage();
@@ -183,7 +188,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   TraerPedidos() {
-    this.authService.traerPedidos().subscribe(pedidos => {
+    this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.cantPedidos = 0;
       this.pedidos = pedidos;
       for (var i = 0; i < this.pedidos.length; i++) {
