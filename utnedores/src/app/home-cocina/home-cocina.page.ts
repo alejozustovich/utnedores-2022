@@ -7,6 +7,7 @@ import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notification.service';
 import { Subscription } from 'rxjs';
+import { DataUsuarioService } from '../services/data-usuario.service';
 
 @Component({
   selector: 'app-home-cocina',
@@ -23,6 +24,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
   tipo = "";
   isModalOpen = false;
   isModalOpen2 = false;
+  isModalOpen3 = false;
   confirmarPedido = false;
   idFieldPedidoActual = "";
   indicePedidoActual = -1;
@@ -59,6 +61,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
     private toastController: ToastController,
     private authService: AuthService,
     private router: Router,
+    private duService: DataUsuarioService,
     private utilidades: UtilidadesService,
     private pnService: PushNotificationService
   ) { 
@@ -72,7 +75,11 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
     },4500);
   }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.duService.openModal$.subscribe(resp => {
+      this.isModalOpen3 = resp;
+    })
+  }
 
   ngOnDestroy(){	
     this.subUsers.unsubscribe();
@@ -311,7 +318,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
         this.authService.pedidoPreparado(this.idFieldPedidoActual);
         setTimeout(() => {
           if(!flag){
-            this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido");
+            this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido", { operacion: 'PedidoListo' });
           }
         }, 1500);
       }
@@ -323,7 +330,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
         this.authService.pedidoPreparado(this.idFieldPedidoActual);
         setTimeout(() => {
           if(!flag){
-            this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido");
+            this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido", { operacion: 'PedidoListo' });
           }
         }, 1500);
       }
@@ -333,6 +340,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
       this.utilidades.SonidoConfirmar();
     }
     this.isModalOpen2 = false;
+    this.duService.setOpenModal = false;
     this.confirmarPedido = false;
   }
 
@@ -343,6 +351,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
   AbrirPedidos(){
     this.isModalOpen = true;
     this.isModalOpen2 = false;
+    this.duService.setOpenModal = false;
   }
 
   VolverHome(){
@@ -360,13 +369,15 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
   }
 
   ObtenerTipo(){
-    setTimeout(()=>{
-      this.authService.getUser(this.authService.usuarioActual()).then(user => {
-        this.tipo = user.tipo;
-        this.idFieldToken = user.token;
-        localStorage.setItem('tipoAlta', user.tipo);
-      });
-    },2500);
+    this.authService.getUsers().subscribe((users: Usuario[]) => {
+      users.forEach((u: Usuario) => {
+        if (u.correo == this.authService.usuarioActual()) {
+          this.tipo = u.tipo;
+          this.idFieldToken = u.idField;
+          localStorage.setItem('tipoAlta', u.tipo);
+        }
+      })
+    });
   }
 
   ActivarDesactivarSonido() {

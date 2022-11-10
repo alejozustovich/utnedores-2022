@@ -43,9 +43,9 @@ export class ChatPage implements OnInit, OnDestroy {
     private pnService: PushNotificationService
   ) {
     this.spinner = true;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.spinner = false;
-    },5000);
+    }, 5000);
     this.Sonido();
     this.TraerUsuarios();
   }
@@ -63,7 +63,7 @@ export class ChatPage implements OnInit, OnDestroy {
     }
   }
 
-  TraerUsuarios(){
+  TraerUsuarios() {
     this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
       this.spinner = false;
@@ -71,11 +71,11 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // localStorage.setItem('numeroMesa', '9')
+    // localStorage.setItem('numeroMesa', '7')
     this.numMesa = localStorage.getItem('numeroMesa');
     this.formMsj = this.fb.group(
       {
-        mensaje: [{value: '', disabled: true}, [Validators.maxLength(30)]]
+        mensaje: [{ value: '', disabled: true }, [Validators.maxLength(30)]]
       }
     )
     this.sub = this.authService.obtenerAuth().onAuthStateChanged(user => {
@@ -93,10 +93,10 @@ export class ChatPage implements OnInit, OnDestroy {
     })
   }
 
-  volver(){
-    if(this.usuarioActual.tipo == "Mozo"){
+  volver() {
+    if (this.usuarioActual.tipo == "Mozo") {
       this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
-    }else{
+    } else {
       this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
     }
   }
@@ -143,19 +143,19 @@ export class ChatPage implements OnInit, OnDestroy {
     var tokens = [""];
     var flagArrayToken = true;
 
-    if(this.flagToken){
+    if (this.flagToken) {
       this.users.forEach(user => {
-        if(user.tipo.includes("Mozo")){
-          if(user.token != ""){
-            if(flagArrayToken){
+        if (user.tipo.includes("Mozo")) {
+          if (user.token != "") {
+            if (flagArrayToken) {
               flagArrayToken = false;
               tokens[0] = user.token;
-            }else{
+            } else {
               tokens.push(user.token);
             }
           }
         }
-      }); 
+      });
     }
 
     const textoMensaje = this.formMsj.value.mensaje;
@@ -176,20 +176,14 @@ export class ChatPage implements OnInit, OnDestroy {
       }
       this.chatService.agregarChat(chat, 'chats')
     } else {
-      let flag = false;
-      if (this.usuarioActual.tipo == "Mozo") {
-        flag = true;
-      }else{
-        if(this.flagToken){
-          this.flagToken = false;
-          if(!flagArrayToken){
-            this.pnService.sendPush(tokens, "Consulta Cliente", "Chat Pendiente");
-          }
-        }
-      }
       this.chat.mensajes.push(mensaje);
-      const obj = { leido: flag, mensajes: this.chat.mensajes }
-      this.chatService.modificarChat(obj, `chats/${this.chat.idField}`)
+      const obj = { leido: (this.usuarioActual.tipo == "Mozo"), mensajes: this.chat.mensajes }
+      this.chatService.modificarChat(obj, `chats/${this.chat.idField}`);
+    }
+    if (this.usuarioActual.perfil == "Cliente" && this.flagToken && !flagArrayToken) {
+      this.flagToken = false;
+      console.log(1);
+      this.pnService.sendPush(tokens, "Consulta Cliente", "Chat Pendiente", { operacion: 'NuevoMensaje' });
     }
     this.formMsj.reset();
   }

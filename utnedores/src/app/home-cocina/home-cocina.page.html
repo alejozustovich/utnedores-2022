@@ -82,9 +82,8 @@
 		</ng-template>
 	</ion-modal>
 
-	<ion-modal [isOpen]="isModalOpen2">
+	<ion-modal [isOpen]="isModalOpen2 || isModalOpen3">
 	<ng-template>
-
 		<ion-header [translucent]="true">
 			<ion-toolbar>
 				<img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
@@ -140,13 +139,9 @@
 	
 				</form>
 			</div>
-			
 			</div>
-
 	</ng-template>
 	</ion-modal>
-
-
 </ion-content>
 
 <div class="custom-loading" *ngIf="spinner">

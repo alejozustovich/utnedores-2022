@@ -11,12 +11,17 @@ export class DataUsuarioService {
     correo: "0", clave: "0", dni: "0", cuil: "0", foto: "0", perfil: "0", tipo: "0", aprobado: "0", token: ""
   });
   private idUsuarioPedido = new BehaviorSubject<string>('');
+  private openModal = new BehaviorSubject<boolean>(false);
 
   constructor() { }
 
   public usuario$ = this.usuario.asObservable();
+  public idUsuarioPedido$ = this.idUsuarioPedido.asObservable();
+  public openModal$ = this.openModal.asObservable();
 
-  public idUsuarioPedido$ = this.idUsuarioPedido.asObservable()
+  set setOpenModal(estado: boolean) {
+    this.openModal.next(estado);
+  }
 
   set setUsuario(usuario: Usuario) {
     this.usuario.next(usuario);

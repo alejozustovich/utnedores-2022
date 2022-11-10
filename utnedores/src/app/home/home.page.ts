@@ -47,13 +47,15 @@ export class HomePage implements OnInit {
   }
 
   ObtenerPerfil(){
-    setTimeout(()=>{
-      this.authService.getUser(this.authService.usuarioActual()).then(user => {
-        this.perfil = user.perfil;
-        this.idFieldToken = user.token;
-        this.spinner = false;
-      });
-    },2500);
+    this.authService.getUsers().subscribe((users: Usuario[]) => {
+      users.forEach((u: Usuario) => {
+        if (u.correo == this.authService.usuarioActual()) {
+          this.perfil = u.perfil;
+          this.idFieldToken = u.idField;
+          this.spinner = false;
+        }
+      })
+    });
   }
 
   ngOnInit() {}

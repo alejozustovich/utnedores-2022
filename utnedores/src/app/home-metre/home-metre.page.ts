@@ -48,12 +48,14 @@ export class HomeMetrePage implements OnInit {
   }
   
   ObtenerTipo(){
-    setTimeout(()=>{
-      this.authService.getUser(this.authService.usuarioActual()).then(user => {
-        this.idFieldToken = user.token;
-        this.spinner = false;
-      });
-    },2500);
+    this.authService.getUsers().subscribe((users: Usuario[]) => {
+      users.forEach((u: Usuario) => {
+        if (u.correo == this.authService.usuarioActual()) {
+          this.idFieldToken = u.idField;
+          this.spinner = false;
+        }
+      })
+    });
   }
 
   ngOnInit() {}

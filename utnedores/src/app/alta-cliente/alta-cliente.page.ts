@@ -38,7 +38,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
   clienteAgregado = false;
   currentEmail = "";
   currentPassword = "";
-  subUsers: Subscription;	
+  subUsers: Subscription;
 
   options: CameraOptions = {
     quality: 50,
@@ -67,16 +67,16 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.ObtenerPerfil();
   }
 
-  Sonido(){
+  Sonido() {
     try {
       var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
+      if (sonido != null) {
+        if (sonido.includes("No")) {
           this.volumenOn = false;
         }
       }
     } catch (error) {
-      
+
     }
   }
 
@@ -220,7 +220,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       } else {
         this.Alerta("Código no válido", 'danger');
-        if(this.volumenOn){
+        if (this.volumenOn) {
           this.utilidades.SonidoError();
         }
         this.utilidades.VibrarError();
@@ -287,17 +287,19 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
     var tokens = [""];
 
     this.users.forEach(user => {
-      if(user.perfil.includes("Dueño") || user.perfil.includes("Supervisor")){
-        if(user.token != ""){
-          if(flag){
+      if (user.perfil.includes("Dueño") || user.perfil.includes("Supervisor")) {
+        if (user.token != "") {
+          if (flag) {
             flag = false;
             tokens[0] = user.token;
-          }else{
+          } else {
             tokens.push(user.token);
           }
         }
       }
     });
+
+    console.log(tokens);
 
     var unUsuarioRegistrado: Usuario = {
       idField: "",
@@ -331,12 +333,12 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
       this.spinner = false;
       this.clienteAgregado = true;
-      if(this.volumenOn){
+      if (this.volumenOn) {
         this.utilidades.SonidoAlta();
       }
       setTimeout(() => {
-        if(!flag){
-          this.pnService.sendPush(tokens, "Cliente Registrado", "Dar de Alta");
+        if (!flag) {
+          this.pnService.sendPush(tokens, "Cliente Registrado", "Dar de Alta", { operacion: 'AltaCliente' });
         }
       }, 1500);
       setTimeout(() => {
@@ -382,7 +384,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
           this.spinner = false;
           this.clienteAgregado = true;
-          if(this.volumenOn){
+          if (this.volumenOn) {
             this.utilidades.SonidoAlta();
           }
           setTimeout(() => {
@@ -420,7 +422,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       this.spinner = false;
       this.GuardarId();
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
-      if(this.volumenOn){
+      if (this.volumenOn) {
         this.utilidades.SonidoError();
       }
       this.utilidades.VibrarError();

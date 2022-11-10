@@ -1,5 +1,5 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Pedido, Mesa } from '../services/auth.service';
+import { AuthService, Pedido, Mesa, Usuario } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { getDownloadURL } from '@angular/fire/storage';
 import { getStorage, ref } from "firebase/storage";
@@ -9,6 +9,7 @@ import { ToastController } from '@ionic/angular';
 import { Chat, ChatService } from '../services/chat.service';
 import { PushNotificationService } from '../services/push-notification.service';
 import { Subscription } from 'rxjs';
+import { DataUsuarioService } from '../services/data-usuario.service';
 
 @Component({
   selector: 'app-home-mozo',
@@ -21,6 +22,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   result = null;
   numMesa = "0";
   isModalOpen: boolean = false;
+  isModalOpen2: boolean = false;
   scanActive = false;
   pedidos: Pedido[];
   chats: Chat[];
@@ -39,6 +41,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private utilidades: UtilidadesService,
+    private duService: DataUsuarioService,
     private chatService: ChatService,
     private pnService: PushNotificationService
   ) {
@@ -46,7 +49,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     this.Sonido();
     this.TraerPedidos();
     this.TraerMesas();
-    this.ObtenerTipo();
+    this.ObtenerIdField();
   }
 
   Sonido() {
@@ -62,12 +65,14 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ObtenerTipo() {
-    setTimeout(() => {
-      this.authService.getUser(this.authService.usuarioActual()).then(user => {
-        this.idFieldToken = user.token;
-      });
-    }, 2500);
+  ObtenerIdField() {
+    this.authService.getUsers().subscribe((users: Usuario[]) => {
+      users.forEach((u: Usuario) => {
+        if (u.correo == this.authService.usuarioActual()) {
+          this.idFieldToken = u.idField;
+        }
+      })
+    });
   }
 
   CierreMesa() {
@@ -96,6 +101,9 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
         return 0;
       })
       this.chats = chatAbiertos;
+    })
+    this.duService.openModal$.subscribe(resp => {
+      this.isModalOpen2 = resp;
     })
   }
 
@@ -126,6 +134,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   entrarChat(numMesa: string) {
     localStorage.setItem('numeroMesa', numMesa);
     this.isModalOpen = false;
+    this.duService.setOpenModal = false;
     setTimeout(() => {
       this.router.navigateByUrl('/chat', { replaceUrl: true });
     }, 10);
@@ -185,6 +194,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
   volver() {
     this.isModalOpen = false;
+    this.duService.setOpenModal = false;
   }
 
   TraerPedidos() {

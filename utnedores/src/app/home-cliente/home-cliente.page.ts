@@ -19,7 +19,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   users: Usuario[];
   mesas: Mesa[];
   listaEspera: Espera[];
-  
+
   clienteAnonimo = true;
   volumenOn = true;
   esRegistrado = false;
@@ -40,7 +40,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     aprobado: "0",
     token: ""
   };
-  mensajeEstado = ""; 
+  mensajeEstado = "";
   estado = 0;
 
   preferenciaMesa = "";
@@ -51,7 +51,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   ingresarCantidad = false;
   subUsers: Subscription;
   subListaEspera: Subscription;
-  subMesas: Subscription;	
+  subMesas: Subscription;
 
   idEsperaMayor = 0;
   //0   => Escanear QR Local
@@ -60,12 +60,12 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   //3   => 
 
   constructor(
-    private toastController : ToastController,
+    private toastController: ToastController,
     private router: Router,
     private authService: AuthService,
     private utilidades: UtilidadesService,
     private pnService: PushNotificationService
-  ) { 
+  ) {
     this.Sonido();
     this.DesactivarSpinner();
     this.TraerMesas();
@@ -74,35 +74,35 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.ObtenerUsuario();
   }
 
-  Sonido(){
+  Sonido() {
     try {
       var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
+      if (sonido != null) {
+        if (sonido.includes("No")) {
           this.volumenOn = false;
         }
       }
     } catch (error) {
-      
+
     }
   }
-  
-  DesactivarSpinner(){
-    setTimeout(()=>{
-      this.spinner = false;
-    },8000);
-  }
-  ngOnInit() {}
 
-  IrEncuestas(){
+  DesactivarSpinner() {
+    setTimeout(() => {
+      this.spinner = false;
+    }, 8000);
+  }
+  ngOnInit() { }
+
+  IrEncuestas() {
     this.spinner = true;
     this.router.navigateByUrl('/encuesta-clientes', { replaceUrl: true });
   }
 
-  IrReservar(){
+  IrReservar() {
   }
 
-  async Alerta( mensaje : string , color : string ) {
+  async Alerta(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
       position: 'top',
@@ -113,32 +113,31 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     await toast.present();
   }
 
-  stopScan()
-  {
+  stopScan() {
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
 
-  Caracteres(dato: string){
+  Caracteres(dato: string) {
     var retorno = dato.toString();
-    if(dato.length == 1){
+    if (dato.length == 1) {
       retorno = "0" + retorno;
     }
     return retorno;
   }
 
-  TraerUsuarios(){
+  TraerUsuarios() {
     this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
     });
   }
 
-  ActivarSpinner(){
+  ActivarSpinner() {
     this.spinner = true;
   }
 
   ActivarDesactivarSonido() {
-    if(this.volumenOn) {
+    if (this.volumenOn) {
       this.volumenOn = false;
       localStorage.setItem('sonido', "No");
     } else {
@@ -147,23 +146,23 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  SonidoEgreso(){
-    if(this.volumenOn) {
+  SonidoEgreso() {
+    if (this.volumenOn) {
       this.utilidades.PlayLogout();
     }
     localStorage.clear();
   }
 
-  CerrarSesion(){
+  CerrarSesion() {
     this.spinner = true;
     this.authService.logout();
 
-    if(!this.esRegistrado){
+    if (!this.esRegistrado) {
       //CHECKEAR QUE NO TENGA MESA
-        //NO
-          //ELIMINAR REGISTRO Y DE LA LISTA
-        //SI
-          //TIENE UNA MESA ASIGNADA
+      //NO
+      //ELIMINAR REGISTRO Y DE LA LISTA
+      //SI
+      //TIENE UNA MESA ASIGNADA
     }
 
     this.SonidoEgreso();
@@ -181,23 +180,23 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.subListaEspera.unsubscribe();
   }
 
-  ObtenerUsuario(){
-    setTimeout(()=>{
+  ObtenerUsuario() {
+    setTimeout(() => {
       this.authService.getUser(this.authService.usuarioActual()).then(user => {
         this.usuarioLogueado = (user as Usuario);
-        if(this.usuarioLogueado.tipo.includes("Registrado")){
+        if (this.usuarioLogueado.tipo.includes("Registrado")) {
           this.esRegistrado = true;
         }
       });
-    },2500);
+    }, 2500);
   }
 
-  TraerMesas(){
+  TraerMesas() {
     this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
-      for(var i = 0 ; i < this.mesas.length - 1; i++){
-        for(var k = i + 1 ; k < this.mesas.length; k++){
-          if((Number(this.mesas[i].numMesa)) > (Number(this.mesas[k].numMesa))){
+      for (var i = 0; i < this.mesas.length - 1; i++) {
+        for (var k = i + 1; k < this.mesas.length; k++) {
+          if ((Number(this.mesas[i].numMesa)) > (Number(this.mesas[k].numMesa))) {
             var mesaAux: Mesa = this.mesas[i];
             this.mesas[i] = this.mesas[k];
             this.mesas[k] = mesaAux;
@@ -205,17 +204,17 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       //ENTRA CAMBIO MESA
-      setTimeout(()=>{
+      setTimeout(() => {
         this.VerEstado(false);
-      },3500);
+      }, 3500);
     });
   }
 
-  TraerEsperas(){
+  TraerEsperas() {
     this.subListaEspera = this.authService.listaEspera().subscribe(esperas => {
       this.listaEspera = esperas;
       this.listaEspera.forEach(u => {
-        if(this.idEsperaMayor < (Number(u.idEspera))){
+        if (this.idEsperaMayor < (Number(u.idEspera))) {
           this.idEsperaMayor = (Number(u.idEspera));
         }
       });
@@ -224,99 +223,99 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  async startScanner(){
-    
+  async startScanner() {
+
     var verificar = true;
-    if(this.mesas.length == 0 || this.mesas == null){
+    if (this.mesas.length == 0 || this.mesas == null) {
       this.TraerMesas();
       verificar = false;
     }
 
-    if(this.idEsperaMayor == 0 || this.listaEspera == null){
+    if (this.idEsperaMayor == 0 || this.listaEspera == null) {
       this.TraerEsperas();
       verificar = false;
     }
-    if(this.usuarioLogueado.idUsuario === "0"){
+    if (this.usuarioLogueado.idUsuario === "0") {
       this.ObtenerUsuario();
       verificar = false;
     }
-    
-    if(verificar){
+
+    if (verificar) {
       this.scanActive = true;
       const result = await BarcodeScanner.startScan();
-      if(result.hasContent){
+      if (result.hasContent) {
         this.scanActive = false;
         this.result = result.content;
         this.AnalizarResultado();
       }
-    }else{
+    } else {
       this.Alerta("Ocurrió un error! Reintentar", 'danger');
     }
   }
 
-  ModificarEstado(mensaje: string){
+  ModificarEstado(mensaje: string) {
     this.mensajeEstado = mensaje;
   }
 
-  AbrirOpcionesMesa(){   
+  AbrirOpcionesMesa() {
     this.cantidadPersonas = 0;
     this.ingresarCantidad = true;
   }
 
-  ModificarOpcionesMesa(cantPersonas: number){
+  ModificarOpcionesMesa(cantPersonas: number) {
     this.cantidadPersonas = cantPersonas;
     this.ingresarCantidad = true;
   }
 
-  Sumar(){
-    if(this.cantidadPersonas < 8){
+  Sumar() {
+    if (this.cantidadPersonas < 8) {
       this.cantidadPersonas = this.cantidadPersonas + 1;
     }
   }
 
-  Restar(){
-    if(this.cantidadPersonas > 0){
+  Restar() {
+    if (this.cantidadPersonas > 0) {
       this.cantidadPersonas = this.cantidadPersonas - 1;
     }
   }
 
-  Aceptar(){
-    if(this.estado == 0){   //NO ESTABA EN LISTA DE ESPERA
+  Aceptar() {
+    if (this.estado == 0) {   //NO ESTABA EN LISTA DE ESPERA
       this.AgregarListaEspera();
-    }else{
+    } else {
       this.ModificarListaEspera();
     }
   }
-  
-  Cancelar(){
+
+  Cancelar() {
     this.ingresarCantidad = false;
   }
 
   SetTipoMesa(valor) {
-    this.preferenciaMesa = valor;
+    this.preferenciaMesa = valor.detail.value;
   }
 
-  AgregarListaEspera(){
+  AgregarListaEspera() {
     var flag = true;
     var tokens = [""];
 
     this.users.forEach(user => {
-      if(user.tipo.includes("Metre")){
-        if(user.token != ""){
-          if(flag){
+      if (user.tipo.includes("Metre")) {
+        if (user.token != "") {
+          if (flag) {
             flag = false;
             tokens[0] = user.token;
-          }else{
+          } else {
             tokens.push(user.token);
           }
         }
       }
-    });  
+    });
 
     var date = new Date();
     var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
     var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
-    var unaEspera : Espera ={
+    var unaEspera: Espera = {
       idField: "",
       idEspera: (this.idEsperaMayor.toString()),
       idUsuario: this.usuarioLogueado.idUsuario,
@@ -329,8 +328,8 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
       preferencia: this.preferenciaMesa
     }
 
-    this.authService.agregarEspera(unaEspera).then((res) =>{
-      if(res){
+    this.authService.agregarEspera(unaEspera).then((res) => {
+      if (res) {
         this.Alerta("EN LISTA DE ESPERA", 'success');
         this.ModificarEstado("EN LISTA DE ESPERA");
         this.estado = 1;
@@ -338,38 +337,38 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     });
     this.ingresarCantidad = false;
     setTimeout(() => {
-      if(!flag){
-        this.pnService.sendPush(tokens, "Ingresó un Cliente", "En Lista de Espera");
+      if (!flag) {
+        this.pnService.sendPush(tokens, "Ingresó un Cliente", "En Lista de Espera", { operacion: 'ListaEspera' });
       }
     }, 1500);
   }
 
-  ModificarListaEspera(){
-    if(this.cantidadPersonas == 0){
+  ModificarListaEspera() {
+    if (this.cantidadPersonas == 0) {
       this.authService.eliminarEspera(this.idFieldEspera);
       this.estado = 0;
       this.ModificarEstado("ESCANEAR QR LOCAL");
       this.ingresarCantidad = false;
-    }else{
+    } else {
       this.authService.modificarEspera(this.idFieldEspera, (this.cantidadPersonas).toString());
-      this.ModificarEstado("EN LISTA DE ESPERA");    
+      this.ModificarEstado("EN LISTA DE ESPERA");
       this.estado = 1;
       this.ingresarCantidad = false;
     }
   }
 
-  DirigirMenu(){
+  DirigirMenu() {
     this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
   }
 
-  VerEstado(flag: boolean){
+  VerEstado(flag: boolean) {
     this.estado = 0;  //ESCANEAR QR LOCAL
 
     var cantPersonasEspera = 0;
     this.idFieldEspera = "";
 
     this.listaEspera.forEach(u => {
-      if(u.idUsuario === this.usuarioLogueado.idUsuario) {
+      if (u.idUsuario === this.usuarioLogueado.idUsuario) {
         this.estado = 1;//EN LISTA DE ESPERA
         this.ModificarEstado("EN LISTA DE ESPERA");
 
@@ -377,31 +376,31 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
         this.idFieldEspera = u.idField;
       }
     });
-    if(this.estado == 1 && flag == true){
+    if (this.estado == 1 && flag == true) {
       this.ModificarOpcionesMesa(cantPersonasEspera);
     }
 
-    if(this.estado == 0){
+    if (this.estado == 0) {
       var mesasDisponibles = "";
       var cant = 0;
       this.mesas.forEach(u => {
-        if(this.usuarioLogueado.idUsuario != "0" && u.idUsuario === this.usuarioLogueado.idUsuario) {
+        if (this.usuarioLogueado.idUsuario != "0" && u.idUsuario === this.usuarioLogueado.idUsuario) {
           this.estado = 2;//TIENE AL MENOS 1 MESA ASIGNADA
 
           cant = cant + 1;
-          if(cant == 1){
+          if (cant == 1) {
             mesasDisponibles = u.numMesa;
-          }else{
+          } else {
             mesasDisponibles = mesasDisponibles + ", " + u.numMesa;
           }
         }
       });
-      if(cant == 0){
+      if (cant == 0) {
         this.ModificarEstado("ESCANEAR QR LOCAL");
-      }else{
-        if(cant == 1){
+      } else {
+        if (cant == 1) {
           this.ModificarEstado(("MESA ASIGNADA: " + mesasDisponibles));
-        }else{
+        } else {
           this.ModificarEstado(("MESAS ASIGNADAS: " + mesasDisponibles));
         }
       }
@@ -409,42 +408,42 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.spinner = false;
   }
 
-  AnalizarResultado(){
+  AnalizarResultado() {
     var numeroMesa = "";
-    if(this.result.includes(this.qrLocal)){
-      
+    if (this.result.includes(this.qrLocal)) {
+
       this.VerEstado(true);
 
-      if(this.estado == 0){
+      if (this.estado == 0) {
         this.AbrirOpcionesMesa();
       }
-      if(this.estado == 2){
+      if (this.estado == 2) {
         this.Alerta("Escanear QR Mesa", "warning");
       }
 
-    }else{
+    } else {
       var estadoMesa = 0;
       //0 MESA NO ENCONTRADA
       //1 ENCONTRADA Y NO DISPONIBLE
       //2 ENCONTRADA Y ASIGNADA
 
       this.mesas.forEach(u => {
-        if(this.result === u.qr){
+        if (this.result === u.qr) {
           estadoMesa = 1;
-          if(this.usuarioLogueado.idUsuario == u.idUsuario){
+          if (this.usuarioLogueado.idUsuario == u.idUsuario) {
             estadoMesa = 2;
             numeroMesa = u.numMesa;
           }
         }
       });
 
-      if(estadoMesa == 0){
+      if (estadoMesa == 0) {
         this.Alerta("CÓDIGO INVÁLIDO", 'danger');
-      }else{
-        if(estadoMesa == 1){
+      } else {
+        if (estadoMesa == 1) {
           this.Alerta("MESA NO ASIGNADA", 'danger');
-        }else{
-          if(estadoMesa == 2){
+        } else {
+          if (estadoMesa == 2) {
             localStorage.setItem('numeroMesa', numeroMesa);
             this.DirigirMenu();
           }

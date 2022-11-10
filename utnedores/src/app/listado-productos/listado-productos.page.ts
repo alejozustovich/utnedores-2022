@@ -54,7 +54,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   unSoloProducto: Producto;
   users: Usuario[];
 
-  subUsers: Subscription;			
+  subUsers: Subscription;
   subMesas: Subscription;
   subProductos: Subscription;
   subPedidos: Subscription;
@@ -66,8 +66,8 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     private utilidades: UtilidadesService,
     private pnService: PushNotificationService
   ) {
-    for(var i = 0 ; i < 50; i++){
-      this.productosAgregados.push({tiempo: 0, cantidad: 0, precio: 0, categoria: ""});
+    for (var i = 0; i < 50; i++) {
+      this.productosAgregados.push({ tiempo: 0, cantidad: 0, precio: 0, categoria: "" });
     }
     this.numMesa = localStorage.getItem('numeroMesa');
     this.back = (Number(localStorage.getItem('back')));
@@ -79,20 +79,20 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.TraerUsuarios();
   }
 
-  Sonido(){
+  Sonido() {
     try {
       var sonido = localStorage.getItem('sonido');
-      if(sonido != null){
-        if(sonido.includes("No")){
+      if (sonido != null) {
+        if (sonido.includes("No")) {
           this.volumenOn = false;
         }
       }
     } catch (error) {
-      
+
     }
   }
 
-  TraerUsuarios(){
+  TraerUsuarios() {
     this.subUsers = this.authService.getUsers().subscribe(allUsers => {
       this.users = allUsers;
     });
@@ -110,70 +110,69 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.subPedidos.unsubscribe();
   }
 
-  async startScanner(){
+  async startScanner() {
     this.scanActive = true;
     const result = await BarcodeScanner.startScan();
-    if(result.hasContent){
+    if (result.hasContent) {
       this.scanActive = false;
       this.result = result.content;
       this.AnalizarResultado();
     }
   }
 
-  AnalizarResultado(){
+  AnalizarResultado() {
     var flag = false;
 
     this.productos.forEach(producto => {
-      if(producto.qr === this.result){
+      if (producto.qr === this.result) {
         flag = true;
         this.categoriaUnProducto = producto.categoria;
         this.unSoloProducto = producto;
       }
     });
 
-    if(flag){
+    if (flag) {
       this.isModalOpen3 = true;
-    }else{
+    } else {
       this.Alerta("Código no válido", 'danger');
-      if(this.volumenOn){
+      if (this.volumenOn) {
         this.utilidades.SonidoError();
       }
       this.utilidades.VibrarError();
     }
   }
 
-  stopScan()
-  {
+  stopScan() {
     BarcodeScanner.stopScan();
     this.scanActive = false;
   }
 
   ngOnInit() {
-    
+
   }
 
   TraerMesas() {
     this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       this.mesas.forEach(m => {
-        if(m.numMesa.includes(this.numMesa)){
+        if (m.numMesa.includes(this.numMesa)) {
           this.idUsuarioMesa = m.idUsuario;
         }
       });
     });
   }
 
-  TraerPedidos(){
+  TraerPedidos() {
     this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
 
       var mayorId = 0;
 
-      if(this.pedidos.length == 0){
+      if (this.pedidos.length == 0) {
         this.idRegistroPedido = 1;
-      }else{
-        for(var i = 0 ; i < this.pedidos.length ; i++){
-          if((Number(this.pedidos[i].idPedido)) > mayorId){
+      } else {
+        for (var i = 0; i < this.pedidos.length; i++) {
+          if ((Number(this.pedidos[i].idPedido)) > mayorId) {
             mayorId = (Number(this.pedidos[i].idPedido));
           }
         }
@@ -183,7 +182,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  VerMenu(){
+  VerMenu() {
     this.isModalOpen = false;
     this.isModalOpen2 = false;
     this.isModalOpen3 = false;
@@ -193,31 +192,31 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.subProductos = this.authService.getProducts().subscribe(allProducts => {
       this.productos = allProducts;
       this.productos.forEach(u => {
-          
-          var foto1Buscar = "productos/" + u.foto1;
-          var foto2Buscar = "productos/" + u.foto2;
-          var foto3Buscar = "productos/" + u.foto3;
-          const storage = getStorage();
 
-          const storageRef1 = ref(storage, foto1Buscar);
-          getDownloadURL(storageRef1).then((response) => {
-            u.foto1 = response;
-          });
+        var foto1Buscar = "productos/" + u.foto1;
+        var foto2Buscar = "productos/" + u.foto2;
+        var foto3Buscar = "productos/" + u.foto3;
+        const storage = getStorage();
 
-          const storageRef2 = ref(storage, foto2Buscar);
-          getDownloadURL(storageRef2).then((response) => {
-            u.foto2 = response;
-          });
+        const storageRef1 = ref(storage, foto1Buscar);
+        getDownloadURL(storageRef1).then((response) => {
+          u.foto1 = response;
+        });
 
-          const storageRef3 = ref(storage, foto3Buscar);
-          getDownloadURL(storageRef3).then((response) => {
-            u.foto3 = response;
-          });
+        const storageRef2 = ref(storage, foto2Buscar);
+        getDownloadURL(storageRef2).then((response) => {
+          u.foto2 = response;
+        });
+
+        const storageRef3 = ref(storage, foto3Buscar);
+        getDownloadURL(storageRef3).then((response) => {
+          u.foto3 = response;
+        });
       });
 
-      for(var i = 0 ; i < this.productos.length - 1; i++){
-        for(var k = i + 1; k < this.productos.length ; k++){
-          if((this.productos[i].producto).localeCompare(this.productos[k].producto) == 1){
+      for (var i = 0; i < this.productos.length - 1; i++) {
+        for (var k = i + 1; k < this.productos.length; k++) {
+          if ((this.productos[i].producto).localeCompare(this.productos[k].producto) == 1) {
             var userA = this.productos[i];
             this.productos[i] = this.productos[k];
             this.productos[k] = userA;
@@ -225,12 +224,12 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
-      for(var i = 0 ; i < this.productos.length; i++){
+      for (var i = 0; i < this.productos.length; i++) {
         this.productosAgregados[Number(this.productos[i].idProducto)].tiempo = Number(this.productos[i].tiempoElaboracion);
         this.productosAgregados[Number(this.productos[i].idProducto)].precio = Number(this.productos[i].precio);
         this.productosAgregados[Number(this.productos[i].idProducto)].categoria = this.productos[i].categoria;
-        for(var k = 0; k < this.categorias.length ; k++){
-          if(this.productos[i].categoria.includes(this.categorias[k])){
+        for (var k = 0; k < this.categorias.length; k++) {
+          if (this.productos[i].categoria.includes(this.categorias[k])) {
             this.buttonsArray[k] = false;
             k = this.categorias.length;
           }
@@ -249,7 +248,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   FiltrarCategoria(categoria) {
     this.isModalOpen = true;
     this.categoria = categoria;
-    this.categoria == 'Bebidas sin alcohol' || this.categoria == 'Bebidas con alcohol'? this.esBebida = true : this.esBebida = false;
+    this.categoria == 'Bebidas sin alcohol' || this.categoria == 'Bebidas con alcohol' ? this.esBebida = true : this.esBebida = false;
   }
 
   SumarProducto(idProducto: string) {
@@ -260,7 +259,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   RestarProducto(idProducto: string) {
-    if(this.productosAgregados[Number(idProducto)].cantidad > 0){
+    if (this.productosAgregados[Number(idProducto)].cantidad > 0) {
       this.productosAgregados[Number(idProducto)].cantidad = this.productosAgregados[Number(idProducto)].cantidad - 1;
     }
     this.CalcularPrecio();
@@ -268,11 +267,11 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.CantidadPorCategoria();
   }
 
-  CalcularPrecio(){
+  CalcularPrecio() {
     var precio = 0;
     this.pedidoValido = false;
     this.productosAgregados.forEach(element => {
-      if(element.cantidad > 0){
+      if (element.cantidad > 0) {
         this.pedidoValido = true;
         precio = precio + (element.precio * element.cantidad);
       }
@@ -280,24 +279,24 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.precioTotal = precio;
   }
 
-  CalcularTiempo(){
+  CalcularTiempo() {
     var tiempoMayor = 0;
     this.productosAgregados.forEach(element => {
-      if(element.cantidad > 0 && element.tiempo > tiempoMayor){
+      if (element.cantidad > 0 && element.tiempo > tiempoMayor) {
         tiempoMayor = element.tiempo;
       }
     });
     this.tiempoTotal = tiempoMayor;
   }
 
-  CantidadPorCategoria(){
-    for(var i = 0 ; i < this.categorias.length ; i++){
+  CantidadPorCategoria() {
+    for (var i = 0; i < this.categorias.length; i++) {
       this.cantidadPorCategoria[i] = 0;
     }
     this.productosAgregados.forEach(element => {
-      if(element.cantidad > 0){
-        for(var i = 0 ; i < this.categorias.length ; i++){
-          if(this.categorias[i].includes(element.categoria)){
+      if (element.cantidad > 0) {
+        for (var i = 0; i < this.categorias.length; i++) {
+          if (this.categorias[i].includes(element.categoria)) {
             this.cantidadPorCategoria[i] = this.cantidadPorCategoria[i] + element.cantidad;
           }
         }
@@ -317,78 +316,78 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     return retorno;
   }
 
-  Confirmar(){
+  Confirmar() {
     this.spinner = true;
 
-    if(this.idRegistroPedido != 0){
+    if (this.idRegistroPedido != 0) {
 
       var tokens = [""];
       var flagOnce = true;
 
       this.isModalOpen2 = false;
       this.DesactivarSpinner();
-  
+
       var date = new Date();
       var fechaActual = this.Caracteres(date.getDate().toString()) + "/" + this.Caracteres(date.getMonth().toString()) + "/" + date.getFullYear().toString();
       var horaActual = this.Caracteres(date.getHours().toString()) + ":" + this.Caracteres(date.getMinutes().toString()) + ":" + this.Caracteres(date.getSeconds().toString());
       var flag = true;
-      
+
       var productosPedido = "[";
-  
+
       var lCocinero = "-1";
       var lBartender = "-1";
 
-      for(var i = 0 ; i < this.productos.length; i++){
+      for (var i = 0; i < this.productos.length; i++) {
         var index = Number(this.productos[i].idProducto);
-        if(this.productosAgregados[index].cantidad > 0){
-  
-          for(var k = 0 ; k < this.categorias.length ; k++){
-            if((this.categorias[k]).includes(this.productos[i].categoria)){
-              if(k < 4){
+        if (this.productosAgregados[index].cantidad > 0) {
+
+          for (var k = 0; k < this.categorias.length; k++) {
+            if ((this.categorias[k]).includes(this.productos[i].categoria)) {
+              if (k < 4) {
                 lCocinero = "0";
-              }else{
+              } else {
                 lBartender = "0";
               }
             }
           }
 
-          if(flag){
+          if (flag) {
             flag = false;
             productosPedido = productosPedido + '{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
-          }else{
+          } else {
             productosPedido = productosPedido + ',{"idProducto":"' + index.toString() + '", "cantidad":"' + (this.productosAgregados[index].cantidad).toString() + '"}';
           }
         }
       }
-  
+
       this.users.forEach(user => {
-        
-        if(user.token != ""){
-          if(this.back == 0){
+
+        if (user.token != "") {
+          if (this.back == 0) {
             var entrar = false;
-            if(user.tipo.includes("Cocinero") && lCocinero == "0"){
+            if (user.tipo.includes("Cocinero") && lCocinero == "0") {
               entrar = true;
             }
-            if(user.tipo.includes("Bartender") && lBartender == "0"){
+            if (user.tipo.includes("Bartender") && lBartender == "0") {
               entrar = true;
             }
-            if(entrar){
-              if(flagOnce){
+            if (entrar) {
+              if (flagOnce) {
                 flagOnce = false;
                 tokens[0] = user.token;
-              }else{
+              } else {
                 tokens.push(user.token);
               }
             }
           }
-          
-          if(this.back == 1){
-            if(user.perfil.includes("Mozo")){
-              if(user.token != ""){
-                if(flagOnce){
+
+          if (this.back == 1) {
+            if (user.perfil.includes("Mozo")) {
+              if (user.token != "") {
+                if (flagOnce) {
                   flagOnce = false;
                   tokens[0] = user.token;
-                }else{
+                } else {
                   tokens.push(user.token);
                 }
               }
@@ -398,16 +397,17 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
       });
 
       productosPedido = productosPedido + "]";
-      
+
       var estadoPedido = "";
-      if(this.back == 0){
+      if (this.back == 0) {
         var estadoPedido = "Confirmado";
       }
-      if(this.back == 1){
+      if (this.back == 1) {
         var estadoPedido = "Enviado";
       }
 
-      var unPedido: Pedido = {idField: "",
+      var unPedido: Pedido = {
+        idField: "",
         idPedido: (this.idRegistroPedido.toString()),
         numMesa: this.numMesa,
         productos: productosPedido,
@@ -418,27 +418,27 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
         listoBartender: lBartender,
         idUsuario: this.idUsuarioMesa
       };
-  
+
       this.authService.agregarPedido(unPedido);
       this.spinner = false;
       this.pedidoEnviado = true;
-      if(this.volumenOn){
+      if (this.volumenOn) {
         this.utilidades.SonidoConfirmar();
       }
 
       setTimeout(() => {
-        if(!flagOnce){
-          this.pnService.sendPush(tokens, "Ingreso un Pedido", "Pedido Pendiente");
+        if (!flagOnce) {
+          this.pnService.sendPush(tokens, "Ingreso un Pedido", "Pedido Pendiente", { operacion: 'PedidoPendiente' });
         }
       }, 1500);
 
       setTimeout(() => {
         this.Redirigir();
       }, 3000);
-    }else{
+    } else {
       //CHECKEAR QUE SE VEA EL AVISO POR MODAL
       this.Alerta("Código no válido", 'danger');
-      if(this.volumenOn){
+      if (this.volumenOn) {
         this.utilidades.SonidoError();
       }
       this.utilidades.VibrarError();
@@ -458,16 +458,16 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     await toast.present();
   }
 
-  Volver(){
+  Volver() {
     this.spinner = true;
     this.Redirigir();
   }
 
-  Redirigir(){
-    if(this.back == 0){
+  Redirigir() {
+    if (this.back == 0) {
       this.router.navigateByUrl('/home-mozo', { replaceUrl: true });
     }
-    if(this.back == 1){
+    if (this.back == 1) {
       this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
     }
   }
