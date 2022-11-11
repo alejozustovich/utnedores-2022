@@ -95,6 +95,11 @@ export class HomePage implements OnInit {
     this.ActivarSpinner();
     this.router.navigateByUrl('/reservas', { replaceUrl: true });
   }
+  
+  IrEncuestaEmpleados(){
+    this.ActivarSpinner();
+    this.router.navigateByUrl('/resultados-encuestas-empleado', { replaceUrl: true });
+  }
 
   ActivarDesactivarSonido() {
     if(this.volumenOn) {
@@ -116,8 +121,8 @@ export class HomePage implements OnInit {
   CerrarSesion(){
     this.spinner = true;
     this.subUsers.unsubscribe();
-    this.authService.logout();
     setTimeout(()=>{
+      this.authService.logout();
       this.pnService.eliminarToken(this.idFieldToken);
     },1000);
     setTimeout(()=>{
