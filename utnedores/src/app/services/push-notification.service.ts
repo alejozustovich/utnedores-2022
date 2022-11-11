@@ -18,6 +18,7 @@ import { DataUsuarioService } from './data-usuario.service';
   providedIn: 'root'
 })
 
+
 export class PushNotificationService {
   subUser: Subscription;
   private user;
@@ -46,7 +47,7 @@ export class PushNotificationService {
 
   async inicializar(): Promise<void> {
     this.addListeners();
-    if (this.platform.is('capacitor') && this.user.token === '') {
+    if (this.platform.is('capacitor')) {
       const result = await PushNotifications.requestPermissions();
       if (result.receive === 'granted') {
         await PushNotifications.register();

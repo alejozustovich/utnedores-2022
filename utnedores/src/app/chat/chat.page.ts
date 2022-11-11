@@ -71,7 +71,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // localStorage.setItem('numeroMesa', '7')
+    localStorage.setItem('numeroMesa', '3')
     this.numMesa = localStorage.getItem('numeroMesa');
     this.formMsj = this.fb.group(
       {
@@ -180,9 +180,9 @@ export class ChatPage implements OnInit, OnDestroy {
       const obj = { leido: (this.usuarioActual.tipo == "Mozo"), mensajes: this.chat.mensajes }
       this.chatService.modificarChat(obj, `chats/${this.chat.idField}`);
     }
+
     if (this.usuarioActual.perfil == "Cliente" && this.flagToken && !flagArrayToken) {
       this.flagToken = false;
-      console.log(1);
       this.pnService.sendPush(tokens, "Consulta Cliente", "Chat Pendiente", { operacion: 'NuevoMensaje' });
     }
     this.formMsj.reset();
