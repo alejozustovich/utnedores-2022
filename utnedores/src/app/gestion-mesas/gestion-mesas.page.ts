@@ -41,6 +41,7 @@ export class GestionMesasPage implements OnInit, OnDestroy {
     this.TraerMesas();
     this.TraerPedidos();
     this.TraerChat();
+    this.TraerCuentas();
   }
 
   Sonido(){
@@ -149,7 +150,6 @@ export class GestionMesasPage implements OnInit, OnDestroy {
     }, 1000);
   }
 
-
   Liberar(idField: string, idUsuario: string, numMesa: string){
     this.recargar = false;
     this.ActivarSpinner();
@@ -174,6 +174,9 @@ export class GestionMesasPage implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.Alerta("Mesa liberada", 'success');
+      if(this.volumenOn){
+        this.utilidades.SonidoConfirmar();
+      }
     }, 5500);
   }
 

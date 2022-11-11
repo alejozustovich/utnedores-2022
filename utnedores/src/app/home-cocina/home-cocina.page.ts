@@ -33,6 +33,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
   confirmarButton = false;
   users: Usuario[];
   idFieldToken = "";
+  subUsers: Subscription;
 
   estadoPedido: string[] = [
     "Pendientes",
@@ -53,7 +54,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
     "Bebidas con alcohol",
     "Postres y Café-Te"];
 
-  subUsers: Subscription;
+  subUsers2: Subscription;
   subPedidos: Subscription;
   subProductos: Subscription;
 
@@ -369,7 +370,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
   }
 
   ObtenerTipo(){
-    this.authService.getUsers().subscribe((users: Usuario[]) => {
+    this.subUsers2 = this.authService.getUsers().subscribe((users: Usuario[]) => {
       users.forEach((u: Usuario) => {
         if (u.correo == this.authService.usuarioActual()) {
           this.tipo = u.tipo;
@@ -399,6 +400,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
 
   CerrarSesion(){
     this.spinner = true;
+    this.subUsers2.unsubscribe();
     this.authService.logout();
     setTimeout(()=>{
       this.pnService.eliminarToken(this.idFieldToken);

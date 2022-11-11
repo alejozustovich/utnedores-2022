@@ -116,6 +116,9 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
   PedidoRecibido(idField: string){
     this.authService.pedidoRecibido(idField);
     this.Alerta("Pedido Recibido!",'success');
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
   }
 
   TraerCuentas() {
@@ -159,10 +162,12 @@ export class EstadoPedidoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
-    this.subMesas.unsubscribe();
+    if(this.pedirCuenta == 1){
+      this.subMesas.unsubscribe();
+      this.subCuentas.unsubscribe();
+    }
     this.subProductos.unsubscribe();
     this.subPedidos.unsubscribe();
-    this.subCuentas.unsubscribe();
     this.sub();
   }
 

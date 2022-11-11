@@ -78,6 +78,9 @@ export class ListaEsperaPage implements OnInit, OnDestroy  {
     this.authService.eliminarEspera(this.idFieldEliminar);
     this.eliminarEspera = false;
     this.Alerta("Espera Eliminada!", 'success');
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
   }
 
   CancelarEliminarEspera(){
@@ -264,6 +267,9 @@ export class ListaEsperaPage implements OnInit, OnDestroy  {
       this.utilidades.SonidoConfirmar();
     }
     this.Alerta("Asignación exitosa!", 'success');
+    if(this.volumenOn){
+      this.utilidades.SonidoConfirmar();
+    }
   }
 
   async AsignarMesa(idField: string, idUsuario: string){

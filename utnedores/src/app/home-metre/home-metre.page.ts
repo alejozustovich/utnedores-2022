@@ -1,20 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-metre',
   templateUrl: './home-metre.page.html',
   styleUrls: ['./home-metre.page.scss'],
 })
-export class HomeMetrePage implements OnInit {
+export class HomeMetrePage implements OnInit, OnDestroy {
 
   volumenOn = true;
   spinner = false;
   users: Usuario[];
   idFieldToken = "";
+  subUsers: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -26,6 +28,10 @@ export class HomeMetrePage implements OnInit {
     this.spinner = true;
     this.Sonido();
     this.ObtenerTipo();
+  }
+
+  ngOnDestroy(){	
+
   }
 
   Sonido(){
@@ -48,7 +54,7 @@ export class HomeMetrePage implements OnInit {
   }
   
   ObtenerTipo(){
-    this.authService.getUsers().subscribe((users: Usuario[]) => {
+    this.subUsers = this.authService.getUsers().subscribe((users: Usuario[]) => {
       users.forEach((u: Usuario) => {
         if (u.correo == this.authService.usuarioActual()) {
           this.idFieldToken = u.idField;
@@ -99,6 +105,7 @@ export class HomeMetrePage implements OnInit {
 
   CerrarSesion(){
     this.ActivarSpinner();
+    this.subUsers.unsubscribe();
     this.authService.logout();
     setTimeout(()=>{
       this.pnService.eliminarToken(this.idFieldToken);

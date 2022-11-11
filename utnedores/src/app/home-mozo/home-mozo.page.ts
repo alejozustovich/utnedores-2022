@@ -35,6 +35,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   idFieldToken = "";
   subMesas: Subscription;
   subPedidos: Subscription;
+  subUsers: Subscription;
 
   constructor(
     private toastController: ToastController,
@@ -66,7 +67,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ObtenerIdField() {
-    this.authService.getUsers().subscribe((users: Usuario[]) => {
+    this.subUsers = this.authService.getUsers().subscribe((users: Usuario[]) => {
       users.forEach((u: Usuario) => {
         if (u.correo == this.authService.usuarioActual()) {
           this.idFieldToken = u.idField;
@@ -239,6 +240,7 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
 
   CerrarSesion() {
     this.ActivarSpinner();
+    this.subUsers.unsubscribe();
     this.authService.logout();
     setTimeout(() => {
       this.pnService.eliminarToken(this.idFieldToken);

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService, Usuario } from '../services/auth.service';
 import { UtilidadesService } from '../services/utilidades.service';
 import { PushNotificationService } from '../services/push-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,7 @@ export class HomePage implements OnInit {
   spinner = true;
   perfil = "Perfil";
   idFieldToken = "";
+  subUsers: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -47,7 +49,7 @@ export class HomePage implements OnInit {
   }
 
   ObtenerPerfil(){
-    this.authService.getUsers().subscribe((users: Usuario[]) => {
+    this.subUsers = this.authService.getUsers().subscribe((users: Usuario[]) => {
       users.forEach((u: Usuario) => {
         if (u.correo == this.authService.usuarioActual()) {
           this.perfil = u.perfil;
@@ -113,6 +115,7 @@ export class HomePage implements OnInit {
 
   CerrarSesion(){
     this.spinner = true;
+    this.subUsers.unsubscribe();
     this.authService.logout();
     setTimeout(()=>{
       this.pnService.eliminarToken(this.idFieldToken);

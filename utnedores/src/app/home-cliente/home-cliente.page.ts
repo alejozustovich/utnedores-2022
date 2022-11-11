@@ -90,8 +90,11 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   DesactivarSpinner() {
     setTimeout(() => {
       this.spinner = false;
+      this.result = "MESA3";
+      this.AnalizarResultado();
     }, 8000);
   }
+  
   ngOnInit() { }
 
   IrEncuestas() {
@@ -331,6 +334,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.agregarEspera(unaEspera).then((res) => {
       if (res) {
         this.Alerta("EN LISTA DE ESPERA", 'success');
+        if(this.volumenOn){
+          this.utilidades.SonidoConfirmar();
+        }
         this.ModificarEstado("EN LISTA DE ESPERA");
         this.estado = 1;
       }
