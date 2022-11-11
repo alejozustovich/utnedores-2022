@@ -60,7 +60,7 @@ export class AltaMesaPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    this.subMesa.unsubscribe();
+
   }
 
   Volver(){
@@ -149,6 +149,7 @@ export class AltaMesaPage implements OnInit, OnDestroy {
     this.numMesa = (Number(this.numMesa) + 1).toString();
     this.myAngularxQrCode = "MESA" + this.numMesa;
     this.mostrarQr = true;
+    this.subMesa.unsubscribe();
   }
 
   onChangeURL(url: SafeUrl) {

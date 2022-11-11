@@ -172,7 +172,6 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(){
     this.stopScan();
-	  this.subUsers.unsubscribe();
   }
 
   PrimeraMayuscula(cadena: String) {
@@ -257,6 +256,7 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
       }
       this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
       this.spinner = false;
+      this.subUsers.unsubscribe();
     });
   }
 
@@ -316,11 +316,15 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
 
   GuardarUsuarioAnonimo() {
 
+    var correoExistente = false;
     var encontrado = false;
 
     this.users.forEach(user => {
-      if(((user.correo).toLocaleLowerCase()).includes(((this.correo.value).toLocaleLowerCase())) == true && ((user.nombre).toLocaleLowerCase()).includes(((this.nombre.value).toLocaleLowerCase())) == true) {
-        encontrado = true;
+      if(((user.correo).toLocaleLowerCase()) === ((this.correo.value).toLocaleLowerCase())) {
+        correoExistente = true;
+        if(((user.nombre).toLocaleLowerCase()).includes(((this.nombre.value).toLocaleLowerCase())) == true && user.tipo.includes("Anónimo")){
+          encontrado = true;
+        }
       }
     });
 
@@ -332,53 +336,61 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
       }, 3000);
       
     }else{
-      var unUsuarioAnonimo: Usuario = {
-        idField: "",
-        idUsuario: this.idRegistroUsuario,
-        nombre: this.nombre.value,
-        apellido: "",
-        correo: (this.correo.value).toLowerCase(),
-        clave: this.claveRegistro,
-        dni: "",
-        cuil: "",
-        foto: this.nombreImagen,
-        perfil: "Cliente",
-        tipo: "Anónimo",
-        aprobado: "",
-        token: ""
-      };
-
-      this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
-
-      setTimeout(() => {
-
-        if (this.fotoCelular) {
-          var rutaImagen = "usuarios/" + this.nombreImagen;
-          this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+      if(correoExistente){
+        this.spinner = false;
+        this.Alerta("Correo ya registrado", 'danger');
+        if(this.volumenOn){
+          this.utilidades.SonidoError();
         }
+        this.utilidades.VibrarError();
+      }else{
+        var unUsuarioAnonimo: Usuario = {
+          idField: "",
+          idUsuario: this.idRegistroUsuario,
+          nombre: this.nombre.value,
+          apellido: "",
+          correo: (this.correo.value).toLowerCase(),
+          clave: this.claveRegistro,
+          dni: "",
+          cuil: "",
+          foto: this.nombreImagen,
+          perfil: "Cliente",
+          tipo: "Anónimo",
+          aprobado: "",
+          token: ""
+        };
 
-        if (this.fotoFile) {
-          var imagenStorage = "usuarios/" + this.nombreImagen;
-          this.authService.subirImagenFile(imagenStorage, this.file);
-        }
+        this.authService.addUser(unUsuarioAnonimo); //Guardar usuario anónimo para quedarse con Nombre y Foto.
 
         setTimeout(() => {
-          var registro = { emailNuevo: this.correo.value, passwordNuevo: this.claveRegistro };
-          this.authService.ingresoAnonimo(registro);
+
+          if (this.fotoCelular) {
+            var rutaImagen = "usuarios/" + this.nombreImagen;
+            this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+          }
+
+          if (this.fotoFile) {
+            var imagenStorage = "usuarios/" + this.nombreImagen;
+            this.authService.subirImagenFile(imagenStorage, this.file);
+          }
 
           setTimeout(() => {
-            this.spinner = false;
-            this.clienteAgregado = true;
-            if(this.volumenOn){
-              this.utilidades.SonidoAlta();
-            }
-            setTimeout(() => {
-              this.Redirigir();
-            }, 2000);
-          }, 1000);
+            var registro = { emailNuevo: this.correo.value, passwordNuevo: this.claveRegistro };
+            this.authService.ingresoAnonimo(registro);
 
+            setTimeout(() => {
+              this.spinner = false;
+              this.clienteAgregado = true;
+              if(this.volumenOn){
+                this.utilidades.SonidoAlta();
+              }
+              setTimeout(() => {
+                this.Redirigir();
+              }, 2000);
+            }, 1000);
+          }, 2500);
         }, 2500);
-      }, 2500);
+      }
     }
   }
 

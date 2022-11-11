@@ -135,7 +135,6 @@ export class AltaSupervisorPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
-    this.subUsers.unsubscribe();
   }
 
   ngOnInit() {
@@ -310,6 +309,7 @@ export class AltaSupervisorPage implements OnInit, OnDestroy {
       }
     }
     this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
+    this.subUsers.unsubscribe();
   }
 
   traerUsuarios() {
@@ -330,82 +330,99 @@ export class AltaSupervisorPage implements OnInit, OnDestroy {
   }
 
   async registrarUsuario() {
-    this.spinner = true;
-    this.DesactivarVentanas();
-    if(this.idRegistroUsuario != "0"){
-      const usuario: Usuario = {
-        idField: "",
-        idUsuario: this.idRegistroUsuario,
-        nombre: this.nombre.value,
-        apellido: this.apellido.value,
-        correo: this.correo.value,
-        clave: this.clave.value,
-        dni: this.dni.value,
-        cuil: this.cuil.value,
-        foto: this.nombreImagen,
-        perfil: this.perfil,
-        tipo: this.perfil,
-        aprobado: "",
-        token: ""
-      };
-      const registro = { emailNuevo: usuario.correo, passwordNuevo: usuario.clave };
-      if (this.verificarUsuario(usuario)) {
-        try {
-          this.authService.addUser(usuario);
 
-          setTimeout(() => {
-            if(this.fotoCelular){
-              var rutaImagen = "usuarios/" + this.nombreImagen;
-              this.authService.subirImagenBase64(rutaImagen, this.base64Image);
-            }
-        
-            if(this.fotoFile){
-              var imagenStorage = "usuarios/" + this.nombreImagen;
-              this.authService.subirImagenFile(imagenStorage, this.file);
-            }
+    this.spinner = true;
+
+    var correoExistente = false;
+    this.users.forEach(user => {
+      if(((user.correo).toLocaleLowerCase()) === ((this.correo.value).toLocaleLowerCase())) {
+        correoExistente = true;
+      }
+    });
+
+    if(correoExistente){
+      this.spinner = false;
+      this.Alerta("Correo ya registrado", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
+    }else{
+      this.DesactivarVentanas();
+      if(this.idRegistroUsuario != "0"){
+        const usuario: Usuario = {
+          idField: "",
+          idUsuario: this.idRegistroUsuario,
+          nombre: this.nombre.value,
+          apellido: this.apellido.value,
+          correo: this.correo.value,
+          clave: this.clave.value,
+          dni: this.dni.value,
+          cuil: this.cuil.value,
+          foto: this.nombreImagen,
+          perfil: this.perfil,
+          tipo: this.perfil,
+          aprobado: "",
+          token: ""
+        };
+        const registro = { emailNuevo: usuario.correo, passwordNuevo: usuario.clave };
+        if (this.verificarUsuario(usuario)) {
+          try {
+            this.authService.addUser(usuario);
 
             setTimeout(() => {
-              var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
-              this.authService.register(registro, currentUser);
+              if(this.fotoCelular){
+                var rutaImagen = "usuarios/" + this.nombreImagen;
+                this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+              }
+          
+              if(this.fotoFile){
+                var imagenStorage = "usuarios/" + this.nombreImagen;
+                this.authService.subirImagenFile(imagenStorage, this.file);
+              }
 
               setTimeout(() => {
-                this.spinner = false;
-                this.usuarioAgregado = true;
-                if(this.volumenOn){
-                  this.utilidades.SonidoAlta();
-                }
+                var currentUser = { emailCurrent: this.currentEmail, passwordCurrent: this.currentPassword };
+                this.authService.register(registro, currentUser);
+
                 setTimeout(() => {
-                  this.Redirigir();
+                  this.spinner = false;
+                  this.usuarioAgregado = true;
+                  if(this.volumenOn){
+                    this.utilidades.SonidoAlta();
+                  }
+                  setTimeout(() => {
+                    this.Redirigir();
+                  }, 3000);
                 }, 3000);
-              }, 3000);
+              }, 2500);
             }, 2500);
-          }, 2500);
-        } catch (e) {
+          } catch (e) {
+            this.spinner = false;
+            this.Alerta('Error al crear usuario!', 'danger');
+            if(this.volumenOn){
+              this.utilidades.SonidoError();
+            }
+            this.utilidades.VibrarError();
+          }
+        } else {
           this.spinner = false;
-          this.Alerta('Error al crear usuario!', 'danger');
+          this.Alerta('Ya existe un usuario con esos datos!', 'danger');
           if(this.volumenOn){
             this.utilidades.SonidoError();
           }
           this.utilidades.VibrarError();
         }
-      } else {
+
+      }else{
         this.spinner = false;
-        this.Alerta('Ya existe un usuario con esos datos!', 'danger');
+        this.Alerta("Ocurrió un error! Reintentar", 'danger');
         if(this.volumenOn){
           this.utilidades.SonidoError();
         }
         this.utilidades.VibrarError();
+        this.traerUsuarios();
       }
-
-    }else{
-      this.spinner = false;
-      this.Alerta("Ocurrió un error! Reintentar", 'danger');
-      if(this.volumenOn){
-        this.utilidades.SonidoError();
-      }
-      this.utilidades.VibrarError();
-      this.traerUsuarios();
     }
   }
-
 }

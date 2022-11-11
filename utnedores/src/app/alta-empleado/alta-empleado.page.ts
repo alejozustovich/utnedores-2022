@@ -221,7 +221,6 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
-    this.subUsers.unsubscribe();
   }
 
   async startScanner() {
@@ -299,6 +298,7 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
+      this.subUsers.unsubscribe();
     });
   }
 
@@ -323,58 +323,75 @@ export class AltaEmpleadoPage implements OnInit, AfterViewInit, OnDestroy {
   // INICIO Guardar Usuarios.
   GuardarEmpleado() {
     this.spinner = true;
-    this.DesactivarVentanas();
-    if(this.idRegistroUsuario != "0"){
-      if (!this.fotoCelular && !this.fotoFile) {
-        this.nombreImagen = "";
-      }
-      var unUsuario: Usuario = {
-        idField: "",
-        idUsuario: this.idRegistroUsuario,
-        nombre: this.nombre.value,
-        apellido: this.apellido.value,
-        correo: this.correo.value,
-        clave: this.clave.value,
-        dni: this.dni.value,
-        cuil: this.cuil.value,
-        foto: this.nombreImagen,
-        perfil: "Empleado",
-        tipo: this.tipo.value,
-        aprobado: "",
-        token: ""
-      };
-  
-      this.authService.addUser(unUsuario);
-      setTimeout(() => {
-  
-        if (this.fotoCelular) {
-           var rutaImagen = "usuarios/" + this.nombreImagen;
-           this.authService.subirImagenBase64(rutaImagen, this.base64Image);
-         }
-  
-         if (this.fotoFile) {
-           var imagenStorage = "usuarios/" + this.nombreImagen;
-           this.authService.subirImagenFile(imagenStorage, this.file);
-         }
 
-         setTimeout(() => {
-          this.RegistrarUsuario();
+    var correoExistente = false;
+    this.users.forEach(user => {
+      if(((user.correo).toLocaleLowerCase()) === ((this.correo.value).toLocaleLowerCase())) {
+        correoExistente = true;
+      }
+    });
+
+    if(correoExistente){
+      this.spinner = false;
+      this.Alerta("Correo ya registrado", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
+      }
+      this.utilidades.VibrarError();
+    }else{
+      this.DesactivarVentanas();
+      if(this.idRegistroUsuario != "0"){
+        if (!this.fotoCelular && !this.fotoFile) {
+          this.nombreImagen = "";
+        }
+        var unUsuario: Usuario = {
+          idField: "",
+          idUsuario: this.idRegistroUsuario,
+          nombre: this.nombre.value,
+          apellido: this.apellido.value,
+          correo: this.correo.value,
+          clave: this.clave.value,
+          dni: this.dni.value,
+          cuil: this.cuil.value,
+          foto: this.nombreImagen,
+          perfil: "Empleado",
+          tipo: this.tipo.value,
+          aprobado: "",
+          token: ""
+        };
+    
+        this.authService.addUser(unUsuario);
+        setTimeout(() => {
+    
+          if (this.fotoCelular) {
+            var rutaImagen = "usuarios/" + this.nombreImagen;
+            this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+          }
+    
+          if (this.fotoFile) {
+            var imagenStorage = "usuarios/" + this.nombreImagen;
+            this.authService.subirImagenFile(imagenStorage, this.file);
+          }
 
           setTimeout(() => {
-            this.spinner = false;
-            this.empleadoAgregado = true;
-            setTimeout(() => {
-              this.Redirigir();
-            }, 3000);
-          }, 3000);
+            this.RegistrarUsuario();
 
+            setTimeout(() => {
+              this.spinner = false;
+              this.empleadoAgregado = true;
+              setTimeout(() => {
+                this.Redirigir();
+              }, 3000);
+            }, 3000);
+
+          }, 2500);
         }, 2500);
-      }, 2500);
-    }else{
-      this.spinner = false;
-      this.GuardarId();
-      this.Alerta("Ocurrió un error! Reintentar", 'danger');
-    }    
+      }else{
+        this.spinner = false;
+        this.GuardarId();
+        this.Alerta("Ocurrió un error! Reintentar", 'danger');
+      }        
+    }
   }
 
   RegistrarUsuario() {

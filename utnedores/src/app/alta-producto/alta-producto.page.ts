@@ -70,7 +70,7 @@ export class AltaProductoPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){	
-    this.subProductos.unsubscribe();
+
   }
 
   ngOnInit(): void {
@@ -148,6 +148,7 @@ export class AltaProductoPage implements OnInit, OnDestroy {
     this.numProducto = (Number(this.numProducto) + 1).toString();
     this.myAngularxQrCode = "PRODUCTO" + this.numProducto;
     this.mostrarQr = true;
+    this.subProductos.unsubscribe();
   }
 
   Caracteres(dato: string) {

@@ -179,7 +179,6 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
-    this.subUsers.unsubscribe();
   }
 
   PrimeraMayuscula(cadena: String) {
@@ -267,6 +266,7 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       }
       this.idRegistroUsuario = (Number(this.idRegistroUsuario) + 1).toString();
       this.spinner = false;
+      this.subUsers.unsubscribe();
     });
   }
 
@@ -283,68 +283,85 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   // INICIO Guardar Usuarios.
   GuardarUsuarioRegistrado() {
-    var flag = true;
-    var tokens = [""];
 
+    var correoExistente = false;
     this.users.forEach(user => {
-      if (user.perfil.includes("Dueño") || user.perfil.includes("Supervisor")) {
-        if (user.token != "") {
-          if (flag) {
-            flag = false;
-            tokens[0] = user.token;
-          } else {
-            tokens.push(user.token);
-          }
-        }
+      if(((user.correo).toLocaleLowerCase()) === ((this.correo.value).toLocaleLowerCase())) {
+        correoExistente = true;
       }
     });
 
-    console.log(tokens);
-
-    var unUsuarioRegistrado: Usuario = {
-      idField: "",
-      idUsuario: this.idRegistroUsuario,
-      nombre: this.nombre.value,
-      apellido: this.apellido.value,
-      correo: (this.correo.value).toLowerCase(),
-      clave: this.clave.value,
-      dni: this.dni.value,
-      cuil: "",
-      foto: this.nombreImagen,
-      perfil: "Cliente",
-      tipo: "Registrado",
-      aprobado: "No",
-      token: ""
-    };
-
-    this.authService.addUser(unUsuarioRegistrado); //Guardar usuario a la espera de que se apruebe.
-
-    setTimeout(() => {
-
-      if (this.fotoCelular) {
-        var rutaImagen = "usuarios/" + this.nombreImagen;
-        this.authService.subirImagenBase64(rutaImagen, this.base64Image);
-      }
-
-      if (this.fotoFile) {
-        var imagenStorage = "usuarios/" + this.nombreImagen;
-        this.authService.subirImagenFile(imagenStorage, this.file);
-      }
-
+    if(correoExistente){
       this.spinner = false;
-      this.clienteAgregado = true;
-      if (this.volumenOn) {
-        this.utilidades.SonidoAlta();
+      this.Alerta("Correo ya registrado", 'danger');
+      if(this.volumenOn){
+        this.utilidades.SonidoError();
       }
-      setTimeout(() => {
-        if (!flag) {
-          this.pnService.sendPush(tokens, "Cliente Registrado", "Dar de Alta", { operacion: 'AltaCliente' });
+      this.utilidades.VibrarError();
+    }
+    else{
+
+      var flag = true;
+      var tokens = [""];
+
+      this.users.forEach(user => {
+        if (user.perfil.includes("Dueño") || user.perfil.includes("Supervisor")) {
+          if (user.token != "") {
+            if (flag) {
+              flag = false;
+              tokens[0] = user.token;
+            } else {
+              tokens.push(user.token);
+            }
+          }
         }
-      }, 1500);
+      });
+
+      var unUsuarioRegistrado: Usuario = {
+        idField: "",
+        idUsuario: this.idRegistroUsuario,
+        nombre: this.nombre.value,
+        apellido: this.apellido.value,
+        correo: (this.correo.value).toLowerCase(),
+        clave: this.clave.value,
+        dni: this.dni.value,
+        cuil: "",
+        foto: this.nombreImagen,
+        perfil: "Cliente",
+        tipo: "Registrado",
+        aprobado: "No",
+        token: ""
+      };
+
+      this.authService.addUser(unUsuarioRegistrado); //Guardar usuario a la espera de que se apruebe.
+
       setTimeout(() => {
-        this.Redirigir();
-      }, 2500);
-    }, 2500);
+
+        if (this.fotoCelular) {
+          var rutaImagen = "usuarios/" + this.nombreImagen;
+          this.authService.subirImagenBase64(rutaImagen, this.base64Image);
+        }
+
+        if (this.fotoFile) {
+          var imagenStorage = "usuarios/" + this.nombreImagen;
+          this.authService.subirImagenFile(imagenStorage, this.file);
+        }
+
+        this.spinner = false;
+        this.clienteAgregado = true;
+        if (this.volumenOn) {
+          this.utilidades.SonidoAlta();
+        }
+        setTimeout(() => {
+          if (!flag) {
+            this.pnService.sendPush(tokens, "Cliente Registrado", "Dar de Alta", { operacion: 'AltaCliente' });
+          }
+        }, 1500);
+        setTimeout(() => {
+          this.Redirigir();
+        }, 2500);
+      }, 2500);      
+    }
   }
 
   GuardarUsuarioAnonimo() {
