@@ -155,7 +155,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
     this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
       this.mesas.forEach(m => {
-        if (m.numMesa.includes(this.numMesa)) {
+        if (m.numMesa === this.numMesa) {
           this.idUsuarioMesa = m.idUsuario;
         }
       });

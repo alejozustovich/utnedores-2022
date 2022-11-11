@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 })
 export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
+  variableUnicaVez = true;
   result = null;
   scanActive = false;
   users: Usuario[];
@@ -90,8 +91,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   DesactivarSpinner() {
     setTimeout(() => {
       this.spinner = false;
-      this.result = "MESA3";
-      this.AnalizarResultado();
     }, 8000);
   }
   
@@ -222,6 +221,9 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.idEsperaMayor = this.idEsperaMayor + 1;
+      setTimeout(() => {
+        this.VerEstado(false);
+      }, 3500);
       //ENTRA CAMBIO LISTAESPERA
     });
   }
@@ -368,50 +370,56 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   VerEstado(flag: boolean) {
-    this.estado = 0;  //ESCANEAR QR LOCAL
+    if(this.variableUnicaVez){
+      this.variableUnicaVez = false;
+      this.estado = 0;  //ESCANEAR QR LOCAL
 
-    var cantPersonasEspera = 0;
-    this.idFieldEspera = "";
+      var cantPersonasEspera = 0;
+      this.idFieldEspera = "";
 
-    this.listaEspera.forEach(u => {
-      if (u.idUsuario === this.usuarioLogueado.idUsuario) {
-        this.estado = 1;//EN LISTA DE ESPERA
-        this.ModificarEstado("EN LISTA DE ESPERA");
+      this.listaEspera.forEach(u => {
+        if (u.idUsuario === this.usuarioLogueado.idUsuario) {
+          this.estado = 1;//EN LISTA DE ESPERA
+          this.ModificarEstado("EN LISTA DE ESPERA");
 
-        cantPersonasEspera = Number(u.cantPersonas);
-        this.idFieldEspera = u.idField;
-      }
-    });
-    if (this.estado == 1 && flag == true) {
-      this.ModificarOpcionesMesa(cantPersonasEspera);
-    }
-
-    if (this.estado == 0) {
-      var mesasDisponibles = "";
-      var cant = 0;
-      this.mesas.forEach(u => {
-        if (this.usuarioLogueado.idUsuario != "0" && u.idUsuario === this.usuarioLogueado.idUsuario) {
-          this.estado = 2;//TIENE AL MENOS 1 MESA ASIGNADA
-
-          cant = cant + 1;
-          if (cant == 1) {
-            mesasDisponibles = u.numMesa;
-          } else {
-            mesasDisponibles = mesasDisponibles + ", " + u.numMesa;
-          }
+          cantPersonasEspera = Number(u.cantPersonas);
+          this.idFieldEspera = u.idField;
         }
       });
-      if (cant == 0) {
-        this.ModificarEstado("ESCANEAR QR LOCAL");
-      } else {
-        if (cant == 1) {
-          this.ModificarEstado(("MESA ASIGNADA: " + mesasDisponibles));
+      if (this.estado == 1 && flag == true) {
+        this.ModificarOpcionesMesa(cantPersonasEspera);
+      }
+
+      if (this.estado == 0) {
+        var mesasDisponibles = "";
+        var cant = 0;
+        this.mesas.forEach(u => {
+          if (this.usuarioLogueado.idUsuario != "0" && u.idUsuario === this.usuarioLogueado.idUsuario) {
+            this.estado = 2;//TIENE AL MENOS 1 MESA ASIGNADA
+
+            cant = cant + 1;
+            if (cant == 1) {
+              mesasDisponibles = u.numMesa;
+            } else {
+              mesasDisponibles = mesasDisponibles + ", " + u.numMesa;
+            }
+          }
+        });
+        if (cant == 0) {
+          this.ModificarEstado("ESCANEAR QR LOCAL");
         } else {
-          this.ModificarEstado(("MESAS ASIGNADAS: " + mesasDisponibles));
+          if (cant == 1) {
+            this.ModificarEstado(("MESA ASIGNADA: " + mesasDisponibles));
+          } else {
+            this.ModificarEstado(("MESAS ASIGNADAS: " + mesasDisponibles));
+          }
         }
       }
+      this.spinner = false;
+
+
     }
-    this.spinner = false;
+    this.variableUnicaVez = true;
   }
 
   AnalizarResultado() {
