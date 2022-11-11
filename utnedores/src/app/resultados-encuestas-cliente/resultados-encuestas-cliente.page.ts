@@ -132,7 +132,7 @@ export class ResultadosEncuestasClientePage implements OnInit, OnDestroy {
   }
 
   volver() {
-    this.router.navigateByUrl('/home-cliente-mesa', { replaceUrl: true });
+    this.router.navigateByUrl('/home-cliente', { replaceUrl: true });
   }
 
   volverModal() {

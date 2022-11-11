@@ -98,7 +98,7 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   IrEncuestas() {
     this.spinner = true;
-    this.router.navigateByUrl('/encuesta-clientes', { replaceUrl: true });
+    this.router.navigateByUrl('/resultados-encuestas-cliente', { replaceUrl: true });
   }
 
   IrReservar() {
@@ -157,7 +157,12 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   CerrarSesion() {
     this.spinner = true;
-    this.authService.logout();
+    this.subUsers.unsubscribe();
+
+    setTimeout(() => {
+      this.authService.logout();
+    }, 1000);
+
 
     if (!this.esRegistrado) {
       //CHECKEAR QUE NO TENGA MESA
@@ -177,7 +182,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
-    this.subUsers.unsubscribe();
     this.subMesas.unsubscribe();
     this.subListaEspera.unsubscribe();
   }

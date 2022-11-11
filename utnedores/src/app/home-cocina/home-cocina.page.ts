@@ -401,8 +401,8 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
   CerrarSesion(){
     this.spinner = true;
     this.subUsers2.unsubscribe();
-    this.authService.logout();
     setTimeout(()=>{
+      this.authService.logout();
       this.pnService.eliminarToken(this.idFieldToken);
     },1000);
     setTimeout(()=>{

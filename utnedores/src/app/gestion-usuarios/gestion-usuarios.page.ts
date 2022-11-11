@@ -83,8 +83,8 @@ export class GestionUsuariosPage implements OnInit, OnDestroy {
   }
 
   async TraerUsuarios() {
-    var usuariosSeleccionados = [];
     this.subUsers = this.authService.getUsers().subscribe(allUsers => {
+        var usuariosSeleccionados = [];
         this.users = allUsers;
         this.users.forEach(user => {
           if(!user.aprobado.includes("No")) {

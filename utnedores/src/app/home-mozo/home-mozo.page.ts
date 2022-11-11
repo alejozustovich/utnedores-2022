@@ -241,8 +241,8 @@ export class HomeMozoPage implements OnInit, AfterViewInit, OnDestroy {
   CerrarSesion() {
     this.ActivarSpinner();
     this.subUsers.unsubscribe();
-    this.authService.logout();
     setTimeout(() => {
+      this.authService.logout();
       this.pnService.eliminarToken(this.idFieldToken);
     }, 1000);
     setTimeout(() => {
