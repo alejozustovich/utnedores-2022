@@ -78,6 +78,15 @@ export class CierreMesaPage implements OnInit, OnDestroy {
   TraerMesas() {
     this.subMesas = this.authService.getTables().subscribe(allTables => {
       this.mesas = allTables;
+      for (var i = 0; i < this.mesas.length - 1; i++) {
+        for (var k = i + 1; k < this.mesas.length; k++) {
+          if ((Number(this.mesas[i].numMesa)) > (Number(this.mesas[k].numMesa))) {
+            var mesaAux: Mesa = this.mesas[i];
+            this.mesas[i] = this.mesas[k];
+            this.mesas[k] = mesaAux;
+          }
+        }
+      }
     });
   }
 
@@ -145,8 +154,17 @@ export class CierreMesaPage implements OnInit, OnDestroy {
   async Cerrar(idField: string, idUsuario: string){
     this.spinner = true;
     this.DesactivarSpinner();
+    var numMesaChat = "";
+    var once = true;
+
     for(var i = 0 ; i < this.mesas.length ; i++){
       if(this.mesas[i].idUsuario === idUsuario){
+
+        if(once){
+          once = false;
+          numMesaChat = this.mesas[i].numMesa;
+        }
+
         this.authService.liberarMesa(this.mesas[i].idField);
         await new Promise(f => setTimeout(f, 1000));
       }

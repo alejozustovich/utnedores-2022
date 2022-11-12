@@ -122,7 +122,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
     	this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
       var pedidosSeleccionados = [];
-
+      
       for(var i = 0 ; i < this.pedidos.length - 1; i++){
         for(var k = i + 1; k < this.pedidos.length ; k++){
           if((Number(this.pedidos[i].idPedido)) > (Number(this.pedidos[k].idPedido))){
@@ -366,7 +366,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
       if(this.pedidosVisibles[this.indicePedidoActual].listoBartender.includes("0")){
         this.authService.listoCocinero(this.idFieldPedidoActual);
       }else{
-        this.authService.pedidoPreparado(this.idFieldPedidoActual);
+        this.authService.pedidoPreparadoCocinero(this.idFieldPedidoActual);
         setTimeout(() => {
           if(!flag){
             this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido", { operacion: 'PedidoListo' });
@@ -378,7 +378,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
       if(this.pedidosVisibles[this.indicePedidoActual].listoCocinero.includes("0")){
         this.authService.listoBartender(this.idFieldPedidoActual);
       }else{
-        this.authService.pedidoPreparado(this.idFieldPedidoActual);
+        this.authService.pedidoPreparadoBartender(this.idFieldPedidoActual);
         setTimeout(() => {
           if(!flag){
             this.pnService.sendPush(tokens, "Pedido Listo", "Entregar Pedido", { operacion: 'PedidoListo' });

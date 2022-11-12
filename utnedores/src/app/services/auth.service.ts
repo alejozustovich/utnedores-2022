@@ -257,9 +257,14 @@ export class AuthService {
 		return updateDoc(pedidoRef, { listoBartender: "1"});
 	}
 
-	pedidoPreparado(idField: string) {
+	pedidoPreparadoCocinero(idField: string) {
 		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
-		return updateDoc(pedidoRef, { estado: 'Preparado', listoCocinero: "1", listoBartender: "1"});
+		return updateDoc(pedidoRef, { estado: 'Preparado', listoCocinero: "1"});
+	}
+
+	pedidoPreparadoBartender(idField: string) {
+		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
+		return updateDoc(pedidoRef, { estado: 'Preparado', listoBartender: "1"});
 	}
 
 	cargarMensajes(ruta: string): Observable<Mensaje[]> {
