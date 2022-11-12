@@ -71,7 +71,6 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    localStorage.setItem('numeroMesa', '3')
     this.numMesa = localStorage.getItem('numeroMesa');
     this.formMsj = this.fb.group(
       {

@@ -1,8 +1,0 @@
-{
-    "/fcm/send":{
-        "target": "https://fcm.googleapis.com",
-        "secure": true,
-        "logLevel": "debug",
-        "changeOrigin": true
-    }
-}

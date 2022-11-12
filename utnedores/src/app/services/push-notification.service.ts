@@ -21,6 +21,7 @@ import { DataUsuarioService } from './data-usuario.service';
 
 export class PushNotificationService {
   subUser: Subscription;
+  subPush: Subscription;
   private user;
 
   constructor(
@@ -32,17 +33,17 @@ export class PushNotificationService {
   ) { }
 
   sendPush(tokens, oneTitle, oneBody, data) {
-    this.sendPushNotifications({
+    this.subPush = this.sendPushNotifications({
       registration_ids: tokens,
       notification: {
         title: oneTitle,
         body: oneBody
       },
       data: data,
-    })
-      .subscribe((data) => {
-        console.log(data);
-      });
+    }).subscribe((data) => {
+      console.log(data);
+      this.subPush.unsubscribe();
+    });
   }
 
   async inicializar(): Promise<void> {
@@ -118,7 +119,7 @@ export class PushNotificationService {
     await PushNotifications.addListener(
       'pushNotificationActionPerformed',
       (notification: ActionPerformed) => {
-        this.redireccion(notification.notification.data.operacion);
+        //this.redireccion(notification.notification.data.operacion);
         console.log('Push Notification Action Performed: ',
           notification.actionId,
           notification.notification
@@ -129,7 +130,7 @@ export class PushNotificationService {
     await LocalNotifications.addListener(
       'localNotificationActionPerformed',
       (notificationAction) => {
-        this.redireccion(notificationAction.notification.extra.data.operacion);
+        //this.redireccion(notificationAction.notification.extra.data.operacion);
         console.log('Local Notification Action Performed: ', notificationAction);
       }
     );
