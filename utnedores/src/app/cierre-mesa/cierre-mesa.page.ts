@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Chat, ChatService } from '../services/chat.service';
 
 @Component({
   selector: 'app-cierre-mesa',
@@ -26,12 +27,15 @@ export class CierreMesaPage implements OnInit, OnDestroy {
   subMesas: Subscription;
   subPedidos: Subscription;
   subCuentas: Subscription;
+  subChat: Subscription;
+  idFieldEliminarChat = "";
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private toastController: ToastController,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private chatService: ChatService,
   ) { 
     this.spinner = true;
     this.DesactivarSpinner();
@@ -63,6 +67,12 @@ export class CierreMesaPage implements OnInit, OnDestroy {
     }, 7000);
   }
 
+  TraerChatMesa(numMesa){
+    this.subChat = this.chatService.cargarChatMesa('chats', numMesa).subscribe((chat: Chat[]) => {
+      this.idFieldEliminarChat = chat[0].idField;
+    });
+  }
+
   TraerPedidos(){
     this.subPedidos = this.authService.traerPedidos().subscribe(pedidos => {
       this.pedidos = pedidos;
@@ -73,6 +83,7 @@ export class CierreMesaPage implements OnInit, OnDestroy {
     this.subMesas.unsubscribe();
     this.subPedidos.unsubscribe();
     this.subCuentas.unsubscribe();
+    this.subChat.unsubscribe();
   }
 
   TraerMesas() {
@@ -177,9 +188,7 @@ export class CierreMesaPage implements OnInit, OnDestroy {
       }
     }
 
-    //LIMPIAR CHATS
-
-
+    this.chatService.eliminarChat(`chats/${this.idFieldEliminarChat}`);
 
     this.authService.cerrarCuenta(idField);
     this.spinner = false;
