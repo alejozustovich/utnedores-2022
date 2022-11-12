@@ -382,7 +382,7 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
           }
 
           if (this.back == 1) {
-            if (user.perfil.includes("Mozo")) {
+            if (user.tipo.includes("Mozo")) {
               if (user.token != "") {
                 if (flagOnce) {
                   flagOnce = false;

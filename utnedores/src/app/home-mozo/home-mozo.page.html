@@ -37,8 +37,8 @@
             width="30"
             height="30"
           /><br />Cierre<br />Mesa
-          <label style="color: rgb(196, 145, 255)" *ngIf="cantCierreMesas != 0"
-            >x{{cantCierreMesas}}</label
+          <span style="color: rgb(196, 145, 255)" *ngIf="cantCierreMesas != 0"
+            >x{{cantCierreMesas}}</span
           >
         </button>
         <!--button (click)="PedidosListos()"><img src="../../assets/ver-pedidos-mozo.png" width="30" height="30"><br>Pedidos<br>Listos <label style="color:rgb(196, 145, 255);" *ngIf="cantPedidosListos != 0">x{{cantPedidosListos}}</label></button-->
@@ -48,8 +48,8 @@
             width="30"
             height="30"
           /><br />Chat<br />Clientes
-          <label style="color: rgb(196, 145, 255)" *ngIf="cantChat != 0"
-            >x{{cantChat}}</label
+          <span style="color: rgb(196, 145, 255)" *ngIf="cantChat != 0"
+            >x{{cantChat}}</span
           >
         </button>
       </div>
