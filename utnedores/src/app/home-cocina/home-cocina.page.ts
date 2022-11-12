@@ -149,7 +149,6 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
           }            
         }
 
-
         if(this.tipo.includes("Bartender")){
           if(this.pedidos[i].listoBartender === "0"){
             this.hayPedido = true;
@@ -313,7 +312,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
     });
 
     if(this.tipo.includes("Cocinero")){
-      if(this.pedidos[this.indicePedidoActual].listoBartender.includes("0")){
+      if(this.pedidosVisibles[this.indicePedidoActual].listoBartender.includes("0")){
         this.authService.listoCocinero(this.idFieldPedidoActual);
       }else{
         this.authService.pedidoPreparado(this.idFieldPedidoActual);
@@ -325,7 +324,7 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
       }
     }
     if(this.tipo.includes("Bartender")){
-      if(this.pedidos[this.indicePedidoActual].listoCocinero.includes("0")){
+      if(this.pedidosVisibles[this.indicePedidoActual].listoCocinero.includes("0")){
         this.authService.listoBartender(this.idFieldPedidoActual);
       }else{
         this.authService.pedidoPreparado(this.idFieldPedidoActual);

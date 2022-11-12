@@ -234,7 +234,7 @@ export class AuthService {
 
 	rechazarPedido(idField: string) {
 		const pedidoRef = doc(this.firestore, `pedidos/${idField}`);
-		return updateDoc(pedidoRef, { estado: 'Rechazado' });
+		return updateDoc(pedidoRef, { estado: 'Rechazado', listoCocinero: '-2', listoBartender: '-2' });
 	}
 
 	confirmarPedido(idField: string, productosActualizados: string, lCocinero: string, lBartender: string) {
