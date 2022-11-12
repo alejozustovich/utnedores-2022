@@ -1,11 +1,12 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Pedido, Producto } from '../services/auth.service';
+import { AuthService, Pedido, Producto,Usuario } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { getStorage, ref } from "firebase/storage";
 import { getDownloadURL } from '@angular/fire/storage';
 import { ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { PushNotificationService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-mozo-ver-pedido',
@@ -69,12 +70,15 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
   cantTipoPedido = [];
   subProductos: Subscription;
   subPedidos: Subscription;
+  subUsers: Subscription;
+  users: Usuario[];
 
   constructor(
     private router: Router,
     private toastController: ToastController,
     private authService: AuthService,
-    private utilidades: UtilidadesService
+    private utilidades: UtilidadesService,
+    private pnService: PushNotificationService
   ) { 
     for(var i = 0 ; i < 50; i++){
       this.cantProductosAgregados.push(0);
@@ -90,6 +94,8 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
     this.Sonido();
     this.TraerPedidos();
     this.TraerProductos();
+    this.TraerUsuarios();
+
   }
 
   Sonido(){
@@ -108,6 +114,13 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
   ngOnDestroy(){
     this.subProductos.unsubscribe();
     this.subPedidos.unsubscribe();
+
+  }
+
+  TraerUsuarios() {
+    this.subUsers = this.authService.getUsers().subscribe(allUsers => {
+      this.users = allUsers;
+    });
   }
 
   FiltrarCategoria(categoria) {
@@ -403,6 +416,37 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
     }
 
     this.authService.confirmarPedido(this.idFieldPedidoActual, productosPedido, lCocinero, lBartender);
+    
+    
+    var tokens = [""];
+    var flagOnce = true;
+
+
+    this.users.forEach(user => {
+      if (user.tipo.includes("Cocinero") && user.token != "" && lCocinero == "0") {
+        if (flagOnce) {
+          flagOnce = false;
+          tokens[0] = user.token;
+        } else {
+          tokens.push(user.token);
+        }
+      }
+      if (user.tipo.includes("Bartender") && user.token != "" && lBartender == "0") {
+        if (flagOnce) {
+          flagOnce = false;
+          tokens[0] = user.token;
+        } else {
+          tokens.push(user.token);
+        }
+      }
+    });
+
+    setTimeout(() => {
+      if (!flagOnce) {
+        this.pnService.sendPush(tokens, "Ingreso un Pedido", "Pedido Pendiente", { operacion: 'PedidoPendiente' });
+      }
+    }, 1500);
+    
     setTimeout(() => {
       this.spinner = false;
       this.confirmarPedido = false;
