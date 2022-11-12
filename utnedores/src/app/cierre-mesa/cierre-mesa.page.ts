@@ -70,6 +70,7 @@ export class CierreMesaPage implements OnInit, OnDestroy {
   TraerChatMesa(numMesa){
     this.subChat = this.chatService.cargarChatMesa('chats', numMesa).subscribe((chat: Chat[]) => {
       this.idFieldEliminarChat = chat[0].idField;
+      this.subChat.unsubscribe();
     });
   }
 
@@ -83,7 +84,6 @@ export class CierreMesaPage implements OnInit, OnDestroy {
     this.subMesas.unsubscribe();
     this.subPedidos.unsubscribe();
     this.subCuentas.unsubscribe();
-    this.subChat.unsubscribe();
   }
 
   TraerMesas() {
@@ -174,6 +174,7 @@ export class CierreMesaPage implements OnInit, OnDestroy {
         if(once){
           once = false;
           numMesaChat = this.mesas[i].numMesa;
+          this.TraerChatMesa(numMesaChat);
         }
 
         this.authService.liberarMesa(this.mesas[i].idField);
