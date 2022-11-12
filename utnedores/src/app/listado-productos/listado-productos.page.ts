@@ -404,6 +404,8 @@ export class ListadoProductosPage implements OnInit, AfterViewInit, OnDestroy {
       }
       if (this.back == 1) {
         var estadoPedido = "Enviado";
+        lCocinero = "-2";
+        lBartender = "-2";
       }
 
       var unPedido: Pedido = {

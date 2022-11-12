@@ -136,30 +136,81 @@ export class HomeCocinaPage implements OnInit, OnDestroy {
         this.pedidos[i].hora = ((this.pedidos[i].hora).substring(0,((this.pedidos[i].hora).length - 3)));
 
 
-        if(this.tipo.includes("Cocinero")){
-          if(this.pedidos[i].listoCocinero === "0"){
-            this.hayPedido = true;
-            this.pedidos[i].estado = "Pendientes";
-            pedidosSeleccionados.push(this.pedidos[i]);
-          }
-          if(this.pedidos[i].listoCocinero === "1"){
-            this.hayPedido = true;
-            this.pedidos[i].estado = "Confirmados";
-            pedidosSeleccionados.push(this.pedidos[i]);
-          }            
-        }
 
-        if(this.tipo.includes("Bartender")){
-          if(this.pedidos[i].listoBartender === "0"){
-            this.hayPedido = true;
-            this.pedidos[i].estado = "Pendientes";
-            pedidosSeleccionados.push(this.pedidos[i]);
+
+
+
+
+
+
+        if(this.pedidos[i].estado.includes("Recibido")){
+          var productosAux = JSON.parse(this.pedidos[i].productos);
+          for(var k = 0 ; k < productosAux.length; k++){
+            var catProd = "";
+            for(var j = 0 ; j < this.productos.length ; j++){
+              if((Number(this.productos[j].idProducto)) == (Number(productosAux[k].idProducto))){
+                catProd = this.productos[j].categoria;
+                j = this.productos.length;
+              }
+            }
+            for(var j = 0 ; j < this.categorias.length ; j++){
+              if(this.categorias[j].includes(catProd)){
+                if(j < 4){
+
+                  if(this.tipo.includes("Cocinero")){
+                    this.pedidos[i].estado = "Entregados";
+                    pedidosSeleccionados.push(this.pedidos[i]);
+                    k = productosAux.length;
+                  }
+                }
+                if(j > 3){
+                  if(this.tipo.includes("Bartender")){
+                    this.pedidos[i].estado = "Entregados";
+                    pedidosSeleccionados.push(this.pedidos[i]);
+                    k = productosAux.length;
+                  }
+                }
+              }
+            }
           }
-          if(this.pedidos[i].listoBartender === "1"){
-            this.hayPedido = true;
-            this.pedidos[i].estado = "Confirmados";
-            pedidosSeleccionados.push(this.pedidos[i]);
-          }            
+
+        }else{
+
+
+
+
+
+
+
+
+
+
+
+          if(this.tipo.includes("Cocinero")){
+            if(this.pedidos[i].listoCocinero === "0"){
+              this.hayPedido = true;
+              this.pedidos[i].estado = "Pendientes";
+              pedidosSeleccionados.push(this.pedidos[i]);
+            }
+            if(this.pedidos[i].listoCocinero === "1"){
+              this.hayPedido = true;
+              this.pedidos[i].estado = "Confirmados";
+              pedidosSeleccionados.push(this.pedidos[i]);
+            }            
+          }
+
+          if(this.tipo.includes("Bartender")){
+            if(this.pedidos[i].listoBartender === "0"){
+              this.hayPedido = true;
+              this.pedidos[i].estado = "Pendientes";
+              pedidosSeleccionados.push(this.pedidos[i]);
+            }
+            if(this.pedidos[i].listoBartender === "1"){
+              this.hayPedido = true;
+              this.pedidos[i].estado = "Confirmados";
+              pedidosSeleccionados.push(this.pedidos[i]);
+            }            
+          }
         }
       }
 

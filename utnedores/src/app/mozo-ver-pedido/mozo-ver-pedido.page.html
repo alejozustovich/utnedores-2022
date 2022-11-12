@@ -67,7 +67,7 @@
         <ion-toolbar>
           <img id="img_toolbar" src="../../assets/Tenedores.png" alt="" width="45">
           <ion-button id="btn_footer3" (click)="AbrirPedidos()">Ver Pedidos</ion-button>
-          <p style="color: rgb(163, 163, 163);">Se perderán los cambios realizados</p>
+          <p *ngIf="hacerCambios" style="color: rgb(163, 163, 163);">Se perderán los cambios realizados</p>
         </ion-toolbar>
       </ion-header>
 
@@ -93,8 +93,8 @@
                       <p *ngIf="p.tamanio == '0'">Demora: {{p.tiempoElaboracion}} mins</p>
                       <p>Precio: ${{p.precio}}</p>
                       <p>Cantidad: {{cantProductosAgregados[k]}}</p>
-                      <ion-button (click)="RestarProducto(p.idProducto)"><ion-icon name="remove-outline"></ion-icon></ion-button>
-                      <ion-button (click)="SumarProducto(p.idProducto)"><ion-icon name="add-outline"></ion-icon></ion-button>
+                      <ion-button *ngIf="hacerCambios" (click)="RestarProducto(p.idProducto)"><ion-icon name="remove-outline"></ion-icon></ion-button>
+                      <ion-button *ngIf="hacerCambios" (click)="SumarProducto(p.idProducto)"><ion-icon name="add-outline"></ion-icon></ion-button>
                     </ion-label>
                   </ion-item>
                 </div>
@@ -112,7 +112,7 @@
             Total = ${{precioTotal}}
             Demora: {{tiempoTotal}} mins
           </p>
-          <ion-button (click)="RechazarPedido()" id="btn_footer">Rechazar</ion-button>
+          <ion-button *ngIf="permitirRechazarPedido" (click)="RechazarPedido()" id="btn_footer">Rechazar</ion-button>
           <ion-button *ngIf="permitirModificar" (click)="ModificarPedido()" id="btn_footer4">Modificar</ion-button>
           <ion-button *ngIf="permitirConfirmar" (click)="ConfirmarPedido()" id="btn_footer2">Confirmar</ion-button>
         </ion-toolbar>

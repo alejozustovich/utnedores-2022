@@ -450,7 +450,6 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
           estadoMesa = 1;
           if (this.usuarioLogueado.idUsuario == u.idUsuario) {
             estadoMesa = 2;
-            numeroMesa = u.numMesa;
           }
         }
       });
@@ -462,6 +461,18 @@ export class HomeClientePage implements OnInit, AfterViewInit, OnDestroy {
           this.Alerta("MESA NO ASIGNADA", 'danger');
         } else {
           if (estadoMesa == 2) {
+
+            var once = true;
+
+            this.mesas.forEach(u => {
+                if (this.usuarioLogueado.idUsuario == u.idUsuario) {
+                  if(once){
+                    once = false;
+                    numeroMesa = u.numMesa;
+                  }
+                }
+            });
+
             localStorage.setItem('numeroMesa', numeroMesa);
             this.DirigirMenu();
           }

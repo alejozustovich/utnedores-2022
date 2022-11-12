@@ -23,6 +23,8 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
   confirmarPedido = false;
   permitirModificar = false;
   permitirConfirmar = false;
+  hacerCambios = true;
+  permitirRechazarPedido = false;
 
   pedidoValido = true;
   hayPedido = false;
@@ -120,6 +122,8 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
   }
 
   VerPedido(index: number, numMesa: string, idField: string){
+    this.hacerCambios = true;
+    this.permitirRechazarPedido = true
     this.permitirModificar = false;
     this.permitirConfirmar = false;
 
@@ -134,6 +138,12 @@ export class MozoVerPedidoPage implements OnInit, OnDestroy {
     if(this.pedidos[index].estado.includes("Enviado")){
       this.permitirModificar = true;
       this.permitirConfirmar = true;
+    }else{
+      this.hacerCambios = false;
+    }
+
+    if(this.pedidos[index].estado.includes("Rechazado")){
+      this.permitirRechazarPedido = false;
     }
 
     var pedidoAux = JSON.parse(this.pedidos[index].productos);
