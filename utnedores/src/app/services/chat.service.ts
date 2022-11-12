@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { query, where, Firestore, collection, collectionData, addDoc, updateDoc, doc } from '@angular/fire/firestore';
+import { query, where, Firestore, collection, collectionData, addDoc, updateDoc, doc, deleteDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 export interface Mensaje {
@@ -40,5 +40,10 @@ export class ChatService {
 	modificarChat(obj: any, ruta: string) {
 		const chatRef = doc(this.firestore, ruta);
 		return updateDoc(chatRef, obj);
+	}
+
+	eliminarChat(ruta: string) {
+		const chatRef = doc(this.firestore, ruta);
+		return deleteDoc(chatRef);
 	}
 }

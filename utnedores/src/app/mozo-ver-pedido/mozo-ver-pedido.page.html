@@ -93,6 +93,8 @@
                       <p *ngIf="p.tamanio == '0'">Demora: {{p.tiempoElaboracion}} mins</p>
                       <p>Precio: ${{p.precio}}</p>
                       <p>Cantidad: {{cantProductosAgregados[k]}}</p>
+                      <span *ngIf="!hacerCambios"><br></span>
+                      <span *ngIf="!hacerCambios"><br></span>
                       <ion-button *ngIf="hacerCambios" (click)="RestarProducto(p.idProducto)"><ion-icon name="remove-outline"></ion-icon></ion-button>
                       <ion-button *ngIf="hacerCambios" (click)="SumarProducto(p.idProducto)"><ion-icon name="add-outline"></ion-icon></ion-button>
                     </ion-label>
