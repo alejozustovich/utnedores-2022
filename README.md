@@ -192,3 +192,7 @@
     * *8: Push Notification al Realizar el Pedido (Mozo)*
 
 >NOTA: Se trabajó en las encuestas y los gráficos que muestran los resultados de las mismas. Se incorporó el chat de Cliente-Mozo y se añadieron los Push Notification. Se realizaron las pruebas integrales de toda la aplicación.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/alejozustovich/utnedores-2022/main/utnedores/src/assets/imagenes-readme/semana-4.png" width="800">
+</p>
