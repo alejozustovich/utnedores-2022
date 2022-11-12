@@ -201,21 +201,35 @@ export class AltaClientePage implements OnInit, AfterViewInit, OnDestroy {
       this.scanActive = false;
       this.result = result.content;
 
+      var dniValido2 = true;
       var dniValido = true;
       var cadena = this.result.split("@");
 
       if (cadena.length < 4) {
+        dniValido2 = false;
         dniValido = false;
       } else {
-        if (!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))) {
-          dniValido = false;
-        }
+          if (!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))) {
+            dniValido = false;
+          }
+          if(cadena[0] != ""){
+            dniValido2 = false;
+          }
       }
 
-      if (dniValido) {
-        this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
-        this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
-        this.dni.setValue(cadena[4]);
+      if (dniValido || dniValido2) {
+
+        if(dniValido){
+          this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+          this.apellido.setValue(this.PrimeraMayuscula(cadena[1]));
+          this.dni.setValue(cadena[4]);
+        }
+
+        if(dniValido2){
+          this.nombre.setValue(this.PrimeraMayuscula(cadena[5]));
+          this.apellido.setValue(this.PrimeraMayuscula(cadena[4]));
+          this.dni.setValue(cadena[1]);
+        }
 
       } else {
         this.Alerta("Código no válido", 'danger');

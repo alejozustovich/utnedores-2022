@@ -57,6 +57,7 @@ export class HomePage implements OnInit {
           this.spinner = false;
         }
       })
+      this.subUsers.unsubscribe();
     });
   }
 
@@ -120,7 +121,6 @@ export class HomePage implements OnInit {
 
   CerrarSesion(){
     this.spinner = true;
-    this.subUsers.unsubscribe();
     setTimeout(()=>{
       this.authService.logout();
       this.pnService.eliminarToken(this.idFieldToken);

@@ -1,5 +1,5 @@
 import { UtilidadesService } from '../services/utilidades.service';
-import { AuthService, Mesa, Usuario, Cuenta } from '../services/auth.service';
+import { AuthService, Mesa, Usuario, Cuenta, EncuestaCliente } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
@@ -23,6 +23,9 @@ export class HomeClienteMesaPage implements OnInit, OnDestroy {
   subMesa: Subscription;
   sub: Unsubscribe;
   subCuentas: Subscription;
+  encuestas: EncuestaCliente[];
+  subEncuestas: Subscription;
+  encuentra = false;
 
   constructor(
     private router: Router,
@@ -37,6 +40,7 @@ export class HomeClienteMesaPage implements OnInit, OnDestroy {
     this.subMesa.unsubscribe();
     this.sub();
     this.subCuentas.unsubscribe();
+    this.subEncuestas.unsubscribe();
   }
 
   ngOnInit() {
@@ -45,8 +49,21 @@ export class HomeClienteMesaPage implements OnInit, OnDestroy {
         this.usuarioActual = user;
         this.TraerCuentas();
         this.TraerMesas();
+        this.TraerEncuestasClientes();
       });
     })
+  }
+
+  TraerEncuestasClientes() {
+    this.subEncuestas = this.authService.traerEncuestaCliente().subscribe(listaencuestas => {
+      this.encuestas = listaencuestas;
+      
+      this.encuestas.forEach(encuesta => {
+        if((Number(encuesta.idUsuario)) == (Number(this.usuarioActual.idUsuario))){
+          this.encuentra = true;
+        }
+      });
+    });
   }
 
   TraerMesas() {

@@ -204,22 +204,38 @@ export class AltaSupervisorPage implements OnInit, OnDestroy {
       this.scanActive = false;
       this.result = result.content;
 
+      var dniValido2 = true;
       var dniValido = true;
       var cadena = this.result.split("@");
 
       if(cadena.length < 4){
+        dniValido2 = false;
         dniValido = false;
       }else{
         if(!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))){
           dniValido = false;
         }
+        if(cadena[0] != ""){
+          dniValido2 = false;
+        }
       }
 
-      if(dniValido){
-        (<HTMLInputElement>document.getElementById('nomHtml')).value = this.PrimeraMayuscula(cadena[2]);
-        (<HTMLInputElement>document.getElementById('apeHtml')).value = this.PrimeraMayuscula(cadena[1]);
-        (<HTMLInputElement>document.getElementById('dniHtml')).value = cadena[4];
-        (<HTMLInputElement>document.getElementById('cuilHtml')).value = ("-" + cadena[4] + "-");
+      if(dniValido || dniValido2){
+
+        if(dniValido){
+          (<HTMLInputElement>document.getElementById('nomHtml')).value = this.PrimeraMayuscula(cadena[2]);
+          (<HTMLInputElement>document.getElementById('apeHtml')).value = this.PrimeraMayuscula(cadena[1]);
+          (<HTMLInputElement>document.getElementById('dniHtml')).value = cadena[4];
+          (<HTMLInputElement>document.getElementById('cuilHtml')).value = ("-" + cadena[4] + "-");
+        }
+
+        if(dniValido2){
+          (<HTMLInputElement>document.getElementById('nomHtml')).value = this.PrimeraMayuscula(cadena[5]);
+          (<HTMLInputElement>document.getElementById('apeHtml')).value = this.PrimeraMayuscula(cadena[4]);
+          (<HTMLInputElement>document.getElementById('dniHtml')).value = cadena[1];
+          (<HTMLInputElement>document.getElementById('cuilHtml')).value = ("-" + cadena[1] + "-");
+        }
+
       }else{
         this.Alerta("Código no válido", 'danger');
         if(this.volumenOn){

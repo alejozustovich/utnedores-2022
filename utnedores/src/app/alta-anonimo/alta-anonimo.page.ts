@@ -194,19 +194,33 @@ export class AltaAnonimoPage implements OnInit, AfterViewInit, OnDestroy {
       this.scanActive = false;
       this.result = result.content;
 
-      var dniValido = true;
       var cadena = this.result.split("@");
 
+      var dniValido = true;
+      var dniValido2 = true;
+      
       if (cadena.length < 4) {
         dniValido = false;
       } else {
+
+        if(cadena[0] != ""){
+          dniValido2 = false;
+        }  
+
         if (!isNaN(Number(cadena[1])) || !isNaN(Number(cadena[2])) || isNaN(Number(cadena[4]))) {
           dniValido = false;
         }
       }
 
-      if (dniValido) {
-        this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+      if (dniValido || dniValido2) {
+
+        if(dniValido){
+          this.nombre.setValue(this.PrimeraMayuscula(cadena[2]));
+        }
+
+        if(dniValido2){
+          this.nombre.setValue(this.PrimeraMayuscula(cadena[5]));
+        }
       } else {
         this.Alerta("Código no válido", 'danger');
         if(this.volumenOn){
